@@ -1,0 +1,7 @@
+FROM nginx:1.22.0-alpine
+COPY build/nginx/conf/nginx.conf /etc/nginx/nginx.conf
+COPY build/nginx/conf/test1.loc.conf /etc/nginx/conf.d/test1.loc.conf
+COPY build/nginx/conf/localhost.conf /etc/nginx/conf.d/default.conf
+
+# docker build -f build/nginx/nginx.docker -t nginx_1_22_0_alpine:v008 .
+# docker run --name ngv008 -d -p 80:80 nginx_1_22_0_alpine:v008

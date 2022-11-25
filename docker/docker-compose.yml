@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  nginx:
+    restart: always
+    #working_dir: /var/www/
+    container_name: mnginx
+    build:
+      context: ../
+      dockerfile: ./build/nginx/nginx.docker
+    ports:
+      - "80:80"
+    links:
+      - php-fpm
+  php-fpm:
+    restart: always
+    # working_dir: /var/www/
+    container_name: mphp
+    ports:
+      - "9000:9000"
+    build:
+      context: ../
+      dockerfile: ./build/php/php-fpm.docker
+    volumes:
+      - ../html/test1.loc:/var/www/html/test1.loc
+  db:
+    image: mysql:8.0
+    container_name: msql8
+    # command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rO0tExample
+      MYSQL_USER: jackson
+      MYSQL_PASSWORD: j@ck5On
+#    volumes:
+#      - mysql_data:/var/lib/mysql
+  redis:
+    image: redis:6.2.7
+    container_name: mredis
+    restart: always
+#    volumes:
+#      - redis_data:/data
+  memcached:
+    image: memcached:1.6.17
+    container_name: mymemcached
+    restart: always
+    command: "memcached -p 11211 -m 2048 -c 8092"
+
+  mongodb:
+    image: 'mongo:6.0-focal'
+    container_name: mymongodb
+    restart: always
+    ports:
+      - "27017:27017"
+#    volumes:
+#      - 'mongodb_data:/bitnami'
+  clickhouse:
+    image: 'bitnami/clickhouse:22.3.14'
+    container_name: myclickhouse
+#    hostname: clickhouse
+    restart: always
