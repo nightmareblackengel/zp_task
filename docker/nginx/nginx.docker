@@ -1,6 +1,6 @@
 FROM nginx:1.22.0-alpine
 COPY ./docker/nginx/conf/nginx.conf /etc/nginx/nginx.conf
-COPY ./docker/nginx/conf/test1.loc.conf /etc/nginx/conf.d/ztt.loc.conf
+COPY ./docker/nginx/conf/ztt.loc.conf /etc/nginx/conf.d/ztt.loc.conf
 
 # docker build -f build/nginx/nginx.docker -t nginx_1_22_0_alpine:v008 .
 # docker run --name ngv008 -d -p 80:80 nginx_1_22_0_alpine:v008
