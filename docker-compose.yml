@@ -55,17 +55,14 @@ services:
         ipv4_address: 172.18.0.103
   #    volumes:
 #      - redis_data:/data
-#  memcached:
-#    #image: 'memcached:alpine'
-#    image: memcached:1.6.17
-#    container_name: mymemcached
-#    restart: always
-#    command: "-p 11211 -m 256 -c 8092"
-#    ports:
-#      - "11211:11211"
-#    networks:
-#      default:
-#        ipv4_address: 127.0.0.1
+  memcached:
+    image: memcached:1.6.17
+    container_name: mymemcached
+    restart: always
+    command: "-p 11211 -m 256 -c 8092"
+    networks:
+      myztt:
+        ipv4_address: 172.18.0.104
 
 #  mongodb:
 #    image: 'mongo:6.0-focal'

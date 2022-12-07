@@ -7,29 +7,29 @@ $params = array_merge(
 );
 
 return [
-    'id' => 'app-frontend',
+    'id' => 'ztt',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'request' => [
-            'csrfParam' => '_csrf-frontend',
+            'csrfParam' => '_csrf-ztt',
+        ],
+        'cache' => [
+            'class' => 'yii\caching\MemCache',
+            'servers' => [
+                [
+                    'host' => '172.18.0.104',
+                    'port' => 11211,
+                    'weight' => 100,
+                ],
+            ],
+            'useMemcached' => true,
         ],
 //        'cache' => [
-//            'class' => 'yii\caching\MemCache',
-//            'servers' => [
-//                [
-//                    'host' => '127.0.0.1',
-//                    'port' => 11211,
-//                    'weight' => 100,
-//                ],
-//            ],
-//            'useMemcached' => true,
+//            'class' => 'yii\redis\Cache',
+//            'redis' => 'redis1',
 //        ],
-        'cache' => [
-            'class' => 'yii\redis\Cache',
-            'redis' => 'redis1',
-        ],
         'redis1' => [
             'class' => 'yii\redis\Connection',
             'hostname' => '172.18.0.103',
@@ -39,7 +39,7 @@ return [
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,
-            'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
+            'identityCookie' => ['name' => '_identity-ztt', 'httpOnly' => true],
         ],
         'session' => [
             // this is the name of the session cookie used for login on the frontend
