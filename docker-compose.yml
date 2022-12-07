@@ -1,30 +1,38 @@
 version: '3'
 
+networks:
+  myztt:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.1
+
 services:
   nginx:
     restart: always
-    #working_dir: /var/www/
     container_name: mnginx
     build:
       context: ./
       dockerfile: ./docker/nginx/nginx.docker
     ports:
       - "80:80"
-    links:
-      - php-fpm
+    networks:
+      myztt:
+        ipv4_address: 172.18.0.100
     volumes:
       - ./:/var/www/html/ztt.loc
   php-fpm:
     restart: always
-    # working_dir: /var/www/
     container_name: mphp
-    ports:
-      - "9000:9000"
     build:
       context: ./
       dockerfile: ./docker/php/php-fpm.docker
     volumes:
       - ./:/var/www/html/ztt.loc
+    networks:
+      myztt:
+        ipv4_address: 172.18.0.101
 #  db:
 #    image: mysql:8.0
 #    container_name: msql8
@@ -36,17 +44,28 @@ services:
 #      MYSQL_PASSWORD: j@ck5On
 ##    volumes:
 ##      - mysql_data:/var/lib/mysql
-#  redis:
-#    image: redis:6.2.7
-#    container_name: mredis
-#    restart: always
-##    volumes:
-##      - redis_data:/data
+  redis:
+    build:
+      context: ./
+      dockerfile: ./docker/redis_data/redis.docker
+    container_name: mredis
+    restart: always
+    networks:
+      myztt:
+        ipv4_address: 172.18.0.103
+  #    volumes:
+#      - redis_data:/data
 #  memcached:
+#    #image: 'memcached:alpine'
 #    image: memcached:1.6.17
 #    container_name: mymemcached
 #    restart: always
-#    command: "memcached -p 11211 -m 2048 -c 8092"
+#    command: "-p 11211 -m 256 -c 8092"
+#    ports:
+#      - "11211:11211"
+#    networks:
+#      default:
+#        ipv4_address: 127.0.0.1
 
 #  mongodb:
 #    image: 'mongo:6.0-focal'
