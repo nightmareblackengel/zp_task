@@ -9,12 +9,15 @@ class ChatAsset extends AssetBundle
     public $baseUrl = '@web';
 
     public $css = [
+        'css/chat.css'
     ];
 
     public $js = [
+        'js/sideBar.js',
     ];
 
     public $depends = [
+        'yii\jui\JuiAsset',
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
     ];
