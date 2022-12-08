@@ -33,17 +33,20 @@ services:
     networks:
       myztt:
         ipv4_address: 172.18.0.101
-#  db:
-#    image: mysql:8.0
-#    container_name: msql8
-#    # command: --default-authentication-plugin=mysql_native_password
-#    restart: always
-#    environment:
-#      MYSQL_ROOT_PASSWORD: rO0tExample
-#      MYSQL_USER: jackson
-#      MYSQL_PASSWORD: j@ck5On
-##    volumes:
-##      - mysql_data:/var/lib/mysql
+  db:
+    image: mysql:8.0
+    container_name: msql8
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rO0tExample
+      MYSQL_USER: jackson
+      MYSQL_PASSWORD: j@ck5On
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    networks:
+      myztt:
+        ipv4_address: 172.18.0.102
   redis:
     build:
       context: ./
@@ -53,8 +56,6 @@ services:
     networks:
       myztt:
         ipv4_address: 172.18.0.103
-  #    volumes:
-#      - redis_data:/data
   memcached:
     image: memcached:1.6.17
     container_name: mymemcached
