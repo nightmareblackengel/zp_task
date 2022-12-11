@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\models\old;
+namespace common\widgets;
 
 use Yii;
 
