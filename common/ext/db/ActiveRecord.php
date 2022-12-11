@@ -1,5 +1,5 @@
 <?php
-namespace common\ext;
+namespace common\ext\db;
 
 class ActiveRecord extends \yii\db\ActiveRecord
 {

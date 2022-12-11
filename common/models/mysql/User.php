@@ -2,7 +2,7 @@
 
 namespace common\models\mysql;
 
-use common\ext\ActiveRecord;
+use common\ext\db\ActiveRecord;
 
 class User extends ActiveRecord
 {

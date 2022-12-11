@@ -2,7 +2,7 @@
 
 namespace common\models;
 
-use common\ext\Model;
+use common\ext\base\Model;
 use common\models\mysql\User;
 
 class UserModel extends Model

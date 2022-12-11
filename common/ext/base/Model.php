@@ -1,6 +1,6 @@
 <?php
 
-namespace common\ext;
+namespace common\ext\base;
 
 use common\ext\patterns\Singleton;
 
