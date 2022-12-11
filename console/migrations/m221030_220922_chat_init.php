@@ -37,7 +37,7 @@ class m221030_220922_chat_init extends \yii\db\Migration
 			$this->execute($sql);
 		}
 
-		return false;
+		return true;
 	}
 
 	public function safeDown()
