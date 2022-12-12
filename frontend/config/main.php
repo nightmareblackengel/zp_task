@@ -30,22 +30,20 @@ return [
 //            'class' => 'yii\redis\Cache',
 //            'redis' => 'redis1',
 //        ],
-        'redis1' => [
+        'redisDb1' => [
             'class' => 'yii\redis\Connection',
             'hostname' => '172.18.0.103',
             'port' => 6379,
             'database' => 1,
         ],
         'user' => [
-            'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
-            'identityCookie' => ['name' => '_identity-ztt', 'httpOnly' => true],
+            'class' => \frontend\models\UserAuth::class,
         ],
         'session' => [
             // this is the name of the session cookie used for login on the frontend
             'name' => 'advanced-frontend',
             'class' => 'yii\redis\Session',
-            'redis' => 'redis1',
+            'redis' => 'redisDb1',
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,

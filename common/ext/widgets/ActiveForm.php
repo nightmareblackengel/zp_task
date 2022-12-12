@@ -1,5 +1,5 @@
 <?php
-namespace common\ext\widget;
+namespace common\ext\widgets;
 
 class ActiveForm extends \yii\widgets\ActiveForm
 {

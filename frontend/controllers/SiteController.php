@@ -2,7 +2,8 @@
 
 namespace frontend\controllers;
 
-use frontend\models\LoginForm;
+use frontend\ext\helpers\Url;
+use frontend\models\forms\AuthForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -62,12 +63,10 @@ class SiteController extends Controller
             return $this->goHome();
         }
 
-        $model = new LoginForm();
+        $model = new AuthForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            return $this->redirect(Url::to('/chat/index'));
         }
-
-        $model->password = '';
 
         return $this->render('login', [
             'model' => $model,
