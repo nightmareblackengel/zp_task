@@ -1,6 +1,7 @@
 <?php
 namespace frontend\models;
 
+use common\ext\helpers\EncryptHelper;
 use common\models\UserModel;
 use yii\base\Model;
 use yii\base\NotSupportedException;
@@ -49,6 +50,11 @@ class UserAuthIdentity extends Model implements IdentityInterface
         return $identity;
     }
 
+    public function getUser()
+    {
+        return $this->_user;
+    }
+
     public function getUserTitle()
     {
         if (!empty($this->_user['name'])) {
@@ -65,15 +71,21 @@ class UserAuthIdentity extends Model implements IdentityInterface
 
     public function getAuthKey()
     {
-        echo "in method getAuthKey";
-        exit();
-        return $this->auth_key;
+        if (empty($this->_user)) {
+            return null;
+        }
+
+        return EncryptHelper::encode($this->_user['id'], $this->_user['created_at']);
     }
 
     public function validateAuthKey($authKey)
     {
-        echo "in method validateAuthKey";
+        echo "validateAuthKey";
         exit();
-        return $this->getAuthKey() === $authKey;
+        if (empty($authKey) || empty($this->_user['email'])) {
+            return false;
+        }
+
+        return $authKey === $this->_user['email'];
     }
 }
