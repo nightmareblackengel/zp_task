@@ -10,7 +10,7 @@ networks:
 
 services:
   nginx:
-    restart: always
+    restart: "no"
     container_name: mnginx
     build:
       context: ./
@@ -23,7 +23,7 @@ services:
     volumes:
       - ./:/var/www/html/ztt.loc
   php-fpm:
-    restart: always
+    restart: "no"
     container_name: mphp
     build:
       context: ./
@@ -36,7 +36,7 @@ services:
   db:
     image: mysql:8.0
     container_name: msql8
-    restart: always
+    restart: "no"
     ports:
       - "3306:3306"
     environment:
@@ -52,14 +52,14 @@ services:
       context: ./
       dockerfile: ./docker/redis_data/redis.docker
     container_name: mredis
-    restart: always
+    restart: "no"
     networks:
       myztt:
         ipv4_address: 172.18.0.103
   memcached:
     image: memcached:1.6.17
     container_name: mymemcached
-    restart: always
+    restart: "no"
     command: "-p 11211 -m 256 -c 8092"
     networks:
       myztt:
@@ -68,7 +68,7 @@ services:
 #  mongodb:
 #    image: 'mongo:6.0-focal'
 #    container_name: mymongodb
-#    restart: always
+#    restart: no
 #    ports:
 #      - "27017:27017"
 #    volumes:
@@ -77,4 +77,4 @@ services:
 #    image: 'bitnami/clickhouse:22.3.14'
 #    container_name: myclickhouse
 #    hostname: clickhouse
-#    restart: always
+#    restart: no

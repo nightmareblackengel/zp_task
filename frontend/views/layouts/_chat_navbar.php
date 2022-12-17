@@ -1,4 +1,6 @@
 <?php
+$identity = Yii::$app->user->identity;
+$userTitle = !empty($identity) ? $identity->getUserTitle() : '';
 ?>
 <nav class="navbar-inverse">
     <div class="container-fluid">
@@ -17,7 +19,7 @@
             <ul class="nav navbar-nav nbeAvatarCont">
                 <li class="dropdown">
                     <a class="nbeAvatar dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        nightmareblackengel@gmail.com
+                        <?= $userTitle; ?>
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">

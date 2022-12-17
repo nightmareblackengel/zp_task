@@ -6,6 +6,12 @@ $params = array_merge(
     require __DIR__ . '/params-local.php'
 );
 
+$redisConfigs = [
+    'class' => 'yii\redis\Connection',
+    'hostname' => '172.18.0.103',
+    'port' => 6379,
+];
+
 return [
     'id' => 'ztt',
     'basePath' => dirname(__DIR__),
@@ -30,20 +36,18 @@ return [
 //            'class' => 'yii\redis\Cache',
 //            'redis' => 'redis1',
 //        ],
-        'redisDb1' => [
-            'class' => 'yii\redis\Connection',
-            'hostname' => '172.18.0.103',
-            'port' => 6379,
-            'database' => 1,
-        ],
+        // sessions
+        'redisDb1' => array_merge(['database' => 1], $redisConfigs),
+        // user auth
+        'redisDb2' => array_merge(['database' => 2], $redisConfigs),
         'user' => [
             'class' => \frontend\models\UserAuth::class,
         ],
         'session' => [
-            // this is the name of the session cookie used for login on the frontend
             'name' => 'advanced-frontend',
-            'class' => 'yii\redis\Session',
+            'class' => \common\ext\RedisSession::class,
             'redis' => 'redisDb1',
+            'keyPrefix' => 'sess_',
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
