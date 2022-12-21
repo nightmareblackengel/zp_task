@@ -3,7 +3,7 @@ namespace frontend\ext\helpers;
 
 use Yii;
 
-class EncryptHelper
+class AuthEncryptHelper
 {
     public static function encode($key, string $salt, int $maxKeyLen = 64, int $maxSaltLen = 31): string
     {

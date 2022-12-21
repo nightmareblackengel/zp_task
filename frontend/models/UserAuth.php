@@ -1,24 +1,21 @@
 <?php
 namespace frontend\models;
 
-use frontend\ext\helpers\EncryptHelper;
+use frontend\ext\helpers\AuthCookieHelper;
+use frontend\ext\helpers\AuthEncryptHelper;
 use Yii;
 use yii\base\InvalidValueException;
-use yii\web\Cookie;
 use yii\web\IdentityInterface;
 
 class UserAuth extends \yii\web\User
 {
-    public const COOK_AUTH = 'ztt-auth';
-    public const AUTH_TIMEOUT = 60 * 5;
-
     public $identityClass = UserAuthIdentity::class;
 
     public $enableAutoLogin = true;
 
-    public $identityCookie = ['name' => self::COOK_AUTH, 'httpOnly' => true,];
+    public $identityCookie = ['name' => AuthCookieHelper::COOK_AUTH, 'httpOnly' => true,];
 
-    public $authTimeout = self::AUTH_TIMEOUT;
+    public $authTimeout = AuthCookieHelper::AUTH_TIMEOUT;
 
     protected $userIdentity = null;
 
@@ -63,28 +60,24 @@ class UserAuth extends \yii\web\User
             return $this->userIdentity;
         }
 
-        $cookieCollection = Yii::$app->request->getCookies();
-        if (empty($cookieCollection)) {
-            return null;
-        }
-        $authCook = $cookieCollection->get(self::COOK_AUTH);
+        $authCook = AuthCookieHelper::getAuthCookie();
         if (empty($authCook->value)) {
-            return $this->removeAuthCookie();
+            return AuthCookieHelper::removeAuthCookie();
         }
 
         $redisValue = Yii::$app->redisDb2->get($authCook->value);
         if (empty($redisValue)) {
-            return $this->removeAuthCookie();
+            return AuthCookieHelper::removeAuthCookie();
         }
 
         $redisAuthData = unserialize($redisValue);
         if (empty($redisAuthData['auth'])) {
-            return $this->removeAuthCookie();
+            return AuthCookieHelper::removeAuthCookie();
         }
 
-        $userId = EncryptHelper::decode($authCook->value, $redisAuthData['auth'], 31);
+        $userId = AuthEncryptHelper::decode($authCook->value, $redisAuthData['auth'], 31);
         if (empty($userId)) {
-            return $this->removeAuthCookie();
+            return AuthCookieHelper::removeAuthCookie();
         }
 
         $this->userIdentity = UserAuthIdentity::findIdentity((int) $userId);
@@ -122,7 +115,7 @@ class UserAuth extends \yii\web\User
             return null;
         }
 
-        $this->sendCookie($redisKey, $this->authTimeout);
+        AuthCookieHelper::sendCookie($redisKey, $this->authTimeout, $this->identityCookie);
         $this->userIdentity = $this->userIdentity;
 
         return true;
@@ -130,42 +123,17 @@ class UserAuth extends \yii\web\User
 
     protected function generateUserHashes($userId, ?string $userEmail, ?string $userCreatedAt)
     {
-        $userEmailHash  = EncryptHelper::encode($userEmail, $userCreatedAt, 255);
-        $userIdHash     = EncryptHelper::encode($userId, $userEmailHash, 64);
+        $userEmailHash  = AuthEncryptHelper::encode($userEmail, $userCreatedAt, 255);
+        $userIdHash     = AuthEncryptHelper::encode($userId, $userEmailHash, 64);
 
         return [$userIdHash, $userEmailHash];
-    }
-
-    protected function removeAuthCookie($retRes = null)
-    {
-        $cookieCollection = Yii::$app->request->getCookies();
-        $cookieCollection->readOnly = false;
-        $cookieCollection->remove(self::COOK_AUTH);
-
-        return $retRes;
-    }
-
-    protected function sendCookie(string $redisKey, int $duration)
-    {
-        $cookieParam = array_merge(
-            $this->identityCookie,
-            [
-                'value' => $redisKey,
-                'expire' => time() + $this->authTimeout,
-            ]
-        );
-
-        $cookies = Yii::$app->response->cookies;
-        $cookies->add(
-            new Cookie($cookieParam)
-        );
     }
 
     public function switchIdentity($identity, $duration = 0)
     {
         $this->setIdentity($identity);
         if ($identity === null) {
-            $this->removeAuthCookie();
+            AuthCookieHelper::removeAuthCookie();
         }
     }
 

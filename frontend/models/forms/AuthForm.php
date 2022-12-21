@@ -2,7 +2,7 @@
 namespace frontend\models\forms;
 
 use common\ext\base\Form;
-use frontend\models\UserAuth;
+use frontend\ext\helpers\AuthCookieHelper;
 use frontend\models\UserAuthIdentity;
 use Yii;
 
@@ -34,6 +34,6 @@ class AuthForm extends Form
             return false;
         }
 
-        return Yii::$app->user->login($identity, UserAuth::AUTH_TIMEOUT);
+        return Yii::$app->user->login($identity, AuthCookieHelper::AUTH_TIMEOUT);
     }
 }

@@ -2,7 +2,8 @@
 namespace frontend\models;
 
 use common\models\UserModel;
-use frontend\ext\helpers\EncryptHelper;
+use Exception;
+use frontend\ext\helpers\AuthEncryptHelper;
 use yii\base\Model;
 use yii\base\NotSupportedException;
 use yii\web\IdentityInterface;
@@ -63,7 +64,7 @@ class UserAuthIdentity extends Model implements IdentityInterface
 
         return $this->_user['email'];
     }
-    /******************************************************/
+
     public static function findIdentityByAccessToken($token, $type = null)
     {
         throw new NotSupportedException('Error when identity by tocken');
@@ -75,17 +76,11 @@ class UserAuthIdentity extends Model implements IdentityInterface
             return null;
         }
 
-        return EncryptHelper::encode($this->_user['id'], $this->_user['created_at']);
+        return AuthEncryptHelper::encode($this->_user['id'], $this->_user['created_at']);
     }
 
     public function validateAuthKey($authKey)
     {
-        echo "validateAuthKey";
-        exit();
-        if (empty($authKey) || empty($this->_user['email'])) {
-            return false;
-        }
-
-        return $authKey === $this->_user['email'];
+        throw new Exception('Nbe ValidateAuthKey') ;
     }
 }
