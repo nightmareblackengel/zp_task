@@ -156,4 +156,25 @@ class UserAuth extends \yii\web\User
     {
         return Yii::$app->redisDb2;
     }
+
+    public function logout($destroySession = true)
+    {
+        $identity = $this->getIdentity();
+        if ($identity !== null && $this->beforeLogout($identity)) {
+            # remove redis key
+            $authCook = AuthCookieHelper::getAuthCookie();
+            if (!empty($authCook->value)) {
+                $this->getRedis()->del($authCook->value);
+            }
+            // remove cookie
+            $this->switchIdentity(null);
+            // remove session
+            if ($destroySession && $this->enableSession) {
+                Yii::$app->getSession()->destroy();
+            }
+            $this->afterLogout($identity);
+        }
+
+        return $this->getIsGuest();
+    }
 }
