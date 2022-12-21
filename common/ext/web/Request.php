@@ -6,7 +6,7 @@ use Yii;
 class Request extends \yii\web\Request
 {
     protected $_csrfToken;
-    public $csrfParam = 'ztt-random-passphrase';
+    public $csrfParam = 'ztt-auth';
 
     public function getCsrfToken($regenerate = false)
     {

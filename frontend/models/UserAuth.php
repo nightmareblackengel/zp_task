@@ -1,6 +1,7 @@
 <?php
 namespace frontend\models;
 
+use Exception;
 use frontend\ext\helpers\AuthCookieHelper;
 use frontend\ext\helpers\AuthEncryptHelper;
 use Yii;
@@ -107,16 +108,16 @@ class UserAuth extends \yii\web\User
         }
 
         $redisKey = $userIdHash;
-        $resisHashData = serialize([
+        $redisHashData = serialize([
             'auth' => $userEmailHash,
             'session' => Yii::$app->session->getId(),
         ]);
-        if (empty(Yii::$app->redisDb2->setex($redisKey, $this->authTimeout, $resisHashData))) {
+        if (empty(Yii::$app->redisDb2->setex($redisKey, $this->authTimeout, $redisHashData))) {
             return null;
         }
 
         AuthCookieHelper::sendCookie($redisKey, $this->authTimeout, $this->identityCookie);
-        $this->userIdentity = $this->userIdentity;
+        $this->userIdentity = UserAuthIdentity::createFromParams($userData);
 
         return true;
     }
@@ -135,5 +136,16 @@ class UserAuth extends \yii\web\User
         if ($identity === null) {
             AuthCookieHelper::removeAuthCookie();
         }
+    }
+
+    # WARNING: do not remove this method: getIsGuest
+    public function getIsGuest()
+    {
+        return $this->getIdentity() === null;
+    }
+
+    public function getId()
+    {
+        throw new Exception('Error UserAuth::getId not realized');
     }
 }

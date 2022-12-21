@@ -42,6 +42,12 @@ class UserAuthIdentity extends Model implements IdentityInterface
         if (empty($user)) {
             return null;
         }
+
+        return self::createFromParams($user);
+    }
+
+    public static function createFromParams(array $user): ?self
+    {
         $identity = new self();
         $identity->_user = $user;
         if (!$identity->validate()) {

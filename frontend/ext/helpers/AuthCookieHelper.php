@@ -6,7 +6,7 @@ use yii\web\Cookie;
 
 class AuthCookieHelper
 {
-    public const COOK_AUTH = 'ztt-auth';
+    public const COOK_AUTH = 'ztt-csrf';
 
     public const AUTH_TIMEOUT = 60 * 5;
 
@@ -19,12 +19,12 @@ class AuthCookieHelper
         return $cookieCollection->get(self::COOK_AUTH);
     }
 
-    public static function sendCookie(string $redisKey, int $duration, array $cookieParams = [])
+    public static function sendCookie(string $value, int $duration, array $cookieParams = [])
     {
         $cookieParam = array_merge(
             $cookieParams,
             [
-                'value' => $redisKey,
+                'value' => $value,
                 'expire' => time() + $duration,
             ]
         );
