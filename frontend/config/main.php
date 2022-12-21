@@ -21,7 +21,6 @@ return [
     'components' => [
         'request' => [
             'class' => \common\ext\web\Request::class,
-            'csrfParam' => '_csrf-ztt',
         ],
         'cache' => [
             'class' => 'yii\caching\MemCache',
