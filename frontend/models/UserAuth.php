@@ -136,9 +136,4 @@ class UserAuth extends \yii\web\User
             AuthCookieHelper::removeAuthCookie();
         }
     }
-
-    public function getIsGuest()
-    {
-        return $this->getIdentity() === null;
-    }
 }

@@ -36,15 +36,31 @@ class Request extends \yii\web\Request
         return $token;
     }
 
-//    protected function createCsrfCookie($token)
-//    {
-//        $options = $this->csrfCookie;
-//        return Yii::createObject(array_merge($options, [
-//            'class' => 'yii\web\Cookie',
-//            'name' => $this->csrfParam,
-//            'value' => $token,
-//        ]));
-//    }
+    // need for use method validateCsrfTokenInternal from this class
+    public function validateCsrfToken($clientSuppliedToken = null)
+    {
+        $method = $this->getMethod();
+        if (!$this->enableCsrfValidation || in_array($method, ['GET', 'HEAD', 'OPTIONS'], true)) {
+            return true;
+        }
+
+        $trueToken = $this->getCsrfToken();
+        if ($clientSuppliedToken !== null) {
+            return $this->validateCsrfTokenInternal($clientSuppliedToken, $trueToken);
+        }
+
+        return $this->validateCsrfTokenInternal($this->getBodyParam($this->csrfParam), $trueToken)
+            || $this->validateCsrfTokenInternal($this->getCsrfTokenFromHeader(), $trueToken);
+    }
+
+    protected function validateCsrfTokenInternal($clientSuppliedToken, $trueToken)
+    {
+        if (empty($clientSuppliedToken) || !is_string($clientSuppliedToken)) {
+            return false;
+        }
+
+        return $clientSuppliedToken === $trueToken;
+    }
 
     /****************************************************************************/
     /** Замена всех приватных методов на "защищенные", чтобы можно было пользоваться переменными **/
@@ -67,17 +83,6 @@ class Request extends \yii\web\Request
 //    protected $_contentTypes;
 //    protected $_languages;
 //    protected $_secureForwardedHeaderParts;
-//
-//    protected function validateCsrfTokenInternal($clientSuppliedToken, $trueToken)
-//    {
-//        if (!is_string($clientSuppliedToken)) {
-//            return false;
-//        }
-//
-//        $security = Yii::$app->security;
-//
-//        return $security->compareString($security->unmaskToken($clientSuppliedToken), $security->unmaskToken($trueToken));
-//    }
 //
 //    protected function utf8Encode($s)
 //    {
