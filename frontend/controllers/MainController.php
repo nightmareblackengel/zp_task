@@ -9,7 +9,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 
-class SiteController extends Controller
+class MainController extends Controller
 {
     public function behaviors()
     {

@@ -17,6 +17,7 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
+    'defaultRoute' => 'main/index',
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-ztt',
@@ -59,7 +60,7 @@ return [
             ],
         ],
         'errorHandler' => [
-            'errorAction' => 'site/error',
+            'errorAction' => 'main/error',
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
