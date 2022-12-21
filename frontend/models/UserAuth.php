@@ -85,6 +85,10 @@ class UserAuth extends \yii\web\User
         }
 
         $this->userIdentity = UserAuthIdentity::findIdentity((int) $userId);
+        if (empty($this->userIdentity)) {
+            $this->getRedis()->del($authCook->value);
+            return AuthCookieHelper::removeAuthCookie();
+        }
 
         return $this->userIdentity ?? null;
     }
