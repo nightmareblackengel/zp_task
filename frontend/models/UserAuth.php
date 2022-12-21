@@ -1,11 +1,10 @@
 <?php
 namespace frontend\models;
 
-use common\ext\helpers\EncryptHelper;
+use frontend\ext\helpers\EncryptHelper;
 use Yii;
 use yii\base\InvalidValueException;
 use yii\web\Cookie;
-use yii\web\CookieCollection;
 use yii\web\IdentityInterface;
 
 class UserAuth extends \yii\web\User

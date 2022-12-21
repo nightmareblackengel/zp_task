@@ -1,8 +1,8 @@
 <?php
 namespace frontend\models;
 
-use common\ext\helpers\EncryptHelper;
 use common\models\UserModel;
+use frontend\ext\helpers\EncryptHelper;
 use yii\base\Model;
 use yii\base\NotSupportedException;
 use yii\web\IdentityInterface;
