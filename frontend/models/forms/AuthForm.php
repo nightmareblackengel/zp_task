@@ -2,14 +2,12 @@
 namespace frontend\models\forms;
 
 use common\ext\base\Form;
-use common\models\UserModel;
+use frontend\models\UserAuth;
 use frontend\models\UserAuthIdentity;
 use Yii;
 
 class AuthForm extends Form
 {
-    const AUTH_DURATION = 7*24*60*60;
-
     public string $email = '';
 
     public function rules(): array
@@ -36,6 +34,6 @@ class AuthForm extends Form
             return false;
         }
 
-        return Yii::$app->user->login($identity, self::AUTH_DURATION);
+        return Yii::$app->user->login($identity, UserAuth::AUTH_TIMEOUT);
     }
 }
