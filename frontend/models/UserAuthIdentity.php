@@ -78,15 +78,11 @@ class UserAuthIdentity extends Model implements IdentityInterface
 
     public function getAuthKey()
     {
-        if (empty($this->_user)) {
-            return null;
-        }
-
-        return AuthEncryptHelper::encode($this->_user['id'], $this->_user['created_at']);
+        throw new Exception('UserAuthIdentity::getAuthKey');
     }
 
     public function validateAuthKey($authKey)
     {
-        throw new Exception('Nbe ValidateAuthKey') ;
+        throw new Exception('UserAuthIdentity::ValidateAuthKey') ;
     }
 }

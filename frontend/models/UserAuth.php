@@ -6,6 +6,7 @@ use frontend\ext\helpers\AuthCookieHelper;
 use frontend\ext\helpers\AuthEncryptHelper;
 use Yii;
 use yii\base\InvalidValueException;
+use yii\redis\Connection;
 use yii\web\IdentityInterface;
 
 class UserAuth extends \yii\web\User
@@ -66,18 +67,20 @@ class UserAuth extends \yii\web\User
             return AuthCookieHelper::removeAuthCookie();
         }
 
-        $redisValue = Yii::$app->redisDb2->get($authCook->value);
+        $redisValue = $this->getRedis()->get($authCook->value);
         if (empty($redisValue)) {
             return AuthCookieHelper::removeAuthCookie();
         }
 
-        $redisAuthData = unserialize($redisValue);
+        $redisAuthData = @unserialize($redisValue);
         if (empty($redisAuthData['auth'])) {
+            $this->getRedis()->del($authCook->value);
             return AuthCookieHelper::removeAuthCookie();
         }
 
         $userId = AuthEncryptHelper::decode($authCook->value, $redisAuthData['auth'], 31);
         if (empty($userId)) {
+            $this->getRedis()->del($authCook->value);
             return AuthCookieHelper::removeAuthCookie();
         }
 
@@ -112,7 +115,7 @@ class UserAuth extends \yii\web\User
             'auth' => $userEmailHash,
             'session' => Yii::$app->session->getId(),
         ]);
-        if (empty(Yii::$app->redisDb2->setex($redisKey, $this->authTimeout, $redisHashData))) {
+        if (empty($this->getRedis()->setex($redisKey, $this->authTimeout, $redisHashData))) {
             return null;
         }
 
@@ -147,5 +150,10 @@ class UserAuth extends \yii\web\User
     public function getId()
     {
         throw new Exception('Error UserAuth::getId not realized');
+    }
+
+    protected function getRedis(): Connection
+    {
+        return Yii::$app->redisDb2;
     }
 }

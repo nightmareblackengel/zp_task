@@ -37,7 +37,7 @@ class AuthCookieHelper
 
     public static function removeAuthCookie($retRes = null)
     {
-        $cookieCollection = Yii::$app->request->getCookies();
+        $cookieCollection = Yii::$app->response->getCookies();
         $cookieCollection->readOnly = false;
         $cookieCollection->remove(self::COOK_AUTH);
 
