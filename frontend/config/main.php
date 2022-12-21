@@ -45,7 +45,7 @@ return [
             'class' => \frontend\models\UserAuth::class,
         ],
         'session' => [
-            'name' => 'advanced-frontend',
+            'name' => 'ztt-session',
             'class' => \common\ext\RedisSession::class,
             'redis' => 'redisDb1',
             'keyPrefix' => 'sess_',
