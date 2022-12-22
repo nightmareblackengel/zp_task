@@ -11,6 +11,8 @@ use yii\web\IdentityInterface;
 
 class UserAuth extends \yii\web\User
 {
+    public $loginUrl = ['main/login'];
+
     public $identityClass = UserAuthIdentity::class;
 
     public $enableAutoLogin = true;

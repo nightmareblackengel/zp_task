@@ -11,7 +11,7 @@ class UserAuthIdentity extends Model implements IdentityInterface
 {
     protected $_user = null;
 
-    public function findUserByEmail(string $email): bool
+    public function isUserExists(string $email): bool
     {
         $this->_user = UserModel::getInstance()->getItemBy($email);
         if (empty($this->_user)) {
@@ -54,6 +54,24 @@ class UserAuthIdentity extends Model implements IdentityInterface
         }
 
         return $identity;
+    }
+
+    public function createUserFromEmail(?string $email): bool
+    {
+        $user = [
+            'email' => $email,
+            'name' => '',
+            'status' => UserModel::STATUS_ENABLED,
+            'created_at' => date('Y-m-d H:i:s'),
+        ];
+        $userId = UserModel::getInstance()->insertBy($user);
+        if (empty($userId)) {
+            return false;
+        }
+        $user['id'] = $userId;
+        $this->_user = $user;
+
+        return true;
     }
 
     public function getUser()

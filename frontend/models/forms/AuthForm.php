@@ -25,10 +25,11 @@ class AuthForm extends Form
         }
 
         $identity = new UserAuthIdentity();
-        if (!$identity->findUserByEmail($this->email)) {
-            $this->addError('email', 'Error! User not exists!');
-            return false;
+        $userExists = $identity->isUserExists($this->email);
+        if (!$userExists) {
+            $identity->createUserFromEmail($this->email);
         }
+
         if (!$identity->validate()) {
             $this->addError('email', 'Error! User deactivated!');
             return false;
