@@ -95,6 +95,12 @@ class UserAuth extends \yii\web\User
             return AuthCookieHelper::removeAuthCookie();
         }
 
+        if (!AuthStorageHelper::getInstance()->validateByLastAuth($authCook->value, $userId)) {
+            AuthStorageHelper::getInstance()->delete($authCook->value, $userId, false);
+
+            return AuthCookieHelper::removeAuthCookie();
+        }
+
         return $this->userIdentity ?? null;
     }
 
@@ -123,8 +129,10 @@ class UserAuth extends \yii\web\User
         $redisHashData = serialize([
             'auth' => $userEmailHash,
             'uip' => Yii::$app->request->getUserIP(),
+            'date' => date('Y-m-d H:i:s'), // change to time
         ]);
-        $saveRes = AuthStorageHelper::getInstance()->save($redisKey, $redisHashData, $this->authTimeout);
+
+        $saveRes = AuthStorageHelper::getInstance()->save($userData['id'], $redisKey, $redisHashData, $this->authTimeout);
         if (empty($saveRes)) {
             return null;
         }
@@ -156,7 +164,7 @@ class UserAuth extends \yii\web\User
             # remove redis key
             $authCook = AuthCookieHelper::getAuthCookie();
             if (!empty($authCook->value)) {
-                AuthStorageHelper::getInstance()->delete($authCook->value);
+                AuthStorageHelper::getInstance()->delete($authCook->value, $identity->getId());
             }
             // remove cookie
             $this->switchIdentity(null);

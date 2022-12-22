@@ -8,7 +8,7 @@ class AuthCookieHelper
 {
     public const COOK_AUTH = 'ztt-csrf';
 
-    public const AUTH_TIMEOUT = 60 * 5;
+    public const AUTH_TIMEOUT = 60 * 60;
 
     public static function getAuthCookie()
     {
