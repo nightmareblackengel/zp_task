@@ -1,5 +1,5 @@
 <?php
-namespace frontend\ext\helpers;
+namespace frontend\models\helpers;
 
 use Yii;
 

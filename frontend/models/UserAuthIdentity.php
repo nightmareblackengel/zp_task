@@ -3,7 +3,6 @@ namespace frontend\models;
 
 use common\models\UserModel;
 use Exception;
-use frontend\ext\helpers\AuthEncryptHelper;
 use yii\base\Model;
 use yii\base\NotSupportedException;
 use yii\web\IdentityInterface;
