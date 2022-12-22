@@ -2,11 +2,11 @@
 namespace frontend\models;
 
 use Exception;
-use frontend\ext\helpers\AuthCookieHelper;
-use frontend\ext\helpers\AuthEncryptHelper;
+use frontend\models\helpers\AuthCookieHelper;
+use frontend\models\helpers\AuthEncryptHelper;
+use frontend\models\helpers\AuthStorageHelper;
 use Yii;
 use yii\base\InvalidValueException;
-use yii\redis\Connection;
 use yii\web\IdentityInterface;
 
 class UserAuth extends \yii\web\User
@@ -26,6 +26,11 @@ class UserAuth extends \yii\web\User
         echo 'loginByAccessToken<pre>';
         debug_print_backtrace();
         exit();
+    }
+
+    public function getId()
+    {
+        throw new Exception('Error UserAuth::getId not realized');
     }
 
     protected function renewAuthStatus()
@@ -67,26 +72,26 @@ class UserAuth extends \yii\web\User
             return AuthCookieHelper::removeAuthCookie();
         }
 
-        $redisValue = $this->getRedis()->get($authCook->value);
+        $redisValue = AuthStorageHelper::getInstance()->getValue($authCook->value);
         if (empty($redisValue)) {
             return AuthCookieHelper::removeAuthCookie();
         }
 
         $redisAuthData = @unserialize($redisValue);
         if (empty($redisAuthData['auth'])) {
-            $this->getRedis()->del($authCook->value);
+            AuthStorageHelper::getInstance()->delete($authCook->value);
             return AuthCookieHelper::removeAuthCookie();
         }
 
         $userId = AuthEncryptHelper::decode($authCook->value, $redisAuthData['auth'], 31);
         if (empty($userId)) {
-            $this->getRedis()->del($authCook->value);
+            AuthStorageHelper::getInstance()->delete($authCook->value);
             return AuthCookieHelper::removeAuthCookie();
         }
 
         $this->userIdentity = UserAuthIdentity::findIdentity((int) $userId);
         if (empty($this->userIdentity)) {
-            $this->getRedis()->del($authCook->value);
+            AuthStorageHelper::getInstance()->delete($authCook->value);
             return AuthCookieHelper::removeAuthCookie();
         }
 
@@ -119,7 +124,8 @@ class UserAuth extends \yii\web\User
             'auth' => $userEmailHash,
             'uip' => Yii::$app->request->getUserIP(),
         ]);
-        if (empty($this->getRedis()->setex($redisKey, $this->authTimeout, $redisHashData))) {
+        $saveRes = AuthStorageHelper::getInstance()->save($redisKey, $redisHashData, $this->authTimeout);
+        if (empty($saveRes)) {
             return null;
         }
 
@@ -127,14 +133,6 @@ class UserAuth extends \yii\web\User
         $this->userIdentity = UserAuthIdentity::createFromParams($userData);
 
         return true;
-    }
-
-    protected function generateUserHashes($userId, ?string $userEmail, ?string $userCreatedAt)
-    {
-        $userEmailHash  = AuthEncryptHelper::encode($userEmail, $userCreatedAt, 255);
-        $userIdHash     = AuthEncryptHelper::encode($userId, $userEmailHash, 64);
-
-        return [$userIdHash, $userEmailHash];
     }
 
     public function switchIdentity($identity, $duration = 0)
@@ -151,16 +149,6 @@ class UserAuth extends \yii\web\User
         return $this->getIdentity() === null;
     }
 
-    public function getId()
-    {
-        throw new Exception('Error UserAuth::getId not realized');
-    }
-
-    protected function getRedis(): Connection
-    {
-        return Yii::$app->redisDb2;
-    }
-
     public function logout($destroySession = true)
     {
         $identity = $this->getIdentity();
@@ -168,7 +156,7 @@ class UserAuth extends \yii\web\User
             # remove redis key
             $authCook = AuthCookieHelper::getAuthCookie();
             if (!empty($authCook->value)) {
-                $this->getRedis()->del($authCook->value);
+                AuthStorageHelper::getInstance()->delete($authCook->value);
             }
             // remove cookie
             $this->switchIdentity(null);
@@ -181,4 +169,13 @@ class UserAuth extends \yii\web\User
 
         return $this->getIsGuest();
     }
+
+    protected function generateUserHashes($userId, ?string $userEmail, ?string $userCreatedAt)
+    {
+        $userEmailHash  = AuthEncryptHelper::encode($userEmail, $userCreatedAt, 255);
+        $userIdHash     = AuthEncryptHelper::encode($userId, $userEmailHash, 64);
+
+        return [$userIdHash, $userEmailHash];
+    }
+
 }

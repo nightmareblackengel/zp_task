@@ -5,9 +5,10 @@ namespace common\ext\redis;
 use yii\base\BaseObject;
 use yii\redis\Connection;
 
-class RedisSets extends BaseObject
+abstract class RedisSets extends BaseObject
 {
     abstract public static function getStorage(): Connection;
+
     public function prepareKey($key)
     {
         return $key;
@@ -25,7 +26,7 @@ class RedisSets extends BaseObject
 
     public function setExValue($key, $value, $timeout, $options = [])
     {
-        return $this->getRedis()->setex($this->prepareKey($key), $timeout, $value);
+        return $this->getStorage()->setex($this->prepareKey($key), $timeout, $value);
     }
 
     public function removeKey($key)
