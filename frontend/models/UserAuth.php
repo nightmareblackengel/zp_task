@@ -117,7 +117,7 @@ class UserAuth extends \yii\web\User
         $redisKey = $userIdHash;
         $redisHashData = serialize([
             'auth' => $userEmailHash,
-            'session' => Yii::$app->session->getId(),
+            'uip' => Yii::$app->request->getUserIP(),
         ]);
         if (empty($this->getRedis()->setex($redisKey, $this->authTimeout, $redisHashData))) {
             return null;
