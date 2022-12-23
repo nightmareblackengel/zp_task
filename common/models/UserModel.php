@@ -13,32 +13,17 @@ class UserModel extends Model
     /** @var User */
     public $model = User::class;
 
-    public function getFullItem(int $id, $selectedFields = []): ?array
+    public function getItemById(int $id, string $selectedFields = '*'): ?array
     {
-        $select = $this->getSelectedFields($selectedFields);
-
         return $this->model::getDb()
-            ->createCommand(sprintf("SELECT %s FROM %s WHERE `id`='%d'", $select, $this->model::tableName(), $id))
+            ->createCommand(sprintf("SELECT %s FROM %s WHERE `id`='%d'", $selectedFields, $this->model::tableName(), $id))
             ->queryOne() ?: null;
     }
 
-    public function getItemBy(string $email, $selectedFields = []): ?array
+    public function getItemByEmail(string $email, string $selectedFields = '*'): ?array
     {
-        $select = $this->getSelectedFields($selectedFields);
-
         return $this->model::getDb()
-            ->createCommand(sprintf("SELECT %s FROM %s WHERE `email`='%s'", $select, $this->model::tableName(), $email))
+            ->createCommand(sprintf("SELECT %s FROM %s WHERE `email`='%s'", $selectedFields, $this->model::tableName(), $email))
             ->queryOne() ?: null;
-    }
-
-    protected function getSelectedFields($selectedFields = []): string
-    {
-        if (empty($selectedFields)) {
-            $select = '*';
-        } else {
-            $select = implode(',', $selectedFields);
-        }
-
-        return $select;
     }
 }

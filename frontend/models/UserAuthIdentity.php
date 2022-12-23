@@ -13,7 +13,7 @@ class UserAuthIdentity extends Model implements IdentityInterface
 
     public function isUserExists(string $email): bool
     {
-        $this->_user = UserModel::getInstance()->getItemBy($email);
+        $this->_user = UserModel::getInstance()->getItemByEmail($email);
         if (empty($this->_user)) {
             return false;
         }
@@ -37,7 +37,7 @@ class UserAuthIdentity extends Model implements IdentityInterface
 
     public static function findIdentity($id)
     {
-        $user = UserModel::getInstance()->getFullItem((int) $id);
+        $user = UserModel::getInstance()->getItemById((int) $id);
         if (empty($user)) {
             return null;
         }
