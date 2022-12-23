@@ -45,10 +45,9 @@ class MainController extends Controller
             'error' => [
                 'class' => \yii\web\ErrorAction::class,
             ],
-//            'captcha' => [
-//                'class' => \yii\captcha\CaptchaAction::class,
-//                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-//            ],
+            'captcha' => [
+                'class' => \common\ext\captcha\CaptchaAction::class,
+            ]
         ];
     }
 

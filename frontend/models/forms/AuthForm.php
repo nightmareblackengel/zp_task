@@ -10,11 +10,15 @@ class AuthForm extends Form
 {
     public string $email = '';
 
+    public string $cap = '';
+
     public function rules(): array
     {
         return [
             [['email'], 'email'],
             [['email'], 'string', 'max' => 255],
+//            [['cap'], 'required'],
+            ['cap', 'captcha', 'captchaAction'=>'/main/captcha'],
         ];
     }
 
