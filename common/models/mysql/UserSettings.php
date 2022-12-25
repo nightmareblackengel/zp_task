@@ -17,13 +17,4 @@ class UserSettings extends ActiveRecord
             [['userId', 'historyStoreType', 'historyStoreTime'], 'required'],
         ];
     }
-
-    public function attributeLabels()
-    {
-        return [
-            'userId',
-            'historyStoreType',
-            'historyStoreTime',
-        ];
-    }
 }

@@ -5,6 +5,9 @@ trait Singleton
 {
     protected static $instance = [];
 
+    /**
+     * @return mixed | static
+     */
     public static function getInstance()
     {
         $class = static::class;
