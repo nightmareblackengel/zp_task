@@ -3,9 +3,15 @@ use common\ext\helpers\Html;
 use common\ext\widgets\ActiveForm;
 use common\models\UserSettingsModel;
 use frontend\ext\helpers\Url;
-
+use yii\web\JqueryAsset;
 
 /** @var \frontend\models\forms\UserSettingsForm $formModel */
+/** @var \yii\web\View $this */
+$this->registerJsFile('/js/settings.js', [
+    'depends' => [
+        JqueryAsset::class,
+    ],
+]);
 ?>
 
 <div class="row">
@@ -30,14 +36,22 @@ use frontend\ext\helpers\Url;
         <div class="row">
             <div class="col-sm-12">
                 <?php echo $form->field($formModel, 'historyStoreType')
-                    ->dropDownList(UserSettingsModel::getHistoryStoreTypeList(), ['prompt' => 'Выберите значение']); ?>
+                    ->dropDownList(UserSettingsModel::getHistoryStoreTypeList(), [
+                        'class' => 'nbeStoreTypeDd form-control',
+                        'prompt' => 'Выберите значение',
+                        'options' => UserSettingsModel::getStoreTypeDropdownOptions(),
+                    ]); ?>
             </div>
         </div>
 
         <div class="row">
             <div class="col-sm-12">
                 <?php echo $form->field($formModel, 'historyStoreTime')
-                    ->dropDownList(UserSettingsModel::getHistoryStoreTime(), ['prompt' => 'Выберите значение']); ?>
+                    ->dropDownList(UserSettingsModel::getHistoryStoreTime(), [
+                        'class' => 'nbeStoreTimeDd form-control',
+                        'prompt' => 'Выберите значение',
+                        'options' => UserSettingsModel::getStoreTimeDropdownOptions(),
+                    ]); ?>
             </div>
         </div>
 

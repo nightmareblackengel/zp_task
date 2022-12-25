@@ -28,6 +28,18 @@ class UserSettingsModel extends Model
         ];
     }
 
+    public static function getStoreTypeDropdownOptions(): array
+    {
+        return [
+            self::HISTORY_STORE_TYPE_DAY => [
+                'class' => 'nbeStoreType',
+            ],
+            self::HISTORY_STORE_TYPE_MESSAGE => [
+                'class' => 'nbeStoreType',
+            ]
+        ];
+    }
+
     public static function getHistoryStoreTime(?int $historyType = 0): array
     {
         $result = [];
@@ -44,5 +56,47 @@ class UserSettingsModel extends Model
         }
 
         return $result;
+    }
+
+    public static function getStoreTimeDropdownOptions(): array
+    {
+        return [
+            self::HISTORY_STORE_MSG_1DAY => [
+                'class' => 'nbeStoreTime',
+                'data' => [
+                    'type' => self::HISTORY_STORE_TYPE_DAY,
+                ],
+            ],
+            self::HISTORY_STORE_MSG_7DAY => [
+                'class' => 'nbeStoreTime',
+                'data' => [
+                    'type' => self::HISTORY_STORE_TYPE_DAY,
+                ],
+            ],
+            self::HISTORY_STORE_MSG_30DAY => [
+                'class' => 'nbeStoreTime',
+                'data' => [
+                    'type' => self::HISTORY_STORE_TYPE_DAY,
+                ],
+            ],
+            self::HISTORY_STORE_MSG_500MSG => [
+                'class' => 'nbeStoreTime',
+                'data' => [
+                    'type' => self::HISTORY_STORE_TYPE_MESSAGE,
+                ],
+            ],
+            self::HISTORY_STORE_MSG_1000MSG => [
+                'class' => 'nbeStoreTime',
+                'data' => [
+                    'type' => self::HISTORY_STORE_TYPE_MESSAGE,
+                ],
+            ],
+            self::HISTORY_STORE_MSG_5000MSG => [
+                'class' => 'nbeStoreTime',
+                'data' => [
+                    'type' => self::HISTORY_STORE_TYPE_MESSAGE,
+                ],
+            ],
+        ];
     }
 }
