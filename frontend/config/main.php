@@ -18,6 +18,8 @@ return [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'defaultRoute' => 'main/index',
+    'language' => 'ru-RU',
+    'name' => 'Смайл Чат',
     'components' => [
         'request' => [
             'class' => \common\ext\web\Request::class,

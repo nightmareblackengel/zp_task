@@ -22,6 +22,14 @@ class AuthForm extends Form
         ];
     }
 
+    public function attributeLabels()
+    {
+        return [
+            'email' => 'E-mail',
+            'cap' => 'Каптча',
+        ];
+    }
+
     public function login(): bool
     {
         if (!$this->validate()) {
