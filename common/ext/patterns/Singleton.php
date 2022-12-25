@@ -3,14 +3,15 @@ namespace common\ext\patterns;
 
 trait Singleton
 {
-    private static $instance;
+    protected static $instance = [];
 
-    public static function getInstance(): self
+    public static function getInstance()
     {
-        if (!isset(static::$instance)) {
-            static::$instance = new static();
+        $class = static::class;
+        if (!isset(static::$instance[$class])) {
+            static::$instance[$class] = new static();
         }
 
-        return static::$instance;
+        return static::$instance[$class];
     }
 }
