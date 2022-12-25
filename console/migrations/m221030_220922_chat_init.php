@@ -25,8 +25,8 @@ class m221030_220922_chat_init extends \yii\db\Migration
 				`text` TEXT,
 				`status` SMALLINT NOT NULL DEFAULT 0
 			) ENGINE=InnoDB;",
-			"CREATE TABLE `user_settings` (
-				`user_id` INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+			"CREATE TABLE `user_setting` (
+				`userId` INT UNSIGNED NOT NULL PRIMARY KEY,
 				`historyStoreType` SMALLINT NOT NULL DEFAULT 0,
 				`historyStoreTime` SMALLINT NOT NULL DEFAULT 0
 			) ENGINE=InnoDB;",

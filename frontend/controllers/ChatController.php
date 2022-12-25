@@ -6,10 +6,15 @@ use frontend\ext\AuthController;
 class ChatController extends AuthController
 {
 
-    function actionTest1()
+    public function actionTest1()
     {
         return $this->render('test1', [
 
         ]);
+    }
+
+    public function actionIndex()
+    {
+        return '';
     }
 }
