@@ -57,11 +57,6 @@ class MainController extends Controller
         ];
     }
 
-    public function actionIndex()
-    {
-        return $this->render('index');
-    }
-
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
@@ -101,6 +96,4 @@ class MainController extends Controller
             'formModel' => $formModel,
         ]);
     }
-
-
 }
