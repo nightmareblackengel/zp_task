@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use frontend\ext\helpers\Url;
 use frontend\models\forms\AuthForm;
+use frontend\models\forms\UserSettingsForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -16,12 +17,17 @@ class MainController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout', 'signup'],
+                'only' => ['logout', 'signup', 'settings'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
                         'allow' => true,
                         'roles' => ['?'],
+                    ],
+                    [
+                        'actions' => ['settings'],
+                        'allow' => true,
+                        'roles' => ['@'],
                     ],
                     [
                         'actions' => ['logout'],
@@ -64,7 +70,7 @@ class MainController extends Controller
 
         $model = new AuthForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->redirect(Url::to('/chat/index'));
+            return $this->redirect(Url::to('/main/index'));
         }
 
         return $this->render('login', [
@@ -78,4 +84,23 @@ class MainController extends Controller
 
         return $this->goHome();
     }
+
+    public function actionSettings()
+    {
+        $this->layout = 'chat';
+        $formModel = new UserSettingsForm();
+        $formModel->userId = Yii::$app->user->identity->getId();
+        $formModel->loadFromDb();
+
+        if ($formModel->load(Yii::$app->request->post()) && $formModel->save()) {
+            # todo: show pretty message
+            exit();
+        }
+
+        return $this->render('settings', [
+            'formModel' => $formModel,
+        ]);
+    }
+
+
 }
