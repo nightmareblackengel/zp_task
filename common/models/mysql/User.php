@@ -8,7 +8,7 @@ class User extends ActiveRecord
 {
     public static function tableName()
     {
-        return 'user';
+        return '`user`';
     }
 
     public function rules()
@@ -17,6 +17,8 @@ class User extends ActiveRecord
             [['email'], 'required'],
             [['email'], 'string', 'max' => 255],
             [['name'], 'string', 'max' => 30],
+            [['created_at'], 'safe'],
+            [['status'], 'integer'],
         ];
     }
 
@@ -26,6 +28,8 @@ class User extends ActiveRecord
             'id' => 'ID',
             'email' => 'Email',
             'name' => 'Name',
+            'created_at' => 'Created At',
+            'status' => 'Status',
         ];
     }
 }

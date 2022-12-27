@@ -2,6 +2,7 @@
 namespace frontend\controllers;
 
 use frontend\ext\AuthController;
+use frontend\models\forms\ChatCreateForm;
 use frontend\models\forms\UserSettingsForm;
 use Yii;
 
@@ -13,6 +14,23 @@ class ChatController extends AuthController
 
         return $this->render('index', [
 
+        ]);
+    }
+
+    public function actionCreate()
+    {
+        $this->layout = '_chat_index';
+        $formModel = new ChatCreateForm();
+
+        if ($formModel->load(Yii::$app->request->post())) {
+
+            if ($formModel->save()) {
+
+            }
+        }
+
+        return $this->render('create', [
+            'formModel' => $formModel,
         ]);
     }
 

@@ -12,7 +12,9 @@ class m221030_220922_chat_init extends \yii\db\Migration
 			"CREATE TABLE `chat` (
 				`id` INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`name` VARCHAR(255) NOT NULL,
-				`isChannel` SMALLINT NOT NULL DEFAULT 0
+				`isChannel` SMALLINT NOT NULL DEFAULT 0,
+				`status` SMALLINT NOT NULL DEFAULT 0,
+				INDEX `chat_name` (`name`(30), `status`)
 			) ENGINE=InnoDB;",
 			"CREATE TABLE `user_chat` (
 				`userId` INT UNSIGNED NOT NULL,

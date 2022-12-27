@@ -1,4 +1,5 @@
 <?php
+use frontend\ext\helpers\Url;
 use yii\helpers\Html;
 
 /** @var array $chatList */
@@ -8,7 +9,9 @@ use yii\helpers\Html;
         <h3 class="panel-title"><strong>Chat lists</strong></h3>
     </div>
     <div class="panel-body">
-        <button type="button" class="btn btn-success nbeAddNewChat">Add new Chat</button>
+        <?php echo Html::a('Создать новый чат', Url::to('/chat/create'), ['class' => 'btn btn-success nbeAddNewChat']); ?>
+        <br/>
+        <br/>
         <?php
         if (empty($chatList) || !is_array($chatList)) {
             echo "<strong>There isn't any chat. Please, create a new chat or join the existing one.</strong>";

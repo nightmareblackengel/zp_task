@@ -7,7 +7,7 @@ class UserSettings extends ActiveRecord
 {
     public static function tableName()
     {
-        return 'user_setting';
+        return '`user_setting`';
     }
 
     public function rules()
