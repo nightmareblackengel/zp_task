@@ -17,17 +17,12 @@ class MainController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout', 'signup', 'settings'],
+                'only' => ['logout', 'signup',],
                 'rules' => [
                     [
                         'actions' => ['signup'],
                         'allow' => true,
                         'roles' => ['?'],
-                    ],
-                    [
-                        'actions' => ['settings'],
-                        'allow' => true,
-                        'roles' => ['@'],
                     ],
                     [
                         'actions' => ['logout'],
@@ -78,22 +73,5 @@ class MainController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
-    }
-
-    public function actionSettings()
-    {
-        $this->layout = 'chat';
-        $formModel = new UserSettingsForm();
-        $formModel->userId = Yii::$app->user->identity->getId();
-        $formModel->loadFromDb();
-
-        if ($formModel->load(Yii::$app->request->post()) && $formModel->save()) {
-            # todo: show pretty message
-            exit();
-        }
-
-        return $this->render('settings', [
-            'formModel' => $formModel,
-        ]);
     }
 }

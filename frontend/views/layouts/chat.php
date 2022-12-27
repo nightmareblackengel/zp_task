@@ -4,6 +4,7 @@ use yii\bootstrap\BootstrapPluginAsset;
 use yii\helpers\Html;
 
 /** @var string $content */
+/** @var \yii\web\View $this */
 
 ChatAsset::register($this);
 BootstrapPluginAsset::register($this);
