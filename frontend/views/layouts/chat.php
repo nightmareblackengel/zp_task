@@ -1,6 +1,5 @@
 <?php
 use frontend\assets\AppAsset;
-use frontend\assets\ChatAsset;
 use yii\bootstrap\BootstrapPluginAsset;
 use yii\helpers\Html;
 
@@ -8,8 +7,8 @@ use yii\helpers\Html;
 /** @var \yii\web\View $this */
 
 AppAsset::register($this);
-ChatAsset::register($this);
 BootstrapPluginAsset::register($this);
+$this->registerCssFile('/css/chat.css');
 ?>
 <?php $this->beginPage(); ?>
 <!DOCTYPE html>

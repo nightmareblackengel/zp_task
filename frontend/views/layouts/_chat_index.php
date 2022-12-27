@@ -1,4 +1,8 @@
 <?php
+use frontend\assets\ChatAsset;
+
+ChatAsset::register($this);
+
 /** @var string $content */
 ?>
 
