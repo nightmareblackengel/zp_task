@@ -65,7 +65,7 @@ class MainController extends Controller
 
         $model = new AuthForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->redirect(Url::to('/main/index'));
+            return $this->redirect(Url::to('/chat/index'));
         }
 
         return $this->render('login', [

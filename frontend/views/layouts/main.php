@@ -35,10 +35,7 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    $menuItems = [
-        ['label' => 'Главная', 'url' => ['/main/index']],
-        ['label' => 'Настройки', 'url' => ['/main/settings']],
-    ];
+    $menuItems = [];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Войти', 'url' => ['/main/login']];
     } else {

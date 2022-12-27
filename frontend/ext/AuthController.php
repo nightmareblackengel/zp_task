@@ -19,6 +19,13 @@ class AuthController extends Controller
         return $this->userArr;
     }
 
+    protected function hasAccess(): bool
+    {
+        $userArr = $this->getCurrentUser();
+
+        return !empty($userArr);
+    }
+
     public function runAction($id, $params = [])
     {
         $action = $this->createAction($id);
@@ -51,6 +58,10 @@ class AuthController extends Controller
         $result = null;
 
         if ($runAction && $this->beforeAction($action)) {
+            if (!$this->hasAccess()) {
+                $this->layout = 'main';
+                return $this->render('/main/page403');
+            }
             // run the action
             $result = $action->runWithParams($params);
             $result = $this->afterAction($action, $result);

@@ -17,7 +17,7 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
-    'defaultRoute' => 'main/index',
+    'defaultRoute' => 'chat/index',
     'language' => 'ru-RU',
     'name' => 'Смайл Чат',
     'components' => [
