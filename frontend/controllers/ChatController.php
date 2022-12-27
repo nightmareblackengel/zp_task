@@ -9,7 +9,7 @@ class ChatController extends AuthController
 {
     public function actionIndex()
     {
-        $this->layout = 'chat';
+        $this->layout = '_chat_index';
 
         return $this->render('index', [
 
@@ -18,7 +18,7 @@ class ChatController extends AuthController
 
     public function actionSettings()
     {
-        $this->layout = 'chat';
+        $this->layout = '_chat_default';
         $formModel = new UserSettingsForm();
         $formModel->userId = Yii::$app->user->identity->getId();
         $formModel->loadFromDb();

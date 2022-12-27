@@ -1,4 +1,5 @@
 <?php
+use frontend\assets\AppAsset;
 use frontend\assets\ChatAsset;
 use yii\bootstrap\BootstrapPluginAsset;
 use yii\helpers\Html;
@@ -6,6 +7,7 @@ use yii\helpers\Html;
 /** @var string $content */
 /** @var \yii\web\View $this */
 
+AppAsset::register($this);
 ChatAsset::register($this);
 BootstrapPluginAsset::register($this);
 ?>
@@ -24,22 +26,8 @@ BootstrapPluginAsset::register($this);
         <?php $this->beginBody(); ?>
         <?= $this->render('_chat_navbar'); ?>
 
-        <div class="wrap">
-            <?= $this->render('_chat_chatlist'); ?>
+        <?php echo $content; ?>
 
-            <div class="nbeContainer">
-                <div class="container-fluid">
-                    <?= $content ?>
-                </div>
-            </div>
-        </div>
-
-        <footer class="nbeFooter">
-            <div class="container-fluid">
-                <p class="pull-left">Chat created by <strong>Yepifanov Serhii</strong></p>
-                <p class="pull-right">2022</p>
-            </div>
-        </footer>
         <?php $this->endBody(); ?>
     </body>
 </html>
