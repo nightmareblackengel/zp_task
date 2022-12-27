@@ -12,6 +12,8 @@ $this->registerJsFile('/js/settings.js', [
         JqueryAsset::class,
     ],
 ]);
+
+$this->title = 'Страница настроек пользователя';
 ?>
 
 <div class="row">
@@ -28,7 +30,7 @@ $this->registerJsFile('/js/settings.js', [
 
         <?php $form = ActiveForm::begin([
             'method' => 'POST',
-            'action' => Url::to('/main/settings'),
+            'action' => Url::to('/chat/settings'),
         ]); ?>
 
         <?php echo $form->field($formModel, 'userId')->hiddenInput()->label(false); ?>

@@ -2,6 +2,8 @@
 use common\ext\helpers\Html;
 use common\ext\widgets\ActiveForm;
 
+$this->title = 'Страница Авторизации';
+
 /** @var \frontend\models\forms\AuthForm $model */
 ?>
 <div class="row">

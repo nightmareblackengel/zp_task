@@ -1,6 +1,7 @@
 <?php
 namespace frontend\ext;
 
+use frontend\models\UserAuthIdentity;
 use yii\base\InvalidRouteException;
 use yii\base\Module;
 use yii\web\Controller;
@@ -12,8 +13,18 @@ class AuthController extends Controller
 
     protected function getCurrentUser()
     {
+        if (!empty($this->userArr)) {
+            return $this->userArr;
+        }
+        /** @var UserAuthIdentity $identity */
+        $identity = Yii::$app->user->identity;
+        if (empty($identity)) {
+            return null;
+        }
+
+        $this->userArr = $identity->getUser();
         if (empty($this->userArr)) {
-            $this->userArr = Yii::$app->user->identity;
+            return null;
         }
 
         return $this->userArr;
