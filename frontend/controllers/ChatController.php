@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use common\models\UserModel;
 use frontend\ext\AuthController;
 use frontend\models\forms\ChatCreateForm;
 use frontend\models\forms\UserSettingsForm;
@@ -20,7 +21,10 @@ class ChatController extends AuthController
     public function actionCreate()
     {
         $this->layout = '_chat_index';
+        $userItem = $this->getCurrentUser();
+
         $formModel = new ChatCreateForm();
+        $userList = UserModel::getInstance()->getShortListExcept($userItem['id']);
 
         if ($formModel->load(Yii::$app->request->post())) {
 
@@ -31,6 +35,7 @@ class ChatController extends AuthController
 
         return $this->render('create', [
             'formModel' => $formModel,
+            'userList' => $userList,
         ]);
     }
 

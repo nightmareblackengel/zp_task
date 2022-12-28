@@ -1,8 +1,10 @@
 <?php
 use common\ext\helpers\Html;
 use common\ext\widgets\ActiveForm;
+use conquer\select2\Select2Widget;
 
 /** @var \frontend\models\forms\ChatCreateForm $formModel */
+/** @var array $userList */
 
 $this->title = 'Страница создания нового чата';
 ?>
@@ -21,7 +23,10 @@ $this->title = 'Страница создания нового чата';
 
             <?= $form->field($formModel, 'name')->textInput(); ?>
 
-            <?= $form->field($formModel, 'userIdList')->dropDownList([]); ?>
+            <?= $form->field($formModel, 'userIdList')->widget(Select2Widget::className(), [
+                'items' => $userList,
+                'multiple' => 'multiple',
+            ]); ?>
 
             <?= $form->field($formModel, 'currentUserId')->hiddenInput()->label(false); ?>
 

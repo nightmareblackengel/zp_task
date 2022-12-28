@@ -11,7 +11,7 @@ class AuthController extends Controller
 {
     protected ?array $userArr = [];
 
-    protected function getCurrentUser()
+    public function getCurrentUser()
     {
         if (!empty($this->userArr)) {
             return $this->userArr;
