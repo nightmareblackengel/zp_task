@@ -3,7 +3,6 @@
 namespace frontend\models\forms;
 
 use common\ext\base\Form;
-use common\models\UserModel;
 use common\models\UserSettingsModel;
 
 class UserSettingsForm extends Form
