@@ -62,7 +62,7 @@ class UserAuthIdentity extends Model implements IdentityInterface
             'email' => $email,
             'name' => '',
             'status' => UserModel::STATUS_ENABLED,
-            'created_at' => date('Y-m-d H:i:s'),
+            'createdAt' => date('Y-m-d H:i:s'),
         ];
         $userId = UserModel::getInstance()->insertBy($user);
         if (empty($userId)) {

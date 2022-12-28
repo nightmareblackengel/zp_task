@@ -118,11 +118,11 @@ class UserAuth extends \yii\web\User
         }
 
         $userData = $identity->getUser();
-        if (empty($userData['id']) || empty($userData['email']) || empty($userData['created_at'])) {
+        if (empty($userData['id']) || empty($userData['email']) || empty($userData['createdAt'])) {
             return null;
         }
 
-        list($userIdHash, $userEmailHash) = $this->generateUserHashes($userData['id'], $userData['email'], $userData['created_at']);
+        list($userIdHash, $userEmailHash) = $this->generateUserHashes($userData['id'], $userData['email'], $userData['createdAt']);
         if (empty($userIdHash) || empty($userEmailHash)) {
             return null;
         }

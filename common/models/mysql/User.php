@@ -17,7 +17,7 @@ class User extends ActiveRecord
             [['email'], 'required'],
             [['email'], 'string', 'max' => 255],
             [['name'], 'string', 'max' => 30],
-            [['created_at'], 'safe'],
+            [['createdAt'], 'safe'],
             [['status'], 'integer'],
         ];
     }
@@ -28,7 +28,7 @@ class User extends ActiveRecord
             'id' => 'ID',
             'email' => 'Email',
             'name' => 'Name',
-            'created_at' => 'Created At',
+            'createdAt' => 'Created At',
             'status' => 'Status',
         ];
     }
