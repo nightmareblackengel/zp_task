@@ -5,17 +5,23 @@ namespace common\ext\base;
 use common\ext\patterns\Singleton;
 use Exception;
 use Yii;
+use yii\base\BaseObject;
 use yii\db\Connection;
 
-class Model extends \yii\base\Model
+abstract class MySqlModel extends BaseObject
 {
     use Singleton;
 
     public array $errors = [];
 
-    public $model;
+    abstract public static function tableName(): string;
 
-    protected function prepareInsertStr(string $tableName, array $params): array
+    public static function getDb(): Connection
+    {
+        return Yii::$app->getDb();
+    }
+
+    protected function prepareInsertStr(array $params): array
     {
         if (empty($params)) {
             return [null, null];
@@ -30,14 +36,14 @@ class Model extends \yii\base\Model
             $colParams[$valueParam] = $columnValue;
         }
 
-        $insertStr = "INSERT INTO " . $tableName
+        $insertStr = "INSERT INTO " . static::tableName()
             . "(" . implode(',', $colNames) . ") "
             . "VALUES (" . implode(',', $colValues) . ")";
 
         return [$insertStr, $colParams];
     }
 
-    public function prepareUpdateStr(string $tableName, array $values, array $whereCond): array
+    public function prepareUpdateStr(array $values, array $whereCond): array
     {
         if (empty($values) || empty($whereCond)) {
             return [null, null];
@@ -57,7 +63,7 @@ class Model extends \yii\base\Model
             $colParams[$valueParam] = $columnValue;
         }
 
-        $updateStr = "UPDATE $tableName SET "
+        $updateStr = "UPDATE " . static::tableName() . " SET "
             . implode(', ', $colNames)
             . " WHERE " . implode(' AND ', $whereColumns);
 
@@ -91,14 +97,14 @@ class Model extends \yii\base\Model
             return null;
         }
 
-        list($insertStr, $insertParams) = $this->prepareInsertStr($this->model::tableName(), $params);
+        list($insertStr, $insertParams) = $this->prepareInsertStr($params);
         if (empty($insertStr)) {
             return null;
         }
-        /** @var Connection $db */
-        $db = $this->model::getDb();
         try {
-            $insertRes = $db->createCommand($insertStr, $insertParams)->execute();
+            $insertRes = static::getDb()
+                ->createCommand($insertStr, $insertParams)
+                ->execute();
         } catch (Exception $ex) {
             $this->errors[] = 'Ошибка! При вставке данных в БД';
         }
@@ -106,7 +112,7 @@ class Model extends \yii\base\Model
             return null;
         }
 
-        return $db->lastInsertID;
+        return static::getDb()->lastInsertID;
     }
 
     public function getItemBy(array $whereParams, string $select = '*'): ?array
@@ -124,12 +130,12 @@ class Model extends \yii\base\Model
             "SELECT %s FROM %s "
             . " WHERE " . $where,
             $select,
-            $this->model::tableName()
+            static::tableName()
         );
-        /** @var Connection $db */
-        $db = $this->model::getDb();
         try {
-            $selectRes = $db->createCommand($selectQueryStr, $colParams)->queryOne();
+            $selectRes = static::getDb()
+                ->createCommand($selectQueryStr, $colParams)
+                ->queryOne();
         } catch (Exception $ex) {
 //            echo $ex->getMessage();
 //            Yii::$app->end();
@@ -149,14 +155,14 @@ class Model extends \yii\base\Model
             return null;
         }
 
-        list($updateStr, $params) = $this->prepareUpdateStr($this->model::tableName(), $values, $whereCond);
+        list($updateStr, $params) = $this->prepareUpdateStr($values, $whereCond);
         if (empty($updateStr)) {
             return null;
         }
-        /** @var Connection $db */
-        $db = $this->model::getDb();
         try {
-            $updateRes = $db->createCommand($updateStr, $params)->execute();
+            $updateRes = static::getDb()
+                ->createCommand($updateStr, $params)
+                ->execute();
         } catch (Exception $ex) {
             $this->errors[] = 'Ошибка! При обновлении данных в БД';
         }

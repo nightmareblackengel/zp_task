@@ -1,11 +1,10 @@
 <?php
 
-namespace common\models;
+namespace common\models\mysql;
 
-use common\ext\base\Model;
-use common\models\mysql\UserSettings;
+use common\ext\base\MySqlModel;
 
-class UserSettingsModel extends Model
+class UserSettingsModel extends MySqlModel
 {
     const HISTORY_STORE_TYPE_DAY = 1;
     const HISTORY_STORE_TYPE_MESSAGE = 2;
@@ -18,7 +17,10 @@ class UserSettingsModel extends Model
     const HISTORY_STORE_MSG_1000MSG = 12;
     const HISTORY_STORE_MSG_5000MSG = 13;
 
-    public $model = UserSettings::class;
+    public static function tableName(): string
+    {
+        return '`user_setting`';
+    }
 
     public static function getHistoryStoreTypeList(): array
     {

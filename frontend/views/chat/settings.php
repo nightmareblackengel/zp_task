@@ -1,7 +1,7 @@
 <?php
 use common\ext\helpers\Html;
 use common\ext\widgets\ActiveForm;
-use common\models\UserSettingsModel;
+use common\models\mysql\UserSettingsModel;
 use frontend\ext\helpers\Url;
 use yii\web\JqueryAsset;
 

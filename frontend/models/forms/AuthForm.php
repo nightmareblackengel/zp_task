@@ -2,7 +2,7 @@
 namespace frontend\models\forms;
 
 use common\ext\base\Form;
-use common\models\UserModel;
+use common\models\mysql\UserModel;
 use frontend\models\helpers\AuthCookieHelper;
 use frontend\models\UserAuthIdentity;
 use Yii;

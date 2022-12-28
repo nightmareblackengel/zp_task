@@ -1,7 +1,7 @@
 <?php
 namespace frontend\controllers;
 
-use common\models\UserModel;
+use common\models\mysql\UserModel;
 use frontend\ext\AuthController;
 use frontend\models\forms\ChatCreateForm;
 use frontend\models\forms\UserSettingsForm;

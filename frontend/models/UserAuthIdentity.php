@@ -1,7 +1,7 @@
 <?php
 namespace frontend\models;
 
-use common\models\UserModel;
+use common\models\mysql\UserModel;
 use Exception;
 use yii\base\Model;
 use yii\base\NotSupportedException;

@@ -1,32 +1,31 @@
 <?php
 
-namespace common\models;
+namespace common\models\mysql;
 
-use common\ext\base\Model;
-use common\models\mysql\User;
-use Exception;
-use Yii;
+use common\ext\base\MySqlModel;
 use yii\db\Connection;
 
-class UserModel extends Model
+class UserModel extends MySqlModel
 {
     const STATUS_DISABLED = 0;
     const STATUS_ENABLED = 1;
 
-    /** @var User */
-    public $model = User::class;
+    public static function tableName(): string
+    {
+        return '`user`';
+    }
 
     public function getItemById(int $id, string $selectedFields = '*'): ?array
     {
-        return $this->model::getDb()
-            ->createCommand(sprintf("SELECT %s FROM %s WHERE `id`='%d'", $selectedFields, $this->model::tableName(), $id))
+        return static::getDb()
+            ->createCommand(sprintf("SELECT %s FROM %s WHERE `id`='%d'", $selectedFields, static::tableName(), $id))
             ->queryOne() ?: null;
     }
 
     public function getItemByEmail(string $email, string $selectedFields = '*'): ?array
     {
-        return $this->model::getDb()
-            ->createCommand(sprintf("SELECT %s FROM %s WHERE `email`='%s'", $selectedFields, $this->model::tableName(), $email))
+        return static::getDb()
+            ->createCommand(sprintf("SELECT %s FROM %s WHERE `email`='%s'", $selectedFields, static::tableName(), $email))
             ->queryOne() ?: null;
     }
 
@@ -44,11 +43,11 @@ class UserModel extends Model
         $selectQueryStr = sprintf(
             "SELECT `id`, CONCAT(`name`, '(', `email`, ')') as name FROM %s "
             . " WHERE `id` <> :pid AND `status` = :status",
-            $this->model::tableName()
+            static::tableName()
         );
-        /** @var Connection $db */
-        $db = $this->model::getDb();
-        $selectRes = $db->createCommand($selectQueryStr, $params)->queryAll();
+        $selectRes = static::getDb()
+            ->createCommand($selectQueryStr, $params)
+            ->queryAll();
         if (empty($selectRes)) {
             return [];
         }
