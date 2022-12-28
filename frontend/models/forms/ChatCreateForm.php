@@ -6,17 +6,28 @@ use common\ext\base\Form;
 
 class ChatCreateForm extends Form
 {
-    public ?int $userId = null;
+    public ?int $currentUserId = null;
     public ?string $name = null;
     public $isChannel = null;
-    public $status = null;
+
+    public $userIdList = null;
 
     public function rules()
     {
         return [
-            [['isChannel', 'status', 'name'], 'required'],
+            [['isChannel', 'name', 'currentUserId', 'userIdList'], 'required'],
             [['name'], 'string', 'max' => 255],
-            [['id', 'isChannel', 'status'], 'integer'],
+            [['isChannel', 'currentUserId'], 'integer'],
+            [['userIdList'], 'safe'],
+        ];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'name' => 'Название',
+            'userIdList' => 'Список пользователей',
+            'isChannel' => 'Является каналом',
         ];
     }
 }
