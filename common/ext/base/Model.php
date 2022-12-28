@@ -11,6 +11,8 @@ class Model extends \yii\base\Model
 {
     use Singleton;
 
+    public array $errors = [];
+
     public $model;
 
     protected function prepareInsertStr(string $tableName, array $params): array
@@ -28,7 +30,7 @@ class Model extends \yii\base\Model
             $colParams[$valueParam] = $columnValue;
         }
 
-        $insertStr = "INSERT INTO `" . $tableName . '`'
+        $insertStr = "INSERT INTO " . $tableName
             . "(" . implode(',', $colNames) . ") "
             . "VALUES (" . implode(',', $colValues) . ")";
 
@@ -55,7 +57,7 @@ class Model extends \yii\base\Model
             $colParams[$valueParam] = $columnValue;
         }
 
-        $updateStr = "UPDATE `$tableName` SET "
+        $updateStr = "UPDATE $tableName SET "
             . implode(', ', $colNames)
             . " WHERE " . implode(' AND ', $whereColumns);
 
@@ -84,6 +86,7 @@ class Model extends \yii\base\Model
 
     public function insertBy(array $params): ?int
     {
+        $this->errors = [];
         if (empty($params)) {
             return null;
         }
@@ -97,6 +100,7 @@ class Model extends \yii\base\Model
         try {
             $insertRes = $db->createCommand($insertStr, $insertParams)->execute();
         } catch (Exception $ex) {
+            $this->errors[] = 'Ошибка! При вставке данных в БД';
         }
         if (empty($insertRes)) {
             return null;
@@ -140,6 +144,7 @@ class Model extends \yii\base\Model
 
     public function updateBy(array $values, array $whereCond): ?int
     {
+        $this->errors = [];
         if (empty($values) || empty($whereCond)) {
             return null;
         }
@@ -153,9 +158,7 @@ class Model extends \yii\base\Model
         try {
             $updateRes = $db->createCommand($updateStr, $params)->execute();
         } catch (Exception $ex) {
-            echo $ex->getMessage();
-            Yii::$app->end();
-            exit();
+            $this->errors[] = 'Ошибка! При обновлении данных в БД';
         }
 
         return !empty($updateRes) ? $updateRes :  null;

@@ -2,6 +2,7 @@
 namespace frontend\models\forms;
 
 use common\ext\base\Form;
+use common\models\UserModel;
 use frontend\models\helpers\AuthCookieHelper;
 use frontend\models\UserAuthIdentity;
 use Yii;
@@ -39,7 +40,15 @@ class AuthForm extends Form
         $identity = new UserAuthIdentity();
         $userExists = $identity->isUserExists($this->email);
         if (!$userExists) {
-            $identity->createUserFromEmail($this->email);
+            $createRes = $identity->createUserFromEmail($this->email);
+            if (!$createRes) {
+                $msgErr = 'Возникла ошибка при сохранении в БД.';
+                if (count(UserModel::getInstance()->errors)) {
+                    $msgErr = UserModel::getInstance()->errors[0];
+                }
+                $this->addError('email', $msgErr);
+                return false;
+            }
         }
 
         if (!$identity->validate()) {
