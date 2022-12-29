@@ -3,6 +3,9 @@
 namespace frontend\models\forms;
 
 use common\ext\base\Form;
+use common\models\mysql\ChatModel;
+use common\models\mysql\UserChatModel;
+use Exception;
 use Yii;
 
 class ChatCreateForm extends Form
@@ -18,10 +21,25 @@ class ChatCreateForm extends Form
         return [
             [['isChannel', 'name', 'currentUserId', 'userIdList'], 'required'],
             [['name'], 'string', 'max' => 255],
+            [['name'], 'isUniqueName'],
             [['isChannel', 'currentUserId'], 'integer'],
             [['userIdList'], 'safe'],
             [['userIdList'], 'customChannelUserCount'],
         ];
+    }
+
+    public function isUniqueName($attribute)
+    {
+        if (empty($this->name)) {
+            return;
+        }
+
+        $chatItem = ChatModel::getInstance()->getItemBy(['name' => $this->name]);
+        if (!empty($chatItem)) {
+            $this->addError($attribute, 'Данное имя уже занято! Выберите другое имя чата');
+        }
+
+        return;
     }
 
     public function customChannelUserCount($attribute)
@@ -63,7 +81,48 @@ class ChatCreateForm extends Form
             return false;
         }
 
+        $result = false;
+        $transaction = ChatModel::getDb()->beginTransaction();
+        try {
+            $chatParams = [
+                'name' => $this->name,
+                'status' => ChatModel::STATUS_ENABLED,
+            ];
+            if (!empty($this->isChannel)) {
+                $chatParams['isChannel'] = 1;
+            }
 
-        return false;
+            $chatId = ChatModel::getInstance()->insertBy($chatParams);
+            if (empty($chatId)) {
+                $transaction->rollBack();
+                $this->addError('name', 'Ошибка. Чат не сохранён!');
+            } else {
+                $this->saveUserChat($this->currentUserId, $chatId, UserChatModel::IS_CHAT_OWNER_YES);
+                foreach ($this->userIdList as $userId) {
+                    $this->saveUserChat($userId, $chatId, UserChatModel::IS_CHAT_OWNER_NO);
+                }
+
+                $transaction->commit();
+                $result = true;
+            }
+        } catch (Exception $ex) {
+            $transaction->rollBack();
+            $this->addError('name', 'Ошибка. Дополнительные данные чата не сохранились.');
+        }
+
+        return $result;
+    }
+
+    protected function saveUserChat($userId, $chatId, $isOwner)
+    {
+        $userChatParams = [
+            'userId' => $userId,
+            'chatId' => $chatId,
+        ];
+        if (!empty($isOwner)) {
+            $userChatParams['isChatOwner'] = UserChatModel::IS_CHAT_OWNER_YES;
+        }
+
+        return UserChatModel::getInstance()->insertBy($userChatParams);
     }
 }

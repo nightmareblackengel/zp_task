@@ -16,15 +16,16 @@ class m221030_220922_chat_init extends \yii\db\Migration
 			"CREATE TABLE `chat` (
 				`id` INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`name` VARCHAR(255) NOT NULL,
-				`isChannel` SMALLINT NOT NULL DEFAULT 0,
+				`isChannel` SMALLINT,
 				`status` SMALLINT NOT NULL DEFAULT 0,
 				`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				INDEX `chat_name` (`name`(30), `status`)
+				UNIQUE INDEX `chat_name` (`name`(100))
 			) ENGINE=InnoDB;",
 			"CREATE TABLE `user_chat` (
 				`userId` INT UNSIGNED NOT NULL,
 				`chatId` INT UNSIGNED NOT NULL,
-				`isUserBanned` SMALLINT NOT NULL DEFAULT 0,
+				`isUserBanned` SMALLINT,
+				`isChatOwner` SMALLINT,
 				`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				PRIMARY KEY (`userId`, `chatId`)
 			) ENGINE=InnoDB;",
