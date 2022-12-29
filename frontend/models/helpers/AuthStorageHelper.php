@@ -3,8 +3,8 @@
 namespace frontend\models\helpers;
 
 use common\ext\patterns\Singleton;
-use common\models\redis\CookieSetStorage;
-use common\models\redis\UserIdSetStorage;
+use common\models\redis\CookieStringStorage;
+use common\models\redis\UserIdStringStorage;
 use yii\base\BaseObject;
 
 /**
@@ -16,17 +16,17 @@ class AuthStorageHelper extends BaseObject
 {
     use Singleton;
 
-    /** @var CookieSetStorage */
+    /** @var CookieStringStorage */
     protected $cookieStorage;
 
-    /** @var UserIdSetStorage */
+    /** @var UserIdStringStorage */
     protected $userStorage;
 
     public function init()
     {
         parent::init();
-        $this->cookieStorage = new CookieSetStorage();
-        $this->userStorage = new UserIdSetStorage();
+        $this->cookieStorage = new CookieStringStorage();
+        $this->userStorage = new UserIdStringStorage();
     }
 
     public function getValue($key)

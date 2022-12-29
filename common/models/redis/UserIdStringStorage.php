@@ -1,11 +1,11 @@
 <?php
 namespace common\models\redis;
 
-use common\ext\redis\RedisSets;
+use common\ext\redis\RedisStrings;
 use Yii;
 use yii\redis\Connection;
 
-class UserIdSetStorage extends RedisSets
+class UserIdStringStorage extends RedisStrings
 {
     public static function getStorage(): Connection
     {

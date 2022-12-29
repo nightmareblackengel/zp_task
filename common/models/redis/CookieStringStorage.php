@@ -2,11 +2,11 @@
 
 namespace common\models\redis;
 
-use common\ext\redis\RedisSets;
+use common\ext\redis\RedisStrings;
 use Yii;
 use yii\redis\Connection;
 
-class CookieSetStorage extends RedisSets
+class CookieStringStorage extends RedisStrings
 {
     public static function getStorage(): Connection
     {

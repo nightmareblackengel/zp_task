@@ -5,7 +5,7 @@ namespace common\ext\redis;
 use yii\base\BaseObject;
 use yii\redis\Connection;
 
-abstract class RedisSets extends BaseObject
+abstract class RedisStrings extends BaseObject
 {
     abstract public static function getStorage(): Connection;
 
