@@ -14,14 +14,16 @@ abstract class RedisHashes extends RedisBase
         return static::getStorage()->hget($this->prepareKey($key), $fieldName);
     }
 
-    public function getFewCertainFields($key, array $fields): array
+    public function getFewCertainFields($key, ...$values): array
     {
-        return static::getStorage()->hmget($this->prepareKey($key), $fields);
+        return static::getStorage()->hmget($this->prepareKey($key), ...$values);
     }
 
     public function getAllFields($key)
     {
-        return static::getStorage()->hgetall($this->prepareKey($key));
+        $result = static::getStorage()->hgetall($this->prepareKey($key));
+
+        return static::prepareArrayListToAssoc($result);
     }
 
     public function getKeys($key)
@@ -32,5 +34,10 @@ abstract class RedisHashes extends RedisBase
     public function getValues($key)
     {
         return static::getStorage()->hvals($this->prepareKey($key));
+    }
+
+    public function deleteCertainField($key, ...$fields)
+    {
+        return static::getStorage()->hdel($this->prepareKey($key), ...$fields);
     }
 }

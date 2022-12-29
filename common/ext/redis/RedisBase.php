@@ -28,4 +28,16 @@ abstract class RedisBase extends BaseObject
     {
         return static::getStorage()->del($this->prepareKey($key));
     }
+
+    public static function prepareArrayListToAssoc(array $arr)
+    {
+        $result = [];
+
+        for ($ind1 = 0; $ind1 < count($arr); $ind1) {
+            $result[$arr[$ind1]] = $arr[$ind1 + 1];
+            $ind1 += 2;
+        }
+
+        return $result;
+    }
 }
