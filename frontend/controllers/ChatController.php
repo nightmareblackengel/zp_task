@@ -3,8 +3,10 @@ namespace frontend\controllers;
 
 use common\models\mysql\UserModel;
 use frontend\ext\AuthController;
+use frontend\ext\helpers\Url;
 use frontend\models\forms\ChatCreateForm;
 use frontend\models\forms\UserSettingsForm;
+use frontend\widgets\CookieAlert;
 use Yii;
 
 class ChatController extends AuthController
@@ -27,9 +29,9 @@ class ChatController extends AuthController
         $userList = UserModel::getInstance()->getShortListExcept($userItem['id']);
 
         if ($formModel->load(Yii::$app->request->post())) {
-
             if ($formModel->save()) {
-
+                CookieAlert::addMessage('Настройки были успешно сохранены');
+                return $this->redirect(Url::to('/chat/index#' . urlencode($formModel->name)));
             }
         }
 
@@ -47,8 +49,8 @@ class ChatController extends AuthController
         $formModel->loadFromDb();
 
         if ($formModel->load(Yii::$app->request->post()) && $formModel->save()) {
-            # todo: show pretty message
-            exit();
+            CookieAlert::addMessage('Настройки были успешно сохранены');
+            return $this->redirect(Url::to('/chat/settings'));
         }
 
         return $this->render('settings', [
