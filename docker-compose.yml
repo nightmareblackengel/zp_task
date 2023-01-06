@@ -33,6 +33,9 @@ services:
     networks:
       myztt:
         ipv4_address: 172.18.0.101
+    environment:
+      - USERMAP_UID=1000
+      - USERMAP_GID=1000
   db:
     image: mysql:8.0
     container_name: msql8
