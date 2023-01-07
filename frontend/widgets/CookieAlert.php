@@ -2,7 +2,6 @@
 
 namespace frontend\widgets;
 
-use common\models\redis\FlashHashesStorage;
 use Yii;
 use yii\bootstrap\Widget;
 use yii\web\Cookie;
@@ -11,6 +10,7 @@ use yii\web\CookieCollection;
 class CookieAlert extends Widget
 {
     const COOKIE_NAME = 'alert';
+    const COOKIE_EXPIRE = 60*60;
 
     public static function addMessage($message, $key = null)
     {
@@ -21,6 +21,7 @@ class CookieAlert extends Widget
             'value' => [
                 $newKey => $message,
             ],
+            'expire' => time() + self::COOKIE_EXPIRE,
         ]));
     }
 
