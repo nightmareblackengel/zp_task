@@ -70,7 +70,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-
+                'chat/index/<chat_id>' => 'chat/index',
             ],
         ],
     ],
