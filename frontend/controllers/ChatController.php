@@ -31,7 +31,7 @@ class ChatController extends AuthController
         if ($formModel->load(Yii::$app->request->post())) {
             if ($formModel->save()) {
                 CookieAlert::addMessage('Настройки были успешно сохранены');
-                return $this->redirect(Url::to('/chat/index#' . urlencode($formModel->name)));
+                return $this->redirect(Url::to(['/chat/index', 'chat_id' => $formModel->id]));
             }
         }
 

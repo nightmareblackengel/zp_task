@@ -27,7 +27,7 @@ $userTitle = !empty($identity) ? $identity->getUserTitle() : '';
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="<?= Url::to('/chat/settings') ?>">Settings</a></li>
+                            <li><a href="<?= Url::to('/chat/settings') ?>">Настройки</a></li>
                             <li>
                                 <?php
                                 echo Html::beginForm(['/main/logout'], 'post')

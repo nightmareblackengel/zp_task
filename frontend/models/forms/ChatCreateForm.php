@@ -10,6 +10,7 @@ use Yii;
 
 class ChatCreateForm extends Form
 {
+    public ?int $id = null;
     public ?int $currentUserId = null;
     public ?string $name = null;
     public $isChannel = null;
@@ -92,14 +93,14 @@ class ChatCreateForm extends Form
                 $chatParams['isChannel'] = 1;
             }
 
-            $chatId = ChatModel::getInstance()->insertBy($chatParams);
-            if (empty($chatId)) {
+            $this->id = ChatModel::getInstance()->insertBy($chatParams);
+            if (empty($this->id)) {
                 $transaction->rollBack();
                 $this->addError('name', 'Ошибка. Чат не сохранён!');
             } else {
-                $this->saveUserChat($this->currentUserId, $chatId, UserChatModel::IS_CHAT_OWNER_YES);
+                $this->saveUserChat($this->currentUserId, $this->id, UserChatModel::IS_CHAT_OWNER_YES);
                 foreach ($this->userIdList as $userId) {
-                    $this->saveUserChat($userId, $chatId, UserChatModel::IS_CHAT_OWNER_NO);
+                    $this->saveUserChat($userId, $this->id, UserChatModel::IS_CHAT_OWNER_NO);
                 }
 
                 $transaction->commit();
