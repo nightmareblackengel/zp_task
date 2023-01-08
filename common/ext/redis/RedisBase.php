@@ -9,22 +9,22 @@ abstract class RedisBase extends BaseObject
 {
     abstract public static function getStorage(): Connection;
 
-    public function prepareKey($key)
+    public function prepareKey(string $key)
     {
         return $key;
     }
 
-    public function isExists($key)
+    public function isExists(string $key)
     {
         return static::getStorage()->exists($this->prepareKey($key));
     }
 
-    public function ttl($key)
+    public function ttl(string $key)
     {
         return static::getStorage()->ttl($this->prepareKey($key));
     }
 
-    public function delete($key): int
+    public function delete(string $key): int
     {
         return static::getStorage()->del($this->prepareKey($key));
     }

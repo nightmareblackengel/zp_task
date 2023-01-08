@@ -4,39 +4,39 @@ namespace common\ext\redis;
 
 abstract class RedisHashes extends RedisBase
 {
-    public function setValues($key, ...$values): int
+    public function setValues(string $key, ...$values): int
     {
         return static::getStorage()->hset($this->prepareKey($key), ...$values);
     }
 
-    public function getCertainField($key, $fieldName)
+    public function getCertainField(string $key, $fieldName)
     {
         return static::getStorage()->hget($this->prepareKey($key), $fieldName);
     }
 
-    public function getFewCertainFields($key, ...$values): array
+    public function getFewCertainFields(string $key, ...$values): array
     {
         return static::getStorage()->hmget($this->prepareKey($key), ...$values);
     }
 
-    public function getAllFields($key)
+    public function getAllFields(string $key)
     {
         $result = static::getStorage()->hgetall($this->prepareKey($key));
 
         return static::prepareArrayListToAssoc($result);
     }
 
-    public function getKeys($key)
+    public function getKeys(string $key)
     {
         return static::getStorage()->hkeys($this->prepareKey($key));
     }
 
-    public function getValues($key)
+    public function getValues(string $key)
     {
         return static::getStorage()->hvals($this->prepareKey($key));
     }
 
-    public function deleteCertainField($key, ...$fields)
+    public function deleteCertainField(string $key, ...$fields)
     {
         return static::getStorage()->hdel($this->prepareKey($key), ...$fields);
     }
