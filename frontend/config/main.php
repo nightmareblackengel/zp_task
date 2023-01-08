@@ -43,7 +43,7 @@ return [
         'redisDb1' => array_merge(['database' => 1], $redisConfigs),
         // user auth
         'redisDb2' => array_merge(['database' => 2], $redisConfigs),
-        // flash messages
+        // chat messages
         'redisDb3' => array_merge(['database' => 3], $redisConfigs),
         'user' => [
             'class' => \frontend\models\UserAuth::class,

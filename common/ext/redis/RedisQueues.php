@@ -14,7 +14,7 @@ abstract class RedisQueues extends RedisBase
         return static::getStorage()->rpush($key, ...$values);
     }
 
-    public function getOffsetList(string $key, int $offset, int $count)
+    public function getOffsetList(string $key, int $offset = 0, int $count = 10)
     {
         return static::getStorage()->lrange($key, $offset, $count);
     }
