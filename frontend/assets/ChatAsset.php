@@ -9,6 +9,7 @@ class ChatAsset extends AssetBundle
     public $baseUrl = '@web';
 
     public $css = [
+        'css/loader.css',
     ];
 
     public $js = [
