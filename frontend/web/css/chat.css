@@ -110,3 +110,12 @@ body {
 .nbeLiLink:hover {
     outline: 0;
 }
+.nbeAddChatMsgGroup .input-group-btn {
+    vertical-align: top;
+}
+.nbeAddChatMsgGroup .form-group {
+    vertical-align: top;
+}
+.nbeAddChatMsgGroup .help-block {
+    margin: 0;
+}
