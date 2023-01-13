@@ -32,6 +32,7 @@ class m221030_220922_chat_init extends \yii\db\Migration
 //			"CREATE TABLE `chat_message` (
 //				`id` BIGINT UNSIGNED NOT NULL  PRIMARY KEY AUTO_INCREMENT,
 //				`text` TEXT,
+//              `type` TINYINT (simple, system - видно только тому, кто отправил, тоже сохраняется в БД)
 //				`status` SMALLINT NOT NULL DEFAULT 0,
 //				`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 //			) ENGINE=Memory;",

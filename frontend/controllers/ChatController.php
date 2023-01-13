@@ -5,6 +5,7 @@ use common\models\mysql\UserModel;
 use frontend\ext\AuthController;
 use frontend\ext\helpers\Url;
 use frontend\models\forms\ChatCreateForm;
+use frontend\models\forms\ChatMessageForm;
 use frontend\models\forms\UserSettingsForm;
 use frontend\widgets\CookieAlert;
 use Yii;
@@ -15,8 +16,15 @@ class ChatController extends AuthController
     {
         $this->layout = '_chat_index';
 
-        return $this->render('index', [
+        $formModel = new ChatMessageForm();
 
+        if ($formModel->load(Yii::$app->request->post()) && $formModel->validate()) {
+            echo "Saved";
+            exit();
+        }
+
+        return $this->render('index', [
+            'formModel' => $formModel,
         ]);
     }
 
