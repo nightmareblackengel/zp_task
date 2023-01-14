@@ -37,6 +37,7 @@ class AuthController extends Controller
         return !empty($userArr);
     }
 
+    // parent default behaviour
     public function runAction($id, $params = [])
     {
         $action = $this->createAction($id);

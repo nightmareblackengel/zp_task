@@ -31,6 +31,8 @@ class m221030_220922_chat_init extends \yii\db\Migration
 			) ENGINE=InnoDB;",
 //			"CREATE TABLE `chat_message` (
 //				`id` BIGINT UNSIGNED NOT NULL  PRIMARY KEY AUTO_INCREMENT,
+//              `chatId` BIGINT UNSIGNED NOT NULL,
+//              `userId` BIGINT UNSIGNED NOT NULL,
 //				`text` TEXT,
 //              `type` TINYINT (simple, system - видно только тому, кто отправил, тоже сохраняется в БД)
 //				`status` SMALLINT NOT NULL DEFAULT 0,
