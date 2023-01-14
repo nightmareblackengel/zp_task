@@ -25,8 +25,14 @@ class ChatController extends AuthController
             $formModel->addError('message', 'Unknown error!');
         }
 
+        $messages = [];
+        if (!empty($formModel->chatId)) {
+            $messages = ChatMessageModel::getInstance()->getList($formModel->chatId, 0, 2000);
+        }
+
         return $this->render('index', [
             'formModel' => $formModel,
+            'messages' => $messages,
         ]);
     }
 

@@ -5,6 +5,8 @@ use common\ext\widgets\ChatMsgActiveField;
 use frontend\ext\helpers\Url;
 
 /** @var \frontend\models\forms\ChatMessageForm $formModel */
+/** @var stdClass[] $messages */
+
 $this->title = 'Главная страница';
 ?>
 <div class="row">
@@ -16,7 +18,18 @@ $this->title = 'Главная страница';
         </div>
 
         <div class="messages-items">
-            messages list
+            <?php if (!empty($messages)) {
+                foreach ($messages as $msgItem) { ?>
+
+                    <div class="" data-msg-type="<?php echo $msgItem->t ?: ''; ?>">
+                        <?php echo date('Y-m-d H:i:s', $msgItem->d ?: ''); ?>
+                        <?php echo $msgItem->m ?: ''; ?>
+                    </div>
+
+                <?php }
+            } else {
+                echo 'Вы не написали еще ни одного сообщения! Теперь есть повод!)';
+            } ?>
         </div>
 
         <?php $form = ActiveForm::begin([

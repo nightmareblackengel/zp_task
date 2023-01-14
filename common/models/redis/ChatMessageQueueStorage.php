@@ -20,7 +20,7 @@ class ChatMessageQueueStorage extends RedisQueues
 
     public function getOffsetList(string $key, int $offset = 0, int $count = 10): array
     {
-        $list = static::getStorage()->lrange($key, $offset, $count);
+        $list = static::getStorage()->lrange($this->prepareKey($key), $offset, $count);
         if (empty($list)) {
             return [];
         }
