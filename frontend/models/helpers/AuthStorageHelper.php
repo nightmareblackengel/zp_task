@@ -25,8 +25,8 @@ class AuthStorageHelper extends BaseObject
     public function init()
     {
         parent::init();
-        $this->cookieStorage = new CookieStringStorage();
-        $this->userStorage = new UserIdStringStorage();
+        $this->cookieStorage = CookieStringStorage::getInstance();
+        $this->userStorage = UserIdStringStorage::getInstance();
     }
 
     public function getValue($key)
