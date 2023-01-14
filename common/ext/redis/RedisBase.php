@@ -2,11 +2,14 @@
 
 namespace common\ext\redis;
 
+use common\ext\patterns\Singleton;
 use yii\base\BaseObject;
 use yii\redis\Connection;
 
 abstract class RedisBase extends BaseObject
 {
+    use Singleton;
+
     abstract public static function getStorage(): Connection;
 
     public function prepareKey(string $key)
@@ -32,7 +35,7 @@ abstract class RedisBase extends BaseObject
     public static function prepareArrayListToAssoc(array $arr)
     {
         $result = [];
-
+        // TODO: test it
         for ($ind1 = 0; $ind1 < count($arr); $ind1) {
             $result[$arr[$ind1]] = $arr[$ind1 + 1];
             $ind1 += 2;

@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use common\models\ChatMessageModel;
 use common\models\mysql\UserModel;
 use frontend\ext\AuthController;
 use frontend\ext\helpers\Url;
@@ -15,12 +16,13 @@ class ChatController extends AuthController
     public function actionIndex()
     {
         $this->layout = '_chat_index';
-
         $formModel = new ChatMessageForm();
 
         if ($formModel->load(Yii::$app->request->post()) && $formModel->validate()) {
-            echo "Saved";
-            exit();
+            if (ChatMessageModel::getInstance()->saveMessageFrom($formModel)) {
+                return $this->redirect(Url::to(['/chat/index', 'chat_id' => $formModel->chatId]));
+            }
+            $formModel->addError('message', 'Unknown error!');
         }
 
         return $this->render('index', [
