@@ -50,7 +50,7 @@ return [
         ],
         'session' => [
             'name' => 'ztt-session',
-            'class' => \common\ext\RedisSession::class,
+            'class' => \frontend\models\RedisSession::class,
             'redis' => 'redisDb1',
             'keyPrefix' => 'sess_',
         ],

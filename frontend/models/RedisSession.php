@@ -1,7 +1,6 @@
 <?php
-namespace common\ext;
+namespace frontend\models;
 
-use Yii;
 use yii\redis\Session;
 
 class RedisSession extends Session
