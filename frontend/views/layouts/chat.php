@@ -23,7 +23,6 @@ $this->registerCssFile('/css/chat.css');
     </head>
     <body>
         <?php $this->beginBody(); ?>
-        <?= $this->render('_chat_navbar'); ?>
 
         <?php echo $content; ?>
 
