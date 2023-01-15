@@ -8,19 +8,13 @@
     {
         $('.nbeFLeft').on('click', function () {
             var $sideBar = $('#nbeLeftSideBar');
-            var $mainContainer = $('.nbeContainer');
-            var $footer = $('.nbeFooter');
             var $chatBtn = $(this);
 
-            if ($sideBar.hasClass('nbeShowedSide')) {
-                $sideBar.removeClass('nbeShowedSide');
-                $mainContainer.removeClass('nbeFullWidth');
-                $footer.removeClass('nbeFullWidth');
+            if ($chatBtn.hasClass('nbeSelected')) {
+                $sideBar.addClass('nbeDisplayNone');
                 $chatBtn.removeClass('nbeSelected');
             } else {
-                $sideBar.addClass('nbeShowedSide');
-                $mainContainer.addClass('nbeFullWidth');
-                $footer.addClass('nbeFullWidth');
+                $sideBar.removeClass('nbeDisplayNone');
                 $chatBtn.addClass('nbeSelected');
             }
         });

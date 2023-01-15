@@ -37,16 +37,14 @@
 
 .nbeLeftNavBar {
     vertical-align: top;
-    width: 0;
     z-index: 100;
-    overflow: hidden;
-    display: none;
-}
-.nbeLeftNavBar.nbeShowedSide {
-    width: 227px;
-    display: block;
+    min-width: 227px;
+    max-width: 227px;
     position: relative;
     height: 100%;
+}
+.nbeDisplayNone {
+    display: none !important;
 }
 
 .nbeFooter {
@@ -206,4 +204,30 @@
 .nbeAddChatMsgGroup .dropdown-menu {
     top: initial;
     bottom: 100%;
+}
+.oneMsgContainer {
+    display: block;
+    margin-top: 13px;
+}
+.nbeDate {
+    font-size: 10px;
+    font-weight: bold;
+    position: absolute;
+    right: 10px;
+    bottom: 0;
+}
+.nbeUser {
+    font-size: 14px;
+    font-weight: bold;
+}
+.nbeMessage {
+    display: inline-block;
+    font-size: 16px;
+    border: 1px solid #aaa;
+    position: relative;
+    padding: 5px 70px 15px 5px;
+    min-width: 200px;
+}
+.nbeOtherUsers {
+    background: lightgoldenrodyellow;
 }

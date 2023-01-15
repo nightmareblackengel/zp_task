@@ -24,15 +24,19 @@ $this->title = 'Главная страница';
             <?php if (!empty($messages)) {
                 foreach ($messages as $msgItem) { ?>
 
-                    <div class="" data-msg-type="<?php echo $msgItem->t ?? '0'; ?>">
-                        <?php
-                        if (!empty($msgItem->d)) {
-                            $createdAt = date('Y-m-d H:i:s', (int) $msgItem->d);
-                        }
-
-                        echo $createdAt ?? '-';
-                        ?>
-                        <?php echo $msgItem->m ?? '[пустое сообщение]'; ?>
+                    <div class="oneMsgContainer" data-msg-type="<?php echo $msgItem->t ?? '0'; ?>">
+                        <div class="nbeUser">от пользователя: <?php echo $msgItem->u ?? '-'; ?></div>
+                        <span class="nbeMessage">
+                            <?php echo $msgItem->m ?? '[пустое сообщение]'; ?>
+                            <span class="nbeDate">
+                                <?php
+                                if (!empty($msgItem->d)) {
+                                    $createdAt = date('Y-m-d H:i:s', (int) $msgItem->d);
+                                }
+                                echo $createdAt ?? '-';
+                                ?>
+                            </span>
+                        </span>
                     </div>
 
                 <?php }
@@ -56,7 +60,7 @@ $this->title = 'Главная страница';
                         <?php echo $form->field($formModel, 'message', [
                             'class' => ChatMsgActiveField::class,
                         ])
-                            ->textInput(['class' => 'form-control'])
+                            ->textInput(['class' => 'form-control', 'placeholder' => 'Введите сообщение...'])
                             ->label(false); ?>
 
                         <?php echo $form->field($formModel, 'chatId')->hiddenInput()->label(false); ?>
