@@ -6,6 +6,7 @@ use frontend\ext\helpers\Url;
 
 /** @var \frontend\models\forms\ChatMessageForm $formModel */
 /** @var stdClass[] $messages */
+/** @var int $currentUserId */
 
 $this->title = 'Главная страница';
 ?>
@@ -22,11 +23,15 @@ $this->title = 'Главная страница';
     <div class="loaderContent">
         <div class="msgItemsContainer">
             <?php if (!empty($messages)) {
-                foreach ($messages as $msgItem) { ?>
+                foreach ($messages as $msgItem) {
+                    $userId = $msgItem->u ?? 0;
+                    ?>
 
-                    <div class="oneMsgContainer" data-msg-type="<?php echo $msgItem->t ?? '0'; ?>">
+                    <div class="oneMsgContainer <?php echo $userId === $currentUserId ? 'nbeMsgToRight' : ''; ?>"
+                         data-msg-type="<?php echo $msgItem->t ?? '0'; ?>">
+
                         <div class="nbeUser">от пользователя: <?php echo $msgItem->u ?? '-'; ?></div>
-                        <span class="nbeMessage">
+                        <span class="nbeMessage <?php echo $userId !== $currentUserId ? 'nbeBgLGolden' : 'nbeLCyan'; ?>">
                             <?php echo $msgItem->m ?? '[пустое сообщение]'; ?>
                             <span class="nbeDate">
                                 <?php

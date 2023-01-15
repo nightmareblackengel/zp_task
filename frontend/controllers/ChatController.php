@@ -33,6 +33,7 @@ class ChatController extends AuthController
         return $this->render('index', [
             'formModel' => $formModel,
             'messages' => $messages,
+            'currentUserId' => Yii::$app->user->identity->getId(),
         ]);
     }
 

@@ -227,7 +227,14 @@
     position: relative;
     padding: 5px 70px 15px 5px;
     min-width: 200px;
+    text-align: left;
 }
-.nbeOtherUsers {
-    background: lightgoldenrodyellow;
+.nbeBgLGolden {
+    background: #fafad2;
+}
+.nbeLCyan {
+    background: #e0ffff;
+}
+.nbeMsgToRight {
+    text-align: right;
 }
