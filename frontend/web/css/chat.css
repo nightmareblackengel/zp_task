@@ -45,6 +45,8 @@
 .nbeLeftNavBar.nbeShowedSide {
     width: 227px;
     display: block;
+    position: relative;
+    height: 100%;
 }
 
 .nbeFooter {
@@ -166,7 +168,8 @@
     left: 0;
     right: 0;
     bottom: 65px;
-    padding: 20px 15px 0;
+    padding: 20px 15px 20px;
+    overflow-x: auto;
 }
 
 .addNewMsgContainer {
@@ -179,4 +182,28 @@
 
     background: #f5f5f5;
     border-top: 1px solid #ddd;
+}
+
+.nbeLeftPanel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.nbeChatContainer {
+    position: absolute;
+    top: 40px;
+    bottom: 0;
+    left: 0;
+    overflow-x: auto;
+    max-height: 100%;
+}
+.nbeChatContainer .nbeChatList {
+    margin: 0;
+}
+
+.nbeAddChatMsgGroup .dropdown-menu {
+    top: initial;
+    bottom: 100%;
 }
