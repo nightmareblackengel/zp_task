@@ -28,12 +28,7 @@ ChatAsset::register($this);
         </tr>
         <tr class="nbeTrFooter">
             <td colspan="2">
-                <footer class="nbeFooter">
-                    <div class="container-fluid">
-                        <p class="pull-left">Chat created by <strong>Yepifanov Serhii</strong></p>
-                        <p class="pull-right">2022 - <?php echo date('Y'); ?></p>
-                    </div>
-                </footer>
+                <?php echo $this->render('_chat_footer'); ?>
             </td>
         </tr>
     </tbody>

@@ -30,9 +30,9 @@ $this->title = 'Главная страница';
                     <div class="oneMsgContainer <?php echo $userId === $currentUserId ? 'nbeMsgToRight' : ''; ?>"
                          data-msg-type="<?php echo $msgItem->t ?? '0'; ?>">
 
-                        <div class="nbeUser">от пользователя: <?php echo $msgItem->u ?? '-'; ?></div>
+                        <div class="nbeUser">от пользователя: <?php echo Html::encode($msgItem->u ?? '-'); ?></div>
                         <span class="nbeMessage <?php echo $userId !== $currentUserId ? 'nbeBgLGolden' : 'nbeLCyan'; ?>">
-                            <?php echo $msgItem->m ?? '[пустое сообщение]'; ?>
+                            <?php echo Html::encode($msgItem->m ?? '[пустое сообщение]'); ?>
                             <span class="nbeDate">
                                 <?php
                                 if (!empty($msgItem->d)) {
