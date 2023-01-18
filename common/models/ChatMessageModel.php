@@ -40,7 +40,7 @@ class ChatMessageModel extends BaseObject
                 'm' => $form->message,
                 't' => $form->messageType,
                 's' => self::STATUS_ACTIVE,
-                'd' => time(),
+                'd' => microtime(true),
             ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
         );
     }
