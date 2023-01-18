@@ -15,6 +15,10 @@ use yii\web\Response;
 
 class ChatController extends AuthController
 {
+    const AJAX_RESULT_OK = 1;
+    const AJAX_RESULT_NOT_FILLED = 2;
+    const AJAX_RESULT_ERR = 3;
+
     public function actionIndex()
     {
         $this->layout = '_chat_index';
@@ -35,21 +39,24 @@ class ChatController extends AuthController
         return $this->render('index', [
             'formModel' => $formModel,
             'messages' => $messages,
-            'currentUserId' => Yii::$app->user->identity->getId(),
+            'currentUserId' => $this->userArr['id'],
         ]);
     }
 
     // TODO: access check
-    // TODO: csrf check
     public function actionAjaxLoad()
     {
         $this->layout = false;
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $userInfo = $this->getCurrentUser();
-        if (empty($userInfo)) {
-            return [];
+        if (empty($this->userArr)) {
+            return $this->ajaxErr('Ошибка! данный пользователь не найден.');
         }
+        if (!Yii::$app->request->isAjax || !Yii::$app->request->isPost) {
+            return $this->ajaxErr('Ошибка! Некорректный тип переданных данных');
+        }
+
+        // проверка чата
 
         // download chat list info
         // params:
@@ -57,23 +64,21 @@ class ChatController extends AuthController
 
         // download message list
 
-        $lastDownloadData = date('Y-m-d H:i:s');
-
         return [
-            'result' => 1,
+            'result' => self::AJAX_RESULT_OK,
             'chats' => [
                 'result' => 1,
                 'html' => $this->render('@frontend/views/chat/ajax/chats', [
-                    'chatList' => ChatModel::getChatList($userInfo['id']),
+                    'chatList' => ChatModel::getChatList($this->userArr['id']),
                     'requestChatId' => (int) Yii::$app->request->get('chat_id'),
                 ]),
-                'downloadedAt' => $lastDownloadData,
+                'downloadedAt' => time(),
             ],
             'messages' => [
-                'result' => 1,
+                'result' => self::AJAX_RESULT_NOT_FILLED,
                 'chat_id' => 1,
                 'html' => '',
-                'downloadedAt' => $lastDownloadData,
+                'downloadedAt' => time(),
             ]
         ];
     }
@@ -114,5 +119,13 @@ class ChatController extends AuthController
         return $this->render('settings', [
             'formModel' => $formModel,
         ]);
+    }
+
+    protected function ajaxErr($message)
+    {
+        return [
+            'result' => self::AJAX_RESULT_ERR,
+            'message' => $message,
+        ];
     }
 }
