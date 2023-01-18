@@ -1,6 +1,5 @@
 <?php
 use frontend\assets\ChatAsset;
-use frontend\widgets\LeftNavBar;
 
 ChatAsset::register($this);
 
@@ -18,7 +17,7 @@ ChatAsset::register($this);
         </tr>
         <tr>
             <td id="nbeLeftSideBar" class="nbeLeftNavBar">
-                <?php echo LeftNavBar::widget(); ?>
+                <?php echo $this->render('_chat_left_bar'); ?>
             </td>
             <td class="nbeContainer">
                 <div class="container-fluid">
