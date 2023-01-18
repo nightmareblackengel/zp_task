@@ -12,14 +12,13 @@ use yii\helpers\Html;
             <?php echo Html::a('Создать новый чат', Url::to('/chat/create'), ['class' => 'btn btn-success nbeAddNewChat']); ?>
             <br/>
             <br/>
-            <?php echo Html::beginTag('div', [
+            <?php echo Html::tag('div', '', [
                 'class' => 'nbeAjaxChatContainer',
                 'data' => [
                     'chat-id' => Yii::$app->request->get('chat_id', 0),
                     'chat-updated' => time(),
                 ],
             ]); ?>
-            </div>
         </div>
     </div>
 </div>

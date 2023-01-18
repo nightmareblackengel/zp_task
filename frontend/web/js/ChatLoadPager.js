@@ -45,7 +45,10 @@
 
         if (data.chats && data.chats.result === AJAX_RESULT_OK && data.chats.html) {
             $('.nbeAjaxChatContainer').html(data.chats.html);
-            $('.nbeAjaxChatContainer').attr('data-chat-updated', data.chats.downloadedAt)
+            $('.nbeAjaxChatContainer').attr('data-chat-updated', data.chats.downloadedAt);
+        }
+        if (data.messages && data.messages.result === AJAX_RESULT_OK && data.messages.html) {
+            $('.nbeAjaxMessageContainer').html(data.messages.html);
         }
 
         console.log('done', data);

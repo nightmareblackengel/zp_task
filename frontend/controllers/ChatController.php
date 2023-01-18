@@ -32,15 +32,8 @@ class ChatController extends AuthController
             $formModel->addError('message', 'Unknown error!');
         }
 
-        $messages = [];
-        if (!empty($formModel->chatId)) {
-            $messages = ChatMessageModel::getInstance()->getList($formModel->chatId, 0, 2000);
-        }
-
         return $this->render('index', [
             'formModel' => $formModel,
-            'messages' => $messages,
-            'currentUserId' => $this->userArr['id'],
         ]);
     }
 
@@ -57,29 +50,34 @@ class ChatController extends AuthController
             return $this->ajaxErr('Ошибка! Некорректный тип переданных данных');
         }
         $chatId = (int) Yii::$app->request->post('requestChatId');
+        $messages = false;
         if (!emptY($chatId)) {
             $hasAccess = UserChatModel::getInstance()->isUserBelongToChat($this->userArr['id'], $chatId);
             if (!$hasAccess) {
                 return $this->ajaxErr('Ошибка 403! У Вас нет доступа к этому чату');
             }
+            // download message list
+            $messages = ChatMessageModel::getInstance()
+                ->getList($chatId, 0, 2000);
         }
-
-        // download message list
 
         return [
             'result' => self::AJAX_RESULT_OK,
             'chats' => [
                 'result' => 1,
-                'html' => $this->render('@frontend/views/chat/ajax/chats', [
+                'html' => $this->render('/chat/ajax/chats', [
                     'chatList' => ChatModel::getChatList($this->userArr['id']),
                     'requestChatId' => $chatId,
                 ]),
                 'downloadedAt' => time(),
             ],
             'messages' => [
-                'result' => self::AJAX_RESULT_NOT_FILLED,
-                'chat_id' => 1,
-                'html' => '',
+                'result' => self::AJAX_RESULT_OK,
+                'chat_id' => $chatId ?? 0,
+                'html' => $this->render('/chat/ajax/messages', [
+                    'messages' => $messages,
+                    'currentUserId' => $this->userArr['id'],
+                ]),
                 'downloadedAt' => time(),
             ]
         ];

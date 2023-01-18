@@ -32,7 +32,7 @@ class UserChatModel extends MySqlModel
         if (empty($item)) {
             return false;
         }
-        if (!empty($item['isUserBanned'])) {
+        if (!empty($item['isUserBanned']) && $item['isUserBanned'] === self::IS_USER_BANNED_YES) {
             return false;
         }
 
