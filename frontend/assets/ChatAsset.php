@@ -13,7 +13,8 @@ class ChatAsset extends AssetBundle
     ];
 
     public $js = [
-        'js/sideBar.js',
+        'js/ChatPanel.js',
+        'js/ChatLoadPager.js',
     ];
 
     public $depends = [

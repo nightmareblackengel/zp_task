@@ -1,10 +1,10 @@
 (function($) {
-    function NbeSideBar()
+    function ChatPanel()
     {
 
     }
 
-    NbeSideBar.prototype.init = function ()
+    ChatPanel.prototype.init = function ()
     {
         $('.nbeFLeft').on('click', function () {
             var $sideBar = $('#nbeLeftSideBar');
@@ -22,7 +22,7 @@
         $('.nbeFLeft').trigger('click');
     }
 
-    window.nbeSideBar = new NbeSideBar();
+    window.nbeSideBar = new ChatPanel();
 
     $(document).ready(function() {
         window.nbeSideBar.init();

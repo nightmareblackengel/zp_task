@@ -2,6 +2,7 @@
 namespace frontend\controllers;
 
 use common\models\ChatMessageModel;
+use common\models\mysql\ChatModel;
 use common\models\mysql\UserModel;
 use frontend\ext\AuthController;
 use frontend\ext\helpers\Url;
@@ -10,6 +11,7 @@ use frontend\models\forms\ChatMessageForm;
 use frontend\models\forms\UserSettingsForm;
 use frontend\widgets\CookieAlert;
 use Yii;
+use yii\web\Response;
 
 class ChatController extends AuthController
 {
@@ -35,6 +37,45 @@ class ChatController extends AuthController
             'messages' => $messages,
             'currentUserId' => Yii::$app->user->identity->getId(),
         ]);
+    }
+
+    // TODO: access check
+    // TODO: csrf check
+    public function actionAjaxLoad()
+    {
+        $this->layout = false;
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $userInfo = $this->getCurrentUser();
+        if (empty($userInfo)) {
+            return [];
+        }
+
+        // download chat list info
+        // params:
+        // $requestChatId
+
+        // download message list
+
+        $lastDownloadData = date('Y-m-d H:i:s');
+
+        return [
+            'result' => 1,
+            'chats' => [
+                'result' => 1,
+                'html' => $this->render('@frontend/views/chat/ajax/chats', [
+                    'chatList' => ChatModel::getChatList($userInfo['id']),
+                    'requestChatId' => (int) Yii::$app->request->get('chat_id'),
+                ]),
+                'downloadedAt' => $lastDownloadData,
+            ],
+            'messages' => [
+                'result' => 1,
+                'chat_id' => 1,
+                'html' => '',
+                'downloadedAt' => $lastDownloadData,
+            ]
+        ];
     }
 
     public function actionCreate()
