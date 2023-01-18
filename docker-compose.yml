@@ -50,15 +50,19 @@ services:
     networks:
       myztt:
         ipv4_address: 172.18.0.102
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
   redis:
     build:
       context: ./
-      dockerfile: ./docker/redis_data/redis.docker
+      dockerfile: docker/redis/redis.docker
     container_name: mredis
     restart: "no"
     networks:
       myztt:
         ipv4_address: 172.18.0.103
+    volumes:
+      - ./docker/redis/data:/data
   memcached:
     image: memcached:1.6.17
     container_name: mymemcached
