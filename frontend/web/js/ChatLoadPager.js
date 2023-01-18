@@ -45,6 +45,7 @@
 
         if (data.chats && data.chats.result === AJAX_RESULT_OK && data.chats.html) {
             $('.nbeAjaxChatContainer').html(data.chats.html);
+            $('.nbeAjaxChatContainer').attr('data-chat-updated', data.chats.downloadedAt)
         }
 
         console.log('done', data);
@@ -53,8 +54,20 @@
 
     ChatLoadPager.prototype.getAjaxData = function()
     {
+        var $chatContainer = $('.nbeAjaxChatContainer');
+        var chatId = parseInt($chatContainer.attr('data-chat-id'));
+        if (!chatId) {
+            chatId = 0;
+        }
+        var chatUpdatedAt = parseInt($chatContainer.attr('data-chat-updated'));
+        if (!chatUpdatedAt) {
+            chatUpdatedAt = 0;
+        }
+
         var sendData = {
-            'requestChatId': null,
+            'requestChatId': chatId,
+            'lastChatUpdatedAt': chatUpdatedAt,
+            "lastMsgUpdatedAt": null,
         };
         var ajaxData = {
             'url': '/chat/ajax-load',

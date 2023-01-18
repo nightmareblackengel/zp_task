@@ -3,6 +3,7 @@ namespace frontend\controllers;
 
 use common\models\ChatMessageModel;
 use common\models\mysql\ChatModel;
+use common\models\mysql\UserChatModel;
 use common\models\mysql\UserModel;
 use frontend\ext\AuthController;
 use frontend\ext\helpers\Url;
@@ -55,12 +56,13 @@ class ChatController extends AuthController
         if (!Yii::$app->request->isAjax || !Yii::$app->request->isPost) {
             return $this->ajaxErr('Ошибка! Некорректный тип переданных данных');
         }
-
-        // проверка чата
-
-        // download chat list info
-        // params:
-        // $requestChatId
+        $chatId = (int) Yii::$app->request->post('requestChatId');
+        if (!emptY($chatId)) {
+            $hasAccess = UserChatModel::getInstance()->isUserBelongToChat($this->userArr['id'], $chatId);
+            if (!$hasAccess) {
+                return $this->ajaxErr('Ошибка 403! У Вас нет доступа к этому чату');
+            }
+        }
 
         // download message list
 
@@ -70,7 +72,7 @@ class ChatController extends AuthController
                 'result' => 1,
                 'html' => $this->render('@frontend/views/chat/ajax/chats', [
                     'chatList' => ChatModel::getChatList($this->userArr['id']),
-                    'requestChatId' => (int) Yii::$app->request->get('chat_id'),
+                    'requestChatId' => $chatId,
                 ]),
                 'downloadedAt' => time(),
             ],

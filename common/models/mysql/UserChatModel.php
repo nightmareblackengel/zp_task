@@ -16,4 +16,26 @@ class UserChatModel extends MySqlModel
     {
         return '`user_chat`';
     }
+
+    public function isUserBelongToChat(int $userId, int $chatId): bool
+    {
+        $queryStr = sprintf(
+            "SELECT userId, chatId, isUserBanned FROM %s WHERE userId = :userId AND chatId = :chatId",
+            static::tableName()
+        );
+        $item = static::getDb()
+            ->createCommand($queryStr, [
+                ':userId' => $userId,
+                ':chatId' => $chatId,
+            ])->queryOne();
+
+        if (empty($item)) {
+            return false;
+        }
+        if (!empty($item['isUserBanned'])) {
+            return false;
+        }
+
+        return true;
+    }
 }
