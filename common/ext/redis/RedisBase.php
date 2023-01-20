@@ -10,6 +10,8 @@ abstract class RedisBase extends BaseObject
 {
     use Singleton;
 
+    const TRANSACTION_QUEUED = 'QUEUED';
+
     abstract public static function getStorage(): Connection;
 
     public function prepareKey(string $key)

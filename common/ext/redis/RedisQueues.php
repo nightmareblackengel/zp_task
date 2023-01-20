@@ -19,6 +19,11 @@ abstract class RedisQueues extends RedisBase
         return static::getStorage()->lrange($this->prepareKey($key), $offset, $count);
     }
 
+    public function getQueueLength(string $key)
+    {
+        return static::getStorage()->llen($this->prepareKey($key));
+    }
+
     public function getRemoveFromHead(string $key)
     {
         return static::getStorage()->lpop($this->prepareKey($key));

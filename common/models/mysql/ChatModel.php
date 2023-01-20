@@ -3,6 +3,7 @@
 namespace common\models\mysql;
 
 use common\ext\base\MySqlModel;
+use common\models\ChatMessageModel;
 
 class ChatModel extends MySqlModel
 {
@@ -31,5 +32,33 @@ class ChatModel extends MySqlModel
         );
 
         return self::getDb()->createCommand($query, [':userId' => $userId])->queryAll();
+    }
+
+    public static function prepareChatListWithCount(int $userId): array
+    {
+        // get storage data
+        $chatListRes = [];
+        $baseChatList = ChatModel::getChatList($userId);
+        if (empty($baseChatList)) {
+            return [];
+        }
+        // prepare result with 'index key'
+        $chatIds = [];
+        foreach ($baseChatList as $chatItem) {
+            $chatIds[] = $chatItem['chatId'];
+            $chatListRes[$chatItem['chatId']] = $chatItem;
+        }
+        unset($baseChatList);
+        // get count for all chats
+        $chatCountList = ChatMessageModel::getInstance()->getChatListMsgCount($chatIds);
+        if (empty($chatCountList)) {
+            return $chatListRes;
+        }
+        // add "count" to result
+        foreach ($chatCountList as $chatId => $msgCount) {
+            $chatListRes[$chatId]['count'] = $msgCount;
+        }
+
+        return $chatListRes;
     }
 }

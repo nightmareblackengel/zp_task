@@ -51,7 +51,7 @@ class ChatController extends AuthController
         }
         $chatId = (int) Yii::$app->request->post('requestChatId');
         $messages = false;
-        if (!emptY($chatId)) {
+        if (!empty($chatId)) {
             $hasAccess = UserChatModel::getInstance()->isUserBelongToChat($this->userArr['id'], $chatId);
             if (!$hasAccess) {
                 return $this->ajaxErr('Ошибка 403! У Вас нет доступа к этому чату');
@@ -66,7 +66,7 @@ class ChatController extends AuthController
             'chats' => [
                 'result' => 1,
                 'html' => $this->render('/chat/ajax/chats', [
-                    'chatList' => ChatModel::getChatList($this->userArr['id']),
+                    'chatList' => ChatModel::prepareChatListWithCount($this->userArr['id']),
                     'requestChatId' => $chatId,
                 ]),
                 'downloadedAt' => time(),
@@ -128,4 +128,9 @@ class ChatController extends AuthController
             'message' => $message,
         ];
     }
+
+//    public function actionTest()
+//    {
+//
+//    }
 }
