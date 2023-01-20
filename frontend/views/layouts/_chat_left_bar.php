@@ -4,7 +4,7 @@ use frontend\widgets\AjaxLoader;
 use yii\helpers\Html;
 
 ?>
-<?php echo AjaxLoader::begin(); ?>
+<?php echo AjaxLoader::begin(['code' => 'chats']); ?>
     <div class="panel-default nbeLeftPanel">
         <div class="panel-heading">
             <h3 class="panel-title"><strong>Список чатов</strong></h3>

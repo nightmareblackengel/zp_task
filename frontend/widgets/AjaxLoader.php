@@ -20,7 +20,7 @@ class AjaxLoader extends Widget
     public static function begin($config = [])
     {
         return Yii::$app->view->render('@frontend/views/widgets/ajax-loader/begin', [
-
+            'code' => $config['code'] ?? '',
         ]);
     }
 

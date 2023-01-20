@@ -1,6 +1,7 @@
 <?php
+/** @var string $code */
 ?>
-<div class="loaderContainer nbeLoading">
+<div class="loaderContainer nbeLoading" data-code="<?= $code; ?>">
     <div class="nbeWaitContainer">
         <div class="nbeWaitWrapper">
             <svg class="nbeLoader" viewBox="25 25 50 50" >
@@ -8,5 +9,5 @@
             </svg>
         </div>
     </div>
-    <div class="loaderContent nbeDisplayNone">
+    <div class="loaderContent">
 

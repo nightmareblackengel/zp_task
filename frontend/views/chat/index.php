@@ -9,7 +9,7 @@ use frontend\widgets\AjaxLoader;
 
 $this->title = 'Главная страница';
 ?>
-<?php echo AjaxLoader::begin(); ?>
+<?php echo AjaxLoader::begin(['code' => 'messages']); ?>
     <?php echo Html::tag('div', '', [
         'class' => 'nbeAjaxMessageContainer'
     ]); ?>

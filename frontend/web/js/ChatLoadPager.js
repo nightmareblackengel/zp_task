@@ -46,13 +46,23 @@
         if (data.chats && data.chats.result === AJAX_RESULT_OK && data.chats.html) {
             $('.nbeAjaxChatContainer').html(data.chats.html);
             $('.nbeAjaxChatContainer').attr('data-chat-updated', data.chats.downloadedAt);
+            window.nbeClp.hideAjaxLoader('chats');
         }
         if (data.messages && data.messages.result === AJAX_RESULT_OK && data.messages.html) {
             $('.nbeAjaxMessageContainer').html(data.messages.html);
+            window.nbeClp.hideAjaxLoader('messages');
         }
 
         console.log('done', data);
         return true;
+    }
+
+    ChatLoadPager.prototype.hideAjaxLoader = function (type)
+    {
+        if (!type) {
+            return;
+        }
+        $('.loaderContainer[data-code="' + type + '"]').removeClass('nbeLoading');
     }
 
     ChatLoadPager.prototype.getAjaxData = function()
