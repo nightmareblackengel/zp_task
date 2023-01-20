@@ -1,9 +1,10 @@
 <?php
 use frontend\ext\helpers\Url;
+use frontend\widgets\AjaxLoader;
 use yii\helpers\Html;
 
 ?>
-<div class="container-fluid">
+<?php echo AjaxLoader::begin(); ?>
     <div class="panel-default nbeLeftPanel">
         <div class="panel-heading">
             <h3 class="panel-title"><strong>Список чатов</strong></h3>
@@ -21,4 +22,5 @@ use yii\helpers\Html;
             ]); ?>
         </div>
     </div>
-</div>
+<?php
+echo AjaxLoader::end();
