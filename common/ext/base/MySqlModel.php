@@ -2,6 +2,7 @@
 
 namespace common\ext\base;
 
+use common\ext\base\traits\ErrorTrait;
 use common\ext\patterns\Singleton;
 use Exception;
 use Yii;
@@ -11,8 +12,7 @@ use yii\db\Connection;
 abstract class MySqlModel extends BaseObject
 {
     use Singleton;
-
-    public array $errors = [];
+    use ErrorTrait;
 
     abstract public static function tableName(): string;
 
@@ -92,7 +92,7 @@ abstract class MySqlModel extends BaseObject
 
     public function insertBy(array $params): ?int
     {
-        $this->errors = [];
+        $this->clearErrors();
         if (empty($params)) {
             return null;
         }
@@ -106,7 +106,7 @@ abstract class MySqlModel extends BaseObject
                 ->createCommand($insertStr, $insertParams)
                 ->execute();
         } catch (Exception $ex) {
-            $this->errors[] = 'Ошибка! При вставке данных в БД';
+            $this->addError('', 'Ошибка! При вставке данных в БД:' . $ex->getMessage());
         }
         if (empty($insertRes)) {
             return null;
@@ -150,7 +150,7 @@ abstract class MySqlModel extends BaseObject
 
     public function updateBy(array $values, array $whereCond): ?int
     {
-        $this->errors = [];
+        $this->clearErrors();
         if (empty($values) || empty($whereCond)) {
             return null;
         }
@@ -164,7 +164,7 @@ abstract class MySqlModel extends BaseObject
                 ->createCommand($updateStr, $params)
                 ->execute();
         } catch (Exception $ex) {
-            $this->errors[] = 'Ошибка! При обновлении данных в БД';
+            $this->addError('', 'Ошибка! При обновлении данных в БД:' . $ex->getMessage());
         }
 
         return !empty($updateRes) ? $updateRes :  null;
