@@ -4,6 +4,7 @@ namespace common\models\mysql;
 
 use common\ext\base\MySqlModel;
 use common\models\ChatMessageModel;
+use Exception;
 
 class ChatModel extends MySqlModel
 {
@@ -32,6 +33,44 @@ class ChatModel extends MySqlModel
         );
 
         return self::getDb()->createCommand($query, [':userId' => $userId])->queryAll();
+    }
+
+    public function saveChat(?string $name, ?bool $isChannel, ?array $userIdList, ?int $currentUserId)
+    {
+        $result = false;
+        $transaction = static::getDb()->beginTransaction();
+        try {
+            $chatParams = [
+                'name' => $name,
+                'status' => self::STATUS_ENABLED,
+            ];
+            if (!empty($isChannel)) {
+                $chatParams['isChannel'] = 1;
+            }
+
+            $newId = $this->insertBy($chatParams);
+            if (empty($newId)) {
+                $transaction->rollBack();
+                $errMsg = 'Ошибка. Чат не сохранён!';
+                if (!empty($this->hasErrors())) {
+                    $errMsg = $this->getFirstError(self::DEFAULT_ERR_ATTRIBUTE);
+                }
+                $this->addError(self::DEFAULT_ERR_ATTRIBUTE, $errMsg);
+            } else {
+                UserChatModel::getInstance()->saveUserChat($currentUserId, $newId, UserChatModel::IS_CHAT_OWNER_YES);
+                foreach ($userIdList as $userId) {
+                    UserChatModel::getInstance()->saveUserChat($userId, $newId, UserChatModel::IS_CHAT_OWNER_NO);
+                }
+
+                $transaction->commit();
+                $result = true;
+            }
+        } catch (Exception $ex) {
+            $transaction->rollBack();
+            $this->addError(self::DEFAULT_ERR_ATTRIBUTE, 'Ошибка: ' . $ex->getMessage());
+        }
+
+        return $result;
     }
 
     public static function prepareChatListWithCount(int $userId): array

@@ -14,6 +14,8 @@ abstract class MySqlModel extends BaseObject
     use Singleton;
     use ErrorTrait;
 
+    const DEFAULT_ERR_ATTRIBUTE = '-';
+
     abstract public static function tableName(): string;
 
     public static function getDb(): Connection
@@ -106,7 +108,7 @@ abstract class MySqlModel extends BaseObject
                 ->createCommand($insertStr, $insertParams)
                 ->execute();
         } catch (Exception $ex) {
-            $this->addError('', 'Ошибка! При вставке данных в БД:' . $ex->getMessage());
+            $this->addError(self::DEFAULT_ERR_ATTRIBUTE, 'Ошибка! При вставке данных в БД:' . $ex->getMessage());
         }
         if (empty($insertRes)) {
             return null;
@@ -164,7 +166,7 @@ abstract class MySqlModel extends BaseObject
                 ->createCommand($updateStr, $params)
                 ->execute();
         } catch (Exception $ex) {
-            $this->addError('', 'Ошибка! При обновлении данных в БД:' . $ex->getMessage());
+            $this->addError(self::DEFAULT_ERR_ATTRIBUTE, 'Ошибка! При обновлении данных в БД:' . $ex->getMessage());
         }
 
         return !empty($updateRes) ? $updateRes :  null;

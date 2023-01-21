@@ -38,4 +38,18 @@ class UserChatModel extends MySqlModel
 
         return true;
     }
+
+    public function saveUserChat($userId, $chatId, $isOwner)
+    {
+        $userChatParams = [
+            'userId' => $userId,
+            'chatId' => $chatId,
+        ];
+        if (!empty($isOwner)) {
+            $userChatParams['isChatOwner'] = UserChatModel::IS_CHAT_OWNER_YES;
+        }
+
+        return UserChatModel::getInstance()
+            ->insertBy($userChatParams);
+    }
 }
