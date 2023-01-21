@@ -52,4 +52,31 @@ class UserChatModel extends MySqlModel
         return UserChatModel::getInstance()
             ->insertBy($userChatParams);
     }
+
+    // проверяет, есть ли у пользователя приватный чат с указанным пользователем
+    public function isUsersHasPrivateChat(int $firstUser, int $secondUser): bool
+    {
+        $query = sprintf("SELECT `chatId`
+            FROM %s
+            WHERE `chatId` IN (
+                SELECT uc.`chatId`
+                FROM %s uc
+                INNER JOIN %s c ON c.`id` = uc.`chatId`
+                WHERE uc.`userId` = :firstUser
+                AND c.`isChannel` IS NULL
+            )
+            AND `userId` = :secondUser",
+            static::tableName(),
+            static::tableName(),
+            ChatModel::tableName()
+        );
+
+        $chatIds = self::getDb()
+            ->createCommand($query, [
+                ':firstUser' => $firstUser,
+                ':secondUser' => $secondUser
+            ])->queryAll();
+
+        return !empty($chatIds);
+    }
 }

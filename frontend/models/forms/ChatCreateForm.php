@@ -20,12 +20,14 @@ class ChatCreateForm extends Form
     public function rules()
     {
         return [
-            [['isChannel', 'name', 'currentUserId', 'userIdList'], 'required'],
+            [['isChannel', 'currentUserId', 'userIdList'], 'required'],
             [['name'], 'string', 'max' => 255],
             [['name'], 'isUniqueName'],
             [['isChannel', 'currentUserId'], 'integer'],
             [['userIdList'], 'safe'],
             [['userIdList'], 'customChannelUserCount'],
+            [['userIdList'], 'checkIfPrivateChatExists'],
+            [['name'], 'checkChannelNameForChannel', 'skipOnEmpty' => false],
         ];
     }
 
@@ -39,8 +41,31 @@ class ChatCreateForm extends Form
         if (!empty($chatItem)) {
             $this->addError($attribute, 'Данное имя уже занято! Выберите другое имя чата');
         }
+    }
 
-        return;
+    public function checkChannelNameForChannel($attribute)
+    {
+        if (empty($this->isChannel)) {
+            return;
+        }
+        if (empty($this->name)) {
+            $this->addError($attribute, 'Необходимо заполнить название канала.');
+        }
+    }
+
+    public function checkIfPrivateChatExists($attribute)
+    {
+        if (!empty($this->isChannel)) {
+            return;
+        }
+        if (empty($this->userIdList)) {
+            return;
+        }
+        $otherUser = $this->userIdList[0];
+
+        if (UserChatModel::getInstance()->isUsersHasPrivateChat($this->currentUserId, $otherUser)) {
+            $this->addError($attribute, 'Между этими пользователями уже есть чат.');
+        }
     }
 
     public function customChannelUserCount($attribute)
@@ -52,7 +77,7 @@ class ChatCreateForm extends Form
         if (empty($this->isChannel) && count($this->userIdList) !== 1) {
             $this->addError(
                 $attribute,
-                'Для типа чата "Не Является каналом" можно добавлять только одного пользователя.'
+                'Для "приватного чата" можно выбирать только одного пользователя.'
             );
         }
     }
@@ -60,7 +85,7 @@ class ChatCreateForm extends Form
     public function attributeLabels()
     {
         return [
-            'name' => 'Название',
+            'name' => 'Название канала',
             'userIdList' => 'Список пользователей',
             'isChannel' => 'Является каналом',
         ];
@@ -82,48 +107,7 @@ class ChatCreateForm extends Form
             return false;
         }
 
-        $result = false;
-        $transaction = ChatModel::getDb()->beginTransaction();
-        try {
-            $chatParams = [
-                'name' => $this->name,
-                'status' => ChatModel::STATUS_ENABLED,
-            ];
-            if (!empty($this->isChannel)) {
-                $chatParams['isChannel'] = 1;
-            }
-
-            $this->id = ChatModel::getInstance()->insertBy($chatParams);
-            if (empty($this->id)) {
-                $transaction->rollBack();
-                $this->addError('name', 'Ошибка. Чат не сохранён!');
-            } else {
-                $this->saveUserChat($this->currentUserId, $this->id, UserChatModel::IS_CHAT_OWNER_YES);
-                foreach ($this->userIdList as $userId) {
-                    $this->saveUserChat($userId, $this->id, UserChatModel::IS_CHAT_OWNER_NO);
-                }
-
-                $transaction->commit();
-                $result = true;
-            }
-        } catch (Exception $ex) {
-            $transaction->rollBack();
-            $this->addError('name', 'Ошибка. Дополнительные данные чата не сохранились.');
-        }
-
-        return $result;
-    }
-
-    protected function saveUserChat($userId, $chatId, $isOwner)
-    {
-        $userChatParams = [
-            'userId' => $userId,
-            'chatId' => $chatId,
-        ];
-        if (!empty($isOwner)) {
-            $userChatParams['isChatOwner'] = UserChatModel::IS_CHAT_OWNER_YES;
-        }
-
-        return UserChatModel::getInstance()->insertBy($userChatParams);
+        return ChatModel::getInstance()
+            ->saveChat($this->name, $this->isChannel, $this->userIdList, $this->currentUserId);
     }
 }

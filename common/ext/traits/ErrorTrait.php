@@ -1,6 +1,6 @@
 <?php
 
-namespace common\ext\base\traits;
+namespace common\ext\traits;
 
 trait ErrorTrait
 {

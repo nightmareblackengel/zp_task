@@ -2,7 +2,7 @@
 
 namespace common\ext\base;
 
-use common\ext\base\traits\ErrorTrait;
+use common\ext\traits\ErrorTrait;
 use common\ext\patterns\Singleton;
 use Exception;
 use Yii;
