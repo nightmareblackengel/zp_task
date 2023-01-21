@@ -19,7 +19,7 @@ class m221030_220922_chat_init extends \yii\db\Migration
 				`isChannel` SMALLINT,
 				`status` SMALLINT NOT NULL DEFAULT 0,
 				`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				UNIQUE INDEX `chat_name` (`name`(100))
+				INDEX `chat__name` (`name`(100))
 			) ENGINE=InnoDB;",
 			"CREATE TABLE `user_chat` (
 				`userId` INT UNSIGNED NOT NULL,
@@ -27,7 +27,8 @@ class m221030_220922_chat_init extends \yii\db\Migration
 				`isUserBanned` SMALLINT,
 				`isChatOwner` SMALLINT,
 				`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				PRIMARY KEY (`chatId`, `userId`)
+				PRIMARY KEY (`chatId`, `userId`),
+				INDEX `user_chat__user_idx` (`userId`)
 			) ENGINE=InnoDB;",
 //			"CREATE TABLE `chat_message` (
 //				`id` BIGINT UNSIGNED NOT NULL  PRIMARY KEY AUTO_INCREMENT,
