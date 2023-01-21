@@ -51,11 +51,6 @@ class ChatModel extends MySqlModel
             $newId = $this->insertBy($chatParams);
             if (empty($newId)) {
                 $transaction->rollBack();
-                $errMsg = 'Ошибка. Чат не сохранён!';
-                if (!empty($this->hasErrors())) {
-                    $errMsg = $this->getFirstError(self::DEFAULT_ERR_ATTRIBUTE);
-                }
-                $this->addError(self::DEFAULT_ERR_ATTRIBUTE, $errMsg);
             } else {
                 UserChatModel::getInstance()->saveUserChat($currentUserId, $newId, UserChatModel::IS_CHAT_OWNER_YES);
                 foreach ($userIdList as $userId) {

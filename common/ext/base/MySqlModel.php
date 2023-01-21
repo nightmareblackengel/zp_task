@@ -23,6 +23,14 @@ abstract class MySqlModel extends BaseObject
         return Yii::$app->getDb();
     }
 
+    public function getDefaultError()
+    {
+        if (empty($this->_errors[self::DEFAULT_ERR_ATTRIBUTE])) {
+            return '';
+        }
+        return array_shift($this->_errors[self::DEFAULT_ERR_ATTRIBUTE]);
+    }
+
     protected function prepareInsertStr(array $params): array
     {
         if (empty($params)) {

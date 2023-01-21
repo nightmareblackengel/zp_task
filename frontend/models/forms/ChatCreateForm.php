@@ -27,7 +27,7 @@ class ChatCreateForm extends Form
             [['userIdList'], 'safe'],
             [['userIdList'], 'customChannelUserCount'],
             [['userIdList'], 'checkIfPrivateChatExists'],
-            [['name'], 'checkChannelNameForChannel', 'skipOnEmpty' => false],
+            [['userIdList'], 'checkChannelNameForChannel', 'skipOnEmpty' => false],
         ];
     }
 
@@ -107,7 +107,16 @@ class ChatCreateForm extends Form
             return false;
         }
 
-        return ChatModel::getInstance()
-            ->saveChat($this->name, $this->isChannel, $this->userIdList, $this->currentUserId);
+        $chatModelInst = ChatModel::getInstance();
+        $saveRes = $chatModelInst->saveChat($this->name, $this->isChannel, $this->userIdList, $this->currentUserId);
+        if (!$saveRes) {
+            $errMsg = 'Ошибка. Чат не сохранён!';
+            if (!empty($chatModelInst->hasErrors())) {
+                $errMsg = $chatModelInst->getDefaultError();
+            }
+            $this->addError('userIdList', $errMsg);
+        }
+
+        return $saveRes;
     }
 }

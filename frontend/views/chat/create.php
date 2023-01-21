@@ -11,6 +11,10 @@ $this->title = 'Страница создания нового чата';
 <div class="row">
     <div class="col-md-offset-2 col-md-8">
         <h2><?php echo $this->title; ?></h2>
+        <div class="bs-callout bs-callout-warning" id="callout-overview-not-both">
+            <p>Для того, чтобы создать чат, достаточно выбрать одного пользователя из списка.</p>
+            <p>Для того, чтобы создать канал, нужно выбрать соотвествующую опцию, и ввести название канала.</p>
+        </div>
 
         <div class="row">
             <?php
@@ -21,8 +25,6 @@ $this->title = 'Страница создания нового чата';
                 ]);
             ?>
 
-            <?= $form->field($formModel, 'name')->textInput(); ?>
-
             <?= $form->field($formModel, 'userIdList')->widget(Select2Widget::className(), [
                 'items' => $userList,
                 'multiple' => 'multiple',
@@ -30,7 +32,9 @@ $this->title = 'Страница создания нового чата';
 
             <?= $form->field($formModel, 'currentUserId')->hiddenInput()->label(false); ?>
 
-            <?= $form->field($formModel, 'isChannel')->checkbox(); ?>
+            <?= $form->field($formModel, 'isChannel')->checkbox(['id' => 'chatIsChannel']); ?>
+
+            <?= $form->field($formModel, 'name')->textInput(); ?>
 
             <?= Html::submitButton('Создать', ['class' => 'btn btn-success']); ?>
 
