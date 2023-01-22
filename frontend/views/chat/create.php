@@ -2,9 +2,12 @@
 use common\ext\helpers\Html;
 use common\ext\widgets\ActiveForm;
 use conquer\select2\Select2Widget;
+use frontend\assets\ChatFormAsset;
 
 /** @var \frontend\models\forms\ChatCreateForm $formModel */
 /** @var array $userList */
+
+ChatFormAsset::register($this);
 
 $this->title = 'Страница создания нового чата';
 ?>
@@ -25,16 +28,25 @@ $this->title = 'Страница создания нового чата';
                 ]);
             ?>
 
-            <?= $form->field($formModel, 'userIdList')->widget(Select2Widget::className(), [
-                'items' => $userList,
-                'multiple' => 'multiple',
-            ]); ?>
+            <?= $form->field($formModel, 'userIdList', [
+                    'errorOptions' => [
+                        'class' => 'help-block',
+                        'encode' => false,
+                    ]
+                ])->widget(Select2Widget::className(), [
+                    'items' => $userList,
+                    'multiple' => 'multiple',
+                ]); ?>
 
             <?= $form->field($formModel, 'currentUserId')->hiddenInput()->label(false); ?>
 
             <?= $form->field($formModel, 'isChannel')->checkbox(['id' => 'chatIsChannel']); ?>
 
-            <?= $form->field($formModel, 'name')->textInput(); ?>
+            <?= $form->field($formModel, 'name', [
+                    'options' => [
+                        'class' => 'form-group chatNameFieldWrapper',
+                    ],
+                ])->textInput(['id' => 'chatName']); ?>
 
             <?= Html::submitButton('Создать', ['class' => 'btn btn-success']); ?>
 

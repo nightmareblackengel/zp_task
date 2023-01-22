@@ -3,9 +3,10 @@
 namespace frontend\models\forms;
 
 use common\ext\base\Form;
+use common\ext\helpers\Html;
 use common\models\mysql\ChatModel;
 use common\models\mysql\UserChatModel;
-use Exception;
+use frontend\ext\helpers\Url;
 use Yii;
 
 class ChatCreateForm extends Form
@@ -27,7 +28,7 @@ class ChatCreateForm extends Form
             [['userIdList'], 'safe'],
             [['userIdList'], 'customChannelUserCount'],
             [['userIdList'], 'checkIfPrivateChatExists'],
-            [['userIdList'], 'checkChannelNameForChannel', 'skipOnEmpty' => false],
+            [['name'], 'checkChannelNameForChannel', 'skipOnEmpty' => false],
         ];
     }
 
@@ -63,8 +64,10 @@ class ChatCreateForm extends Form
         }
         $otherUser = $this->userIdList[0];
 
-        if (UserChatModel::getInstance()->isUsersHasPrivateChat($this->currentUserId, $otherUser)) {
-            $this->addError($attribute, 'Между этими пользователями уже есть чат.');
+        $chatIds = UserChatModel::getInstance()->getUserPrivateChatIds($this->currentUserId, $otherUser);
+        if (!empty($chatIds)) {
+            $this->addError($attribute, 'Между этими пользователями уже есть чат. '
+                . Html::a('Перейти в чат', Url::to(['/chat/index', 'chat_id' => $chatIds[0]]), ['target' => '_blank']));
         }
     }
 

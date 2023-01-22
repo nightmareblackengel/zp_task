@@ -53,8 +53,7 @@ class UserChatModel extends MySqlModel
             ->insertBy($userChatParams);
     }
 
-    // проверяет, есть ли у пользователя приватный чат с указанным пользователем
-    public function isUsersHasPrivateChat(int $firstUser, int $secondUser): bool
+    public function getUserPrivateChatIds(int $firstUser, int $secondUser): array
     {
         $query = sprintf("SELECT `chatId`
             FROM %s
@@ -76,7 +75,10 @@ class UserChatModel extends MySqlModel
                 ':firstUser' => $firstUser,
                 ':secondUser' => $secondUser
             ])->queryAll();
+        if (empty($chatIds)) {
+            return [];
+        }
 
-        return !empty($chatIds);
+        return array_column($chatIds, 'chatId');
     }
 }
