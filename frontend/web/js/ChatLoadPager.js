@@ -33,6 +33,7 @@
 
         if (!data || !data.result) {
             alert(errMsg);
+            window.nbeClp.alwaysOnAjaxDone();
             return false;
         }
         if (data.result === AJAX_RESULT_ERR) {
@@ -40,21 +41,27 @@
                 errMsg = data.message;
             }
             alert(errMsg);
+            window.nbeClp.alwaysOnAjaxDone();
             return false;
         }
 
         if (data.chats && data.chats.result === AJAX_RESULT_OK && data.chats.html) {
             $('.nbeAjaxChatContainer').html(data.chats.html);
             $('.nbeAjaxChatContainer').attr('data-chat-updated', data.chats.downloadedAt);
-            window.nbeClp.hideAjaxLoader('chats');
         }
         if (data.messages && data.messages.result === AJAX_RESULT_OK && data.messages.html) {
             $('.nbeAjaxMessageContainer').html(data.messages.html);
-            window.nbeClp.hideAjaxLoader('messages');
         }
 
         console.log('done', data);
+        window.nbeClp.alwaysOnAjaxDone();
         return true;
+    }
+
+    ChatLoadPager.prototype.alwaysOnAjaxDone = function ()
+    {
+        window.nbeClp.hideAjaxLoader('chats');
+        window.nbeClp.hideAjaxLoader('messages');
     }
 
     ChatLoadPager.prototype.hideAjaxLoader = function (type)
