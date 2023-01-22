@@ -28,7 +28,11 @@ if (empty($chatList) || !is_array($chatList)) {
                 'a',
                 $linkContent,
                 [
+                    // 'id' => 'divChatId' . $chatItem['chatId'],
                     'class' => implode(' ', $linkClasses),
+                    'data' => [
+                        'id' => $chatItem['chatId'],
+                    ],
                     'href' => Url::to(['/chat/index', 'chat_id' => $chatItem['chatId']]),
                 ]);
         } ?>

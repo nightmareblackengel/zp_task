@@ -11,7 +11,6 @@ use Yii;
 
 class ChatCreateForm extends Form
 {
-    public ?int $id = null;
     public ?int $currentUserId = null;
     public ?string $name = null;
     public $isChannel = null;
@@ -111,8 +110,8 @@ class ChatCreateForm extends Form
         }
 
         $chatModelInst = ChatModel::getInstance();
-        $saveRes = $chatModelInst->saveChat($this->name, $this->isChannel, $this->userIdList, $this->currentUserId);
-        if (!$saveRes) {
+        $chatId = $chatModelInst->saveChat($this->name, $this->isChannel, $this->userIdList, $this->currentUserId);
+        if (!$chatId) {
             $errMsg = 'Ошибка. Чат не сохранён!';
             if (!empty($chatModelInst->hasErrors())) {
                 $errMsg = $chatModelInst->getDefaultError();
@@ -120,6 +119,6 @@ class ChatCreateForm extends Form
             $this->addError('userIdList', $errMsg);
         }
 
-        return $saveRes;
+        return $chatId;
     }
 }

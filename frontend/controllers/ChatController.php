@@ -92,9 +92,12 @@ class ChatController extends AuthController
         $userList = UserModel::getInstance()->getShortListExcept($userItem['id']);
 
         if ($formModel->load(Yii::$app->request->post())) {
-            if ($formModel->save()) {
-                CookieAlert::addMessage('Настройки были успешно сохранены');
-                return $this->redirect(Url::to(['/chat/index', 'chat_id' => $formModel->id]));
+            $chatId = $formModel->save();
+            if ($chatId) {
+                CookieAlert::addMessage('Чат успешно создан');
+                return $this->redirect(
+                    Url::to(['/chat/index', 'chat_id' => $chatId /*, '#' => 'divChatId' . $chatId*/])
+                );
             }
         }
 

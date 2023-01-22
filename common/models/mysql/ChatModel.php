@@ -35,9 +35,8 @@ class ChatModel extends MySqlModel
         return self::getDb()->createCommand($query, [':userId' => $userId])->queryAll();
     }
 
-    public function saveChat(?string $name, ?bool $isChannel, ?array $userIdList, ?int $currentUserId)
+    public function saveChat(?string $name, ?bool $isChannel, ?array $userIdList, ?int $currentUserId): ?int
     {
-        $result = false;
         $transaction = static::getDb()->beginTransaction();
         try {
             $chatParams = [
@@ -48,24 +47,23 @@ class ChatModel extends MySqlModel
                 $chatParams['isChannel'] = 1;
             }
 
-            $newId = $this->insertBy($chatParams);
-            if (empty($newId)) {
+            $newChatId = $this->insertBy($chatParams);
+            if (empty($newChatId)) {
                 $transaction->rollBack();
             } else {
-                UserChatModel::getInstance()->saveUserChat($currentUserId, $newId, UserChatModel::IS_CHAT_OWNER_YES);
+                UserChatModel::getInstance()->saveUserChat($currentUserId, $newChatId, UserChatModel::IS_CHAT_OWNER_YES);
                 foreach ($userIdList as $userId) {
-                    UserChatModel::getInstance()->saveUserChat($userId, $newId, UserChatModel::IS_CHAT_OWNER_NO);
+                    UserChatModel::getInstance()->saveUserChat($userId, $newChatId, UserChatModel::IS_CHAT_OWNER_NO);
                 }
-
                 $transaction->commit();
-                $result = true;
             }
         } catch (Exception $ex) {
+            $newChatId = null;
             $transaction->rollBack();
             $this->addError(self::DEFAULT_ERR_ATTRIBUTE, 'Ошибка: ' . $ex->getMessage());
         }
 
-        return $result;
+        return $newChatId ?? null;
     }
 
     public static function prepareChatListWithCount(int $userId): array
