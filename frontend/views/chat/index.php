@@ -14,7 +14,7 @@ $this->title = 'Главная страница';
         'class' => 'nbeAjaxMessageContainer'
     ]); ?>
 
-    <div class="addNewMsgContainer">
+    <div class="addNewMsgContainer nbeDisplayNone">
         <?php $form = ActiveForm::begin([
             'method' => 'post',
             'action' => Url::to(['/chat/index', 'chat_id' => $formModel->chatId]),

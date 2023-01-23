@@ -74,6 +74,7 @@ class ChatController extends AuthController
             'messages' => [
                 'result' => self::AJAX_RESULT_OK,
                 'chat_id' => $chatId ?? 0,
+                'show_add_new_message' => is_array($messages) ? count($messages) : 0,
                 'html' => $this->render('/chat/ajax/messages', [
                     'userList' => UserModel::getInstance()->getUserListForChat($chatId),
                     'messages' => $messages,

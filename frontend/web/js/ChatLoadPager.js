@@ -51,6 +51,9 @@
         }
         if (data.messages && data.messages.result === AJAX_RESULT_OK && data.messages.html) {
             $('.nbeAjaxMessageContainer').html(data.messages.html);
+            if (data.messages.show_add_new_message) {
+                $('.addNewMsgContainer').removeClass('nbeDisplayNone');
+            }
         }
 
         console.log('done', data);
