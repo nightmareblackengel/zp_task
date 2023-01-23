@@ -75,6 +75,7 @@ class ChatController extends AuthController
                 'result' => self::AJAX_RESULT_OK,
                 'chat_id' => $chatId ?? 0,
                 'html' => $this->render('/chat/ajax/messages', [
+                    'userList' => UserModel::getInstance()->getUserListForChat($chatId),
                     'messages' => $messages,
                     'currentUserId' => $this->userArr['id'],
                 ]),

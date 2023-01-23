@@ -41,7 +41,7 @@ class UserModel extends MySqlModel
         ];
 
         $selectQueryStr = sprintf(
-            "SELECT `id`, CONCAT(`name`, '(', `email`, ')') as name FROM %s "
+            "SELECT `id`, " . static::getUserNameQuery() . " FROM %s "
             . " WHERE `id` <> :pid AND `status` = :status",
             static::tableName()
         );
@@ -53,5 +53,33 @@ class UserModel extends MySqlModel
         }
 
         return array_column($selectRes, 'name', 'id');
+    }
+
+    public function getUserListForChat(?int $chatId): array
+    {
+        if (empty($chatId)) {
+            return [];
+        }
+        $query = sprintf(
+            "SELECT u.`id`, " . static::getUserNameQuery() . " "
+            . "FROM %s uc "
+            . "INNER JOIN %s u ON u.`id` = uc.`userId` "
+            . "WHERE uc.`chatId` = :chatId",
+            UserChatModel::tableName(),
+            static::tableName()
+        );
+
+        $users = static::getDb()
+            ->createCommand($query, [
+                ':chatId' => $chatId,
+            ])
+            ->queryAll();
+
+        return array_column($users, 'name', 'id');
+    }
+
+    public static function getUserNameQuery()
+    {
+        return "CONCAT(`name`, '(', `email`, ')') as name";
     }
 }

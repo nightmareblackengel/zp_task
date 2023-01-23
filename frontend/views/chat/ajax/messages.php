@@ -3,6 +3,7 @@ use common\ext\helpers\Html;
 
 /** @var stdClass[] $messages */
 /** @var int $currentUserId */
+/** @var array $userList */
 ?>
 
 <?php
@@ -18,7 +19,13 @@ if ($messages === false) {
         <div class="oneMsgContainer <?php echo $userId === $currentUserId ? 'nbeMsgToRight' : ''; ?>"
              data-msg-type="<?php echo $msgItem->t ?? '0'; ?>">
 
-            <div class="nbeUser">от пользователя: <?php echo Html::encode($msgItem->u ?? '-'); ?></div>
+            <div class="nbeUser">
+                <?php if ($msgItem->u === $currentUserId) { ?>
+                    Вы:
+                <?php } else { ?>
+                    от пользователя: <?php echo Html::encode($userList[$msgItem->u] ?? '-'); ?>
+                <?php } ?>
+            </div>
             <span class="nbeMessage <?php echo $userId !== $currentUserId ? 'nbeBgLGolden' : 'nbeLCyan'; ?>">
                 <?php echo Html::encode($msgItem->m ?? '[пустое сообщение]'); ?>
                 <span class="nbeDate">
