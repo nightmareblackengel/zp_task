@@ -25,12 +25,13 @@ class ChatMsgActiveField extends ActiveField
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><span class="nbeCmdCommandLine">/date</span></li>
-                    <li><span class="nbeCmdCommandLine">/me {some string}</span></li>
-                    <li><span class="nbeCmdCommandLine">/showmembers</span></li>
-                    <li><span class="nbeCmdCommandLine">/kick {email}</span></li>
-                    <li><span class="nbeCmdCommandLine">/clearhistory</span></li>
-                    <li><span class="nbeCmdCommandLine">/sendwithdelay {N} {message}</span></li>
+                    <span class="msgEmptyCmd">Выберите текст комманды</span>
+                    <li class="msgLinkCmd"><span class="nbeCmdCommandLine">/date</span></li>
+                    <li class="msgLinkCmd"><span class="nbeCmdCommandLine">/me {some string}</span></li>
+                    <li class="msgLinkCmd"><span class="nbeCmdCommandLine">/showmembers</span></li>
+                    <li class="msgLinkCmd"><span class="nbeCmdCommandLine">/kick {email}</span></li>
+                    <li class="msgLinkCmd"><span class="nbeCmdCommandLine">/clearhistory</span></li>
+                    <li class="msgLinkCmd"><span class="nbeCmdCommandLine">/sendwithdelay {N} {message}</span></li>
                 </ul>
             </div>'
             . Html::activeTextInput($this->model, $this->attribute, $options);

@@ -85,7 +85,7 @@ class ChatController extends AuthController
         ];
     }
 
-    public function actionCreate()
+    public function actionCreateChat()
     {
         $this->layout = '_chat_index';
         $userItem = $this->getCurrentUser();

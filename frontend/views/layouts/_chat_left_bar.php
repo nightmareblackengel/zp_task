@@ -10,7 +10,7 @@ use yii\helpers\Html;
             <h3 class="panel-title"><strong>Список чатов</strong></h3>
         </div>
         <div class="panel-body nbeChatContainer">
-            <?php echo Html::a('Создать новый чат', Url::to('/chat/create'), ['class' => 'btn btn-success nbeAddNewChat']); ?>
+            <?php echo Html::a('Создать новый чат', Url::to('/chat/create-chat'), ['class' => 'btn btn-success nbeAddNewChat']); ?>
             <br/>
             <br/>
             <?php echo Html::tag('div', '', [

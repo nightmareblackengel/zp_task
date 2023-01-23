@@ -239,3 +239,11 @@
 .nbeMsgToRight {
     text-align: right;
 }
+.msgEmptyCmd {
+    cursor: not-allowed;
+}
+.msgLinkCmd {
+    cursor: pointer;
+    font-weight: bold;
+    padding: 1px 10px;
+}
