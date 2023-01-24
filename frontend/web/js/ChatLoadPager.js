@@ -1,8 +1,11 @@
 (function ($)
 {
-    const AJAX_RESULT_OK = 1;
-    const AJAX_RESULT_NOT_FILLED = 2;
-    const AJAX_RESULT_ERR = 3;
+    const AJAX_RESPONSE_OK = 1;
+    const AJAX_RESPONSE_NOT_FILLED = 2;
+    const AJAX_RESPONSE_ERR = 3;
+
+    const AJAX_REQUEST_INCLUDE = 1;
+    const AJAX_REQUEST_EXCLUDE = 2;
 
     function ChatLoadPager()
     {
@@ -38,7 +41,7 @@
             window.nbeClp.alwaysOnAjaxDone();
             return false;
         }
-        if (data.result === AJAX_RESULT_ERR) {
+        if (data.result === AJAX_RESPONSE_ERR) {
             if (data.message) {
                 errMsg = data.message;
             }
@@ -49,17 +52,17 @@
             return false;
         }
 
-        if (data.chats && data.chats.result === AJAX_RESULT_OK && data.chats.html) {
+        if (data.chats && data.chats.result === AJAX_RESPONSE_OK && data.chats.html) {
             $('.nbeAjaxChatContainer').html(data.chats.html);
             $('.nbeAjaxChatContainer').attr('data-chat-updated', data.chats.downloaded_at);
         }
-        if (data.messages && data.messages.result === AJAX_RESULT_OK && data.messages.html) {
+        if (data.messages && data.messages.result === AJAX_RESPONSE_OK && data.messages.html) {
             $('.nbeAjaxMessageContainer').html(data.messages.html);
             if (data.messages.show_add_new_message) {
                 $('.addNewMsgContainer').removeClass('nbeDisplayNone');
             }
         }
-        if (data.new_message && data.new_message.result === AJAX_RESULT_OK && data.new_message.html) {
+        if (data.new_message && data.new_message.result === AJAX_RESPONSE_OK && data.new_message.html) {
             $('.addNewMsgContainer').html(data.new_message.html);
         }
 
@@ -96,14 +99,16 @@
 
         var sendData = {
             'chats': {
+                'show_in_response': AJAX_REQUEST_INCLUDE,
                 'id': chatId,
-                'lastUpdatedAt': chatUpdatedAt,
+                'last_updated_at': chatUpdatedAt,
             },
             'messages': {
-                'lastUpdatedAt': null,
+                'show_in_response': AJAX_REQUEST_INCLUDE,
+                'last_updated_at': null,
             },
-            'new_message': {
-
+            'new_item': {
+                'show_in_response': AJAX_REQUEST_INCLUDE,
             },
         };
 

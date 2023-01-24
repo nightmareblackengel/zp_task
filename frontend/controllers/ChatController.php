@@ -1,14 +1,12 @@
 <?php
 namespace frontend\controllers;
 
-use common\models\ChatMessageModel;
 use common\models\mysql\UserModel;
 use frontend\ext\AuthController;
 use frontend\ext\helpers\Url;
-use frontend\models\forms\AjaxChatForm;
 use frontend\models\forms\ChatCreateForm;
-use frontend\models\forms\ChatMessageForm;
 use frontend\models\forms\UserSettingsForm;
+use frontend\models\helpers\AjaxHelper;
 use frontend\widgets\CookieAlert;
 use Yii;
 use yii\web\Response;
@@ -28,14 +26,11 @@ class ChatController extends AuthController
         $this->layout = false;
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        if (empty($this->userArr)) {
-            return $this->ajaxErr('Ошибка! данный пользователь не найден.');
-        }
         if (!Yii::$app->request->isAjax || !Yii::$app->request->isPost) {
             return $this->ajaxErr('Ошибка! Некорректный тип переданных данных');
         }
 
-        $form = new AjaxChatForm(['userId' => $this->userArr['id']]);
+        $form = new AjaxHelper();
         if (!$form->load(Yii::$app->request->post()) || !$form->hasAccess()) {
             return $this->ajaxErr($form->getDefaultError());
         }
@@ -86,7 +81,7 @@ class ChatController extends AuthController
     protected function ajaxErr($message)
     {
         return [
-            'result' => AjaxChatForm::AJAX_RESULT_ERR,
+            'result' => AjaxHelper::AJAX_RESPONSE_ERR,
             'message' => $message,
         ];
     }
