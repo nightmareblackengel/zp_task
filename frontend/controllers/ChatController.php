@@ -2,11 +2,10 @@
 namespace frontend\controllers;
 
 use common\models\ChatMessageModel;
-use common\models\mysql\ChatModel;
-use common\models\mysql\UserChatModel;
 use common\models\mysql\UserModel;
 use frontend\ext\AuthController;
 use frontend\ext\helpers\Url;
+use frontend\models\forms\AjaxChatForm;
 use frontend\models\forms\ChatCreateForm;
 use frontend\models\forms\ChatMessageForm;
 use frontend\models\forms\UserSettingsForm;
@@ -16,10 +15,6 @@ use yii\web\Response;
 
 class ChatController extends AuthController
 {
-    const AJAX_RESULT_OK = 1;
-    const AJAX_RESULT_NOT_FILLED = 2;
-    const AJAX_RESULT_ERR = 3;
-
     public function actionIndex()
     {
         $this->layout = '_chat_index';
@@ -49,40 +44,13 @@ class ChatController extends AuthController
         if (!Yii::$app->request->isAjax || !Yii::$app->request->isPost) {
             return $this->ajaxErr('Ошибка! Некорректный тип переданных данных');
         }
-        $chatId = (int) Yii::$app->request->post('requestChatId');
-        $messages = false;
-        if (!empty($chatId)) {
-            $hasAccess = UserChatModel::getInstance()->isUserBelongToChat($this->userArr['id'], $chatId);
-            if (!$hasAccess) {
-                return $this->ajaxErr('Ошибка 403! У Вас нет доступа к этому чату');
-            }
-            // download message list
-            $messages = ChatMessageModel::getInstance()
-                ->getList($chatId, 0, 2000);
+
+        $form = new AjaxChatForm(['userId' => $this->userArr['id']]);
+        if (!$form->load(Yii::$app->request->post()) || !$form->hasAccess()) {
+            return $this->ajaxErr($form->getDefaultError());
         }
 
-        return [
-            'result' => self::AJAX_RESULT_OK,
-            'chats' => [
-                'result' => 1,
-                'html' => $this->render('/chat/ajax/chats', [
-                    'chatList' => ChatModel::prepareChatListWithCount($this->userArr['id']),
-                    'requestChatId' => $chatId,
-                ]),
-                'downloadedAt' => time(),
-            ],
-            'messages' => [
-                'result' => self::AJAX_RESULT_OK,
-                'chat_id' => $chatId ?? 0,
-                'show_add_new_message' => is_array($messages) ? count($messages) : 0,
-                'html' => $this->render('/chat/ajax/messages', [
-                    'userList' => UserModel::getInstance()->getUserListForChat($chatId),
-                    'messages' => $messages,
-                    'currentUserId' => $this->userArr['id'],
-                ]),
-                'downloadedAt' => time(),
-            ]
-        ];
+        return $form->prepareData();
     }
 
     public function actionCreateChat()
@@ -128,7 +96,7 @@ class ChatController extends AuthController
     protected function ajaxErr($message)
     {
         return [
-            'result' => self::AJAX_RESULT_ERR,
+            'result' => AjaxChatForm::AJAX_RESULT_ERR,
             'message' => $message,
         ];
     }

@@ -32,7 +32,9 @@
         var errMsg = 'Возникла ошибка! ';
 
         if (!data || !data.result) {
-            alert(errMsg);
+            // TODO:
+            // alert(errMsg);
+            console.log(errMsg);
             window.nbeClp.alwaysOnAjaxDone();
             return false;
         }
@@ -40,14 +42,16 @@
             if (data.message) {
                 errMsg = data.message;
             }
-            alert(errMsg);
+            // TODO:
+            // alert(errMsg);
+            console.log(errMsg);
             window.nbeClp.alwaysOnAjaxDone();
             return false;
         }
 
         if (data.chats && data.chats.result === AJAX_RESULT_OK && data.chats.html) {
             $('.nbeAjaxChatContainer').html(data.chats.html);
-            $('.nbeAjaxChatContainer').attr('data-chat-updated', data.chats.downloadedAt);
+            $('.nbeAjaxChatContainer').attr('data-chat-updated', data.chats.downloaded_at);
         }
         if (data.messages && data.messages.result === AJAX_RESULT_OK && data.messages.html) {
             $('.nbeAjaxMessageContainer').html(data.messages.html);
@@ -88,11 +92,16 @@
         }
 
         var sendData = {
-            'requestChatId': chatId,
-            'lastChatUpdatedAt': chatUpdatedAt,
-            "lastMsgUpdatedAt": null,
+            'chats': {
+                'id': chatId,
+                'lastUpdatedAt': chatUpdatedAt,
+            },
+            'messages': {
+                'lastUpdatedAt': null,
+            },
         };
-        var ajaxData = {
+
+        return {
             'url': '/chat/ajax-load',
             'method': 'post',
             'data': sendData,
@@ -102,11 +111,11 @@
                     // statusText
                     errMsg = errMsg + 'Подробнее: ' + err.responseText;
                 }
-                alert(errMsg);
+                // TODO:
+                console.log(errMsg);
+                // alert(errMsg);
             },
         };
-
-        return ajaxData;
     }
 
     window.nbeClp = new ChatLoadPager();
