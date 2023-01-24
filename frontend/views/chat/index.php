@@ -27,9 +27,9 @@ $this->title = 'Главная страница';
             <div class="col-sm-9">
                 <div class="nbeAddChatMsgGroup">
                     <?php echo $form->field($formModel, 'message', [
-                        'class' => ChatMsgActiveField::class,
-                    ])
-                        ->textInput(['class' => 'form-control', 'placeholder' => 'Введите сообщение...'])
+                            'class' => ChatMsgActiveField::class,
+                        ])
+                        ->sendMessageText(['class' => 'form-control', 'placeholder' => 'Введите сообщение...'])
                         ->label(false); ?>
 
                     <?php echo $form->field($formModel, 'chatId')->hiddenInput()->label(false); ?>

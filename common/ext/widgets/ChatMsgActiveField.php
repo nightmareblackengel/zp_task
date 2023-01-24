@@ -9,7 +9,7 @@ class ChatMsgActiveField extends ActiveField
 {
     public $options = ['class' => 'form-group input-group'];
 
-    public function textInput($options = [])
+    public function sendMessageText($options = [])
     {
         $options = array_merge($this->inputOptions, $options);
         if ($this->form->validationStateOn === ActiveForm::VALIDATION_STATE_ON_INPUT) {
@@ -25,7 +25,7 @@ class ChatMsgActiveField extends ActiveField
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <span class="msgEmptyCmd">Выберите текст комманды</span>
+                    <span class="msgEmptyCmd">Выберите комманду</span>
                     <li class="msgLinkCmd"><span class="nbeCmdCommandLine">/date</span></li>
                     <li class="msgLinkCmd"><span class="nbeCmdCommandLine">/me {some string}</span></li>
                     <li class="msgLinkCmd"><span class="nbeCmdCommandLine">/showmembers</span></li>
