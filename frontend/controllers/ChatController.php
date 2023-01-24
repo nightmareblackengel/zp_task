@@ -18,18 +18,8 @@ class ChatController extends AuthController
     public function actionIndex()
     {
         $this->layout = '_chat_index';
-        $formModel = new ChatMessageForm();
 
-        if ($formModel->load(Yii::$app->request->post()) && $formModel->validate()) {
-            if (ChatMessageModel::getInstance()->saveMessageFrom($formModel)) {
-                return $this->redirect(Url::to(['/chat/index', 'chat_id' => $formModel->chatId]));
-            }
-            $formModel->addError('message', 'Unknown error!');
-        }
-
-        return $this->render('index', [
-            'formModel' => $formModel,
-        ]);
+        return $this->render('index');
     }
 
     // TODO: access check
@@ -70,7 +60,7 @@ class ChatController extends AuthController
             }
         }
 
-        return $this->render('create', [
+        return $this->render('create-chat', [
             'formModel' => $formModel,
             'userList' => $userList,
         ]);

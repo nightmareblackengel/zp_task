@@ -59,6 +59,9 @@
                 $('.addNewMsgContainer').removeClass('nbeDisplayNone');
             }
         }
+        if (data.new_message && data.new_message.result === AJAX_RESULT_OK && data.new_message.html) {
+            $('.addNewMsgContainer').html(data.new_message.html);
+        }
 
         console.log('done', data);
         window.nbeClp.alwaysOnAjaxDone();
@@ -98,6 +101,9 @@
             },
             'messages': {
                 'lastUpdatedAt': null,
+            },
+            'new_message': {
+
             },
         };
 

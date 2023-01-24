@@ -7,6 +7,7 @@ use common\models\ChatMessageModel;
 use common\models\mysql\ChatModel;
 use common\models\mysql\UserChatModel;
 use common\models\mysql\UserModel;
+use frontend\ext\helpers\Url;
 use Yii;
 
 class AjaxChatForm extends Form
@@ -50,11 +51,21 @@ class AjaxChatForm extends Form
 
     public function prepareData(): array
     {
+        // messages
         $messages = false;
         if (!empty($this->chatId)) {
             $messages = ChatMessageModel::getInstance()
                 ->getList($this->chatId, 0, 2000);
         }
+        // add new message
+        $formModel = new ChatMessageForm();
+        if ($formModel->load(Yii::$app->request->post()) && $formModel->validate()) {
+            if (ChatMessageModel::getInstance()->saveMessageFrom($formModel)) {
+                return $this->redirect(Url::to(['/chat/index', 'chat_id' => $formModel->chatId]));
+            }
+            $formModel->addError('message', 'Unknown error!');
+        }
+        //
 
         return [
             'result' => self::AJAX_RESULT_OK,
@@ -76,7 +87,13 @@ class AjaxChatForm extends Form
                     'currentUserId' => $this->userId,
                 ]),
                 'downloaded_at' => time(),
-            ]
+            ],
+            'new_message' => [
+                'result' => self::AJAX_RESULT_OK,
+                'html' => Yii::$app->controller->render('/chat/ajax/create-message', [
+                    'formModel' => $formModel,
+                ]),
+            ],
         ];
     }
 }
