@@ -3,7 +3,7 @@ namespace frontend\assets;
 
 use yii\web\AssetBundle;
 
-class ChatAsset extends AssetBundle
+class MessagesAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
@@ -15,6 +15,7 @@ class ChatAsset extends AssetBundle
     public $js = [
         'js/ChatPanel.js',
         'js/ChatLoadPager.js',
+        'js/NewMsgForm.js',
     ];
 
     public $depends = [

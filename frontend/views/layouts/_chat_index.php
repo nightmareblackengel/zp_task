@@ -1,7 +1,7 @@
 <?php
-use frontend\assets\ChatAsset;
+use frontend\assets\MessagesAsset;
 
-ChatAsset::register($this);
+MessagesAsset::register($this);
 
 /** @var string $content */
 ?>
