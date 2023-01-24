@@ -33,7 +33,6 @@ class ChatMessageForm extends Form
     {
         $res = parent::load($data, $formName);
 
-        $this->chatId = Yii::$app->request->get('chat_id');
         if (empty($this->messageType)) {
             $this->messageType = ChatMessageModel::MESSAGE_TYPE_SIMPLE;
         }

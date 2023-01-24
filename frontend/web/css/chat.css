@@ -247,3 +247,10 @@
     font-weight: bold;
     padding: 1px 10px;
 }
+
+.nbeAddNewMsgBtn[data-process="1"],
+.nbeAddNewMsgBtn[data-process="1"]:active,
+.nbeAddNewMsgBtn[data-process="1"]:focus,
+.nbeAddNewMsgBtn[data-process="1"]:hover {
+    background: #808080;
+}

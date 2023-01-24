@@ -8,8 +8,9 @@ use frontend\ext\helpers\Url;
 ?>
 
 <?php $form = ActiveForm::begin([
+    'id' => 'addNewMessageForm',
     'method' => 'post',
-    'action' => Url::to(['/chat/index', 'chat_id' => $formModel->chatId]),
+    'action' => Url::to(['/']),
     'options' => [
         'class' => 'container-fluid addNewMsgForm',
     ],
@@ -19,8 +20,8 @@ use frontend\ext\helpers\Url;
     <div class="col-sm-9">
         <div class="nbeAddChatMsgGroup">
             <?php echo $form->field($formModel, 'message', [
-                'class' => ChatMsgActiveField::class,
-            ])
+                    'class' => ChatMsgActiveField::class,
+                ])
                 ->sendMessageText(['class' => 'form-control', 'placeholder' => 'Введите сообщение...'])
                 ->label(false); ?>
 
@@ -30,7 +31,7 @@ use frontend\ext\helpers\Url;
         </div>
     </div>
     <div class="col-sm-3">
-        <?php echo Html::submitButton('Отправить', ['class' => 'btn btn-success nbeAddNewMsgBtn']); ?>
+        <?php echo Html::button('Отправить', ['type' => 'button', 'class' => 'btn btn-success nbeAddNewMsgBtn']); ?>
     </div>
 </div>
 

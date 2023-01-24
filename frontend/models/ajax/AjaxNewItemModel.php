@@ -21,21 +21,15 @@ class AjaxNewItemModel extends AjaxBase
 
     public function prepareResponse(?int $userId, ?int $chatId): ?array
     {
-        $formModel = new ChatMessageForm();
-        # TODO Fully incorrect
-        if ($formModel->load(Yii::$app->request->post()) && $formModel->validate()) {
-            if (ChatMessageModel::getInstance()->saveMessageFrom($formModel)) {
-                # TODO: replace
-                echo "REDIRECTED!!!";
-                exit();
-                //return $this->redirect(Url::to(['/chat/index', 'chat_id' => $formModel->chatId]));
-            }
-            $formModel->addError('message', 'Unknown error!');
-        }
-
         if ($this->showInResponse === AjaxHelper::AJAX_REQUEST_EXCLUDE) {
             return null;
         }
+
+        $formModel = new ChatMessageForm();
+        $formModel->chatId = $chatId;
+        $formModel->userId = $userId;
+        $formModel->messageType = ChatMessageModel::MESSAGE_TYPE_SIMPLE;
+        $formModel->message = '';
 
         return [
             'result' => AjaxHelper::AJAX_RESPONSE_OK,
