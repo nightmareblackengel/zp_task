@@ -3,11 +3,10 @@
 namespace frontend\models\helpers;
 
 use common\ext\traits\ErrorTrait;
-use common\models\ChatMessageModel;
-use common\models\mysql\ChatModel;
 use common\models\mysql\UserChatModel;
-use common\models\mysql\UserModel;
-use frontend\models\forms\ChatMessageForm;
+use frontend\models\ajax\AjaxChatModel;
+use frontend\models\ajax\AjaxMessageModel;
+use frontend\models\ajax\AjaxNewItemModel;
 use Yii;
 
 class AjaxHelper
@@ -25,16 +24,18 @@ class AjaxHelper
 
     public ?int $userId = null;
 
-    public ?int $chatId = null;
-    public ?int $chatShowInResponse = null;
-    public ?int $chatLastUpdatedAt = null;
+    public ?AjaxChatModel $chat = null;
+    public ?AjaxMessageModel $message = null;
+    public ?AjaxNewItemModel $newItem = null;
 
-    public ?int $msgLastUpdatedAt = null;
-    public ?int $msgShowInResponse = null;
+    public function __construct()
+    {
+        $this->chat = new AjaxChatModel();
+        $this->message = new AjaxMessageModel();
+        $this->newItem = new AjaxNewItemModel();
+    }
 
-    public ?int $newItemShowInResponse = null;
-
-    public function load($data, $formName = null)
+    public function load($data)
     {
         $currentUser = Yii::$app->controller->getCurrentUser();
         if (empty($currentUser)) {
@@ -43,26 +44,17 @@ class AjaxHelper
         }
         $this->userId = $currentUser['id'];
 
-        if (!empty($data['chats'])) {
-            $this->chatId = (int) $data['chats']['id'] ?? 0;
-            $this->chatLastUpdatedAt = (int) $data['chats']['last_updated_at'] ?? 0;
-            $this->chatShowInResponse = (int) $data['chats']['show_in_response'] ?? 0;
-        }
-        if (!empty($data['messages'])) {
-            $this->msgLastUpdatedAt = (int) $data['messages']['last_updated_at'] ?? 0;
-            $this->msgShowInResponse = (int) $data['messages']['show_in_response'] ?? 0;
-        }
-        if (!empty($data['new_item'])) {
-            $this->newItemShowInResponse = (int) $data['new_item']['show_in_response'] ?? 0;
-        }
+        $this->chat->load($data['chats'] ?? []);
+        $this->message->load($data['messages'] ?? []);
+        $this->newItem->load($data['new_item'] ?? []);
 
         return true;
     }
 
     public function hasAccess()
     {
-        if (!empty($this->chatId)) {
-            $hasAccess = UserChatModel::getInstance()->isUserBelongToChat($this->userId, $this->chatId);
+        if (!empty($this->chat->id)) {
+            $hasAccess = UserChatModel::getInstance()->isUserBelongToChat($this->userId, $this->chat->id);
             if (!$hasAccess) {
                 $this->addError(self::DEFAULT_ERR_ATTRIBUTE, 'Ошибка 403! У Вас нет доступа к этому чату');
                 return false;
@@ -74,61 +66,13 @@ class AjaxHelper
 
     public function prepareData(): array
     {
-        // messages
-        $messages = false;
-        if (!empty($this->chatId)) {
-            $messages = ChatMessageModel::getInstance()
-                ->getList($this->chatId, 0, 2000);
-        }
-        // add new message
-        $formModel = new ChatMessageForm();
-        if ($formModel->load(Yii::$app->request->post()) && $formModel->validate()) {
-            if (ChatMessageModel::getInstance()->saveMessageFrom($formModel)) {
-                # TODO: replace
-                echo "REDIRECTED!!!";
-                exit();
-                //return $this->redirect(Url::to(['/chat/index', 'chat_id' => $formModel->chatId]));
-            }
-            $formModel->addError('message', 'Unknown error!');
-        }
-        //
-        $resultArr = ['result' => self::AJAX_RESPONSE_OK];
-
-        if ($this->chatShowInResponse === self::AJAX_REQUEST_INCLUDE) {
-            $resultArr['chats'] = [
-                'result' => self::AJAX_RESPONSE_OK,
-                'html' => Yii::$app->controller->render('/chat/ajax/chats', [
-                    'chatList' => ChatModel::prepareChatListWithCount($this->userId),
-                    'requestChatId' => $this->chatId,
-                ]),
-                'downloaded_at' => time(),
-            ];
-        }
-
-        if ($this->msgShowInResponse === self::AJAX_REQUEST_INCLUDE) {
-            $resultArr['messages'] = [
-                'result' => self::AJAX_RESPONSE_OK,
-                'chat_id' => $this->chatId ?? 0,
-                'show_add_new_message' => is_array($messages) ? count($messages) : 0,
-                'html' => Yii::$app->controller->render('/chat/ajax/messages', [
-                    'userList' => UserModel::getInstance()->getUserListForChat($this->chatId),
-                    'messages' => $messages,
-                    'currentUserId' => $this->userId,
-                ]),
-                'downloaded_at' => time(),
-            ];
-        }
-
-        if ($this->newItemShowInResponse === self::AJAX_REQUEST_INCLUDE) {
-            $resultArr['new_message'] = [
-                'result' => self::AJAX_RESPONSE_OK,
-                'html' => Yii::$app->controller->render('/chat/ajax/create-message', [
-                    'formModel' => $formModel,
-                ]),
-            ];
-        }
-
-        return $resultArr;
+        return [
+            'result' => self::AJAX_RESPONSE_OK,
+            'chatId' => $this->chat->id,
+            'chats' => $this->chat->prepareResponse($this->userId, $this->chat->id),
+            'messages' => $this->message->prepareResponse($this->userId, $this->chat->id),
+            'new_message' => $this->newItem->prepareResponse($this->userId, $this->chat->id),
+        ];
     }
 
     public function getDefaultError()

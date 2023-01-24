@@ -20,7 +20,6 @@ class ChatController extends AuthController
         return $this->render('index');
     }
 
-    // TODO: access check
     public function actionAjaxLoad()
     {
         $this->layout = false;
