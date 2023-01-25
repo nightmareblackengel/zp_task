@@ -27,7 +27,13 @@
             console.log('ajaxObj nulled');
         }
 
-        this.ajaxObj = $.ajax(this.getAjaxData()).done(this.parseAjaxResHandler);
+        this.ajaxObj = $.ajax(
+            this.getAjaxData(
+                AJAX_REQUEST_INCLUDE,
+                AJAX_REQUEST_INCLUDE,
+                AJAX_REQUEST_INCLUDE,
+            )
+        ).done(this.parseAjaxResHandler);
     }
 
     ChatLoadPager.prototype.parseAjaxResHandler = function (data)
@@ -64,6 +70,7 @@
         }
         if (data.new_message && data.new_message.result === AJAX_RESPONSE_OK && data.new_message.html) {
             $('.addNewMsgContainer').html(data.new_message.html);
+            window.nbeClp.initSendForm();
         }
 
         console.log('done', data);
@@ -85,7 +92,7 @@
         $('.loaderContainer[data-code="' + type + '"]').removeClass('nbeLoading');
     }
 
-    ChatLoadPager.prototype.getAjaxData = function()
+    ChatLoadPager.prototype.getAjaxData = function(showChats, showMessages, showAddNewItem)
     {
         var $chatContainer = $('.nbeAjaxChatContainer');
         var chatId = parseInt($chatContainer.attr('data-chat-id'));
@@ -99,16 +106,16 @@
 
         var sendData = {
             'chats': {
-                'show_in_response': AJAX_REQUEST_INCLUDE,
+                'show_in_response': showChats,
                 'id': chatId,
                 'last_updated_at': chatUpdatedAt,
             },
             'messages': {
-                'show_in_response': AJAX_REQUEST_INCLUDE,
+                'show_in_response': showMessages,
                 'last_updated_at': null,
             },
             'new_item': {
-                'show_in_response': AJAX_REQUEST_INCLUDE,
+                'show_in_response': showAddNewItem,
             },
         };
 
@@ -127,6 +134,26 @@
                 // alert(errMsg);
             },
         };
+    }
+
+    ChatLoadPager.prototype.addAttributeParam = function(attrId)
+    {
+        return {
+            'id': attrId,
+            'input': $('#' + attrId),
+            'container': $('.field-' + attrId),
+            'error': $('.field-' + attrId + ' .help-block'),
+        }
+    }
+
+    ChatLoadPager.prototype.initSendForm = function()
+    {
+        $('#addNewMessageForm').yiiActiveForm({
+            'message': this.addAttributeParam('chatmessageform-message'),
+            "userId": this.addAttributeParam('chatmessageform-userid'),
+            "chatId": this.addAttributeParam('chatmessageform-chatid'),
+            "messageType": this.addAttributeParam('chatmessageform-messagetype'),
+        });
     }
 
     window.nbeClp = new ChatLoadPager();

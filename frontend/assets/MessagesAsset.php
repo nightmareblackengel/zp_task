@@ -21,6 +21,7 @@ class MessagesAsset extends AssetBundle
     public $depends = [
         'yii\jui\JuiAsset',
         'yii\web\YiiAsset',
+        'yii\widgets\ActiveFormAsset',
         'yii\bootstrap\BootstrapAsset',
     ];
 }
