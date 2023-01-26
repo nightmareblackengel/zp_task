@@ -57,10 +57,18 @@
 
         if (data.chats && data.chats.result === AJAX_RESPONSE_OK && data.chats.html) {
             $('.nbeAjaxChatContainer').html(data.chats.html);
+            // сокроем "общий лоадер" (можно вызывать дважды и более)
+            window.nbeClp.hideAjaxLoader('chats');
             $('.nbeAjaxChatContainer').attr('data-chat-updated', data.chats.downloaded_at);
+            // выполним скролл
+            window.nbeClp.scrollChatListTo(data.chatId);
         }
         if (data.messages && data.messages.result === AJAX_RESPONSE_OK && data.messages.html) {
             $('.nbeAjaxMessageContainer').html(data.messages.html);
+            // сокроем "общий лоадер" (можно вызывать дважды и более)
+            window.nbeClp.hideAjaxLoader('messages');
+            // проскролим до последнего сообщения
+            $('.nbeAjaxMessageContainer').scrollTop($('.nbeAjaxMessageContainer').height());
             if (data.messages.show_add_new_message !== false && typeof data.messages.show_add_new_message === 'number') {
                 $('.addNewMsgContainer').removeClass('nbeDisplayNone');
             }
@@ -73,6 +81,28 @@
         console.log('done', data);
         window.nbeClp.alwaysOnAjaxDone();
         return true;
+    }
+
+    ChatLoadPager.prototype.scrollChatListTo = function (chatId)
+    {
+        if (!chatId) {
+            return;
+        }
+
+        var $scrollToItem = $('.nbeChatList .list-group-item[data-id="' + chatId + '"]');
+        var offsetHeight = parseInt($scrollToItem.offset().top);
+        var itemHeight = parseInt($scrollToItem.prop('scrollHeight'));
+        // отступ до 1го элементаs
+        var scrollHeight = - 160;
+        if (offsetHeight) {
+            scrollHeight += offsetHeight;
+        }
+        if (itemHeight) {
+            scrollHeight += itemHeight;
+        }
+        if (scrollHeight) {
+            $('.nbeChatContainer').scrollTop(scrollHeight/2);
+        }
     }
 
     ChatLoadPager.prototype.alwaysOnAjaxDone = function ()
