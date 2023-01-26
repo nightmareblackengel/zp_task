@@ -8,6 +8,10 @@ networks:
         - subnet: 172.18.0.0/16
           gateway: 172.18.0.1
 
+volumes:
+  ztt-mysql-data:
+  ztt-redis-data:
+
 services:
   nginx:
     restart: "no"
@@ -43,6 +47,7 @@ services:
     ports:
       - "3306:3306"
     environment:
+      MYSQL_DATABASE: ztt
       MYSQL_ROOT_PASSWORD: rO0tExample
       MYSQL_USER: jackson
       MYSQL_PASSWORD: j@ck5On
@@ -51,7 +56,7 @@ services:
       myztt:
         ipv4_address: 172.18.0.102
     volumes:
-      - ./docker/mysql/data:/var/lib/mysql
+      - ztt-mysql-data:/var/lib/mysql
   redis:
     build:
       context: ./
@@ -62,7 +67,7 @@ services:
       myztt:
         ipv4_address: 172.18.0.103
     volumes:
-      - ./docker/redis/data:/data
+      - ztt-redis-data:/data
   memcached:
     image: memcached:1.6.17
     container_name: mymemcached
