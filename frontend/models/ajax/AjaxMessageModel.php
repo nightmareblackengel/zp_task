@@ -35,7 +35,7 @@ class AjaxMessageModel extends AjaxBase
 
         return [
             'result' => AjaxHelper::AJAX_RESPONSE_OK,
-            'show_add_new_message' => is_array($messages) ? count($messages) : false,
+            'messages_count' => is_array($messages) ? count($messages) : false,
             'html' => Yii::$app->controller->render('/chat/ajax/messages', [
                 'userList' => UserModel::getInstance()->getUserListForChat($chatId),
                 'messages' => $messages,

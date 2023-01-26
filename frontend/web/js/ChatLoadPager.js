@@ -54,7 +54,7 @@
             window.nbeClp.hideAjaxLoader('chats');
             $('.nbeAjaxChatContainer').attr('data-chat-updated', data.chats.downloaded_at);
             // выполним скролл
-            window.nbeClp.scrollChatListTo(data.chatId);
+            window.nbeClp.scrollChatListTo(data.chat_id);
         }
         if (data.messages && data.messages.result === AJAX_RESPONSE_OK && data.messages.html) {
             $('.nbeAjaxMessageContainer').html(data.messages.html);
@@ -62,7 +62,8 @@
             window.nbeClp.hideAjaxLoader('messages');
             // проскролим до последнего сообщения
             $('.nbeAjaxMessageContainer').scrollTop($('.nbeAjaxMessageContainer').height());
-            if (data.messages.show_add_new_message !== false && typeof data.messages.show_add_new_message === 'number') {
+            // если есть сообщения
+            if (data.messages.messages_count !== false && typeof data.messages.messages_count === 'number') {
                 $('.addNewMsgContainer').removeClass('nbeDisplayNone');
             }
         }
@@ -75,9 +76,9 @@
 
         setTimeout(function () {
             window.nbeClp.loadData(
+                AJAX_REQUEST_EXCLUDE,
                 AJAX_REQUEST_INCLUDE,
-                AJAX_REQUEST_INCLUDE,
-                AJAX_REQUEST_INCLUDE
+                AJAX_REQUEST_EXCLUDE
             );
         }, 5000);
 

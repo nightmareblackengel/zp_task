@@ -68,7 +68,8 @@ class AjaxHelper
     {
         return [
             'result' => self::AJAX_RESPONSE_OK,
-            'chatId' => $this->chat->id,
+            'chat_id' => $this->chat->id,
+            'send_time' => time(),
             'chats' => $this->chat->prepareResponse($this->userId, $this->chat->id),
             'messages' => $this->message->prepareResponse($this->userId, $this->chat->id),
             'new_message' => $this->newItem->prepareResponse($this->userId, $this->chat->id),
