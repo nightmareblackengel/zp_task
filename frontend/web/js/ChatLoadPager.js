@@ -17,11 +17,8 @@
     ChatLoadPager.prototype.loadData = function (showChats, showMessages, showAddNewItem)
     {
         if (this.ajaxObj) {
-            this.ajaxObj.abort().done(function() {
-                console.log('ajaxObj aborted');
-            });
+            this.ajaxObj.abort();
             this.ajaxObj = null;
-            console.log('ajaxObj nulled');
         }
 
         this.ajaxObj = $.ajax(
@@ -38,9 +35,7 @@
         var errMsg = 'Возникла ошибка! ';
 
         if (!data || !data.result) {
-            // TODO:
-            // alert(errMsg);
-            console.log(errMsg);
+            alert(errMsg);
             window.nbeClp.alwaysOnAjaxDone();
             return false;
         }
@@ -48,9 +43,7 @@
             if (data.message) {
                 errMsg = data.message;
             }
-            // TODO:
-            // alert(errMsg);
-            console.log(errMsg);
+            alert(errMsg);
             window.nbeClp.alwaysOnAjaxDone();
             return false;
         }
@@ -77,9 +70,17 @@
             $('.addNewMsgContainer').html(data.new_message.html);
             window.nbeClp.initSendForm();
         }
-
-        console.log('done', data);
         window.nbeClp.alwaysOnAjaxDone();
+        console.log('success loaded', data);
+
+        setTimeout(function () {
+            window.nbeClp.loadData(
+                AJAX_REQUEST_INCLUDE,
+                AJAX_REQUEST_INCLUDE,
+                AJAX_REQUEST_INCLUDE
+            );
+        }, 5000);
+
         return true;
     }
 
