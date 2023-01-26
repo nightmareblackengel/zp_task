@@ -1,9 +1,5 @@
 (function($)
 {
-    const AJAX_RESPONSE_OK = 1;
-    const AJAX_RESPONSE_NOT_FILLED = 2;
-    const AJAX_RESPONSE_ERR = 3;
-
     function NewMsgForm()
     {
 
@@ -23,7 +19,6 @@
             }
             $sendBtn.attr('data-process', '1');
 
-            var ajaxData = {};
             $.ajax({
                 'url': '/chat/create-msg',
                 'method': 'POST',
@@ -47,10 +42,14 @@
                     if (data.form_err) {
                         $('#addNewMessageForm').yiiActiveForm('updateMessages', data.form_err)
                     }
+                } else if (data.result === AJAX_RESPONSE_OK) {
+                    window.nbeClp.loadData(
+                        AJAX_REQUEST_INCLUDE,
+                        AJAX_REQUEST_INCLUDE,
+                        AJAX_REQUEST_INCLUDE
+                    );
                 }
-
-                console.log(data);
-                $sendBtn.attr('data-process', '0');
+                $('.nbeAddNewMsgBtn').attr('data-process', '0');
             });
         });
     }

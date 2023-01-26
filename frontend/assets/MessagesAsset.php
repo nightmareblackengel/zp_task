@@ -13,6 +13,7 @@ class MessagesAsset extends AssetBundle
     ];
 
     public $js = [
+        'js/AjaxBase.js',
         'js/ChatPanel.js',
         'js/ChatLoadPager.js',
         'js/NewMsgForm.js',

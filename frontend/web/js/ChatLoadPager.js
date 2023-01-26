@@ -1,12 +1,5 @@
 (function ($)
 {
-    const AJAX_RESPONSE_OK = 1;
-    const AJAX_RESPONSE_NOT_FILLED = 2;
-    const AJAX_RESPONSE_ERR = 3;
-
-    const AJAX_REQUEST_INCLUDE = 1;
-    const AJAX_REQUEST_EXCLUDE = 2;
-
     function ChatLoadPager()
     {
         this.ajaxObj = null;
@@ -14,10 +7,14 @@
 
     ChatLoadPager.prototype.init = function ()
     {
-        this.loadData();
+        this.loadData(
+            AJAX_REQUEST_INCLUDE,
+            AJAX_REQUEST_INCLUDE,
+            AJAX_REQUEST_INCLUDE
+        );
     }
 
-    ChatLoadPager.prototype.loadData = function ()
+    ChatLoadPager.prototype.loadData = function (showChats, showMessages, showAddNewItem)
     {
         if (this.ajaxObj) {
             this.ajaxObj.abort().done(function() {
@@ -29,9 +26,9 @@
 
         this.ajaxObj = $.ajax(
             this.getAjaxData(
-                AJAX_REQUEST_INCLUDE,
-                AJAX_REQUEST_INCLUDE,
-                AJAX_REQUEST_INCLUDE,
+                showChats,
+                showMessages,
+                showAddNewItem
             )
         ).done(this.parseAjaxResHandler);
     }
@@ -64,7 +61,7 @@
         }
         if (data.messages && data.messages.result === AJAX_RESPONSE_OK && data.messages.html) {
             $('.nbeAjaxMessageContainer').html(data.messages.html);
-            if (data.messages.show_add_new_message) {
+            if (data.messages.show_add_new_message !== false && typeof data.messages.show_add_new_message === 'number') {
                 $('.addNewMsgContainer').removeClass('nbeDisplayNone');
             }
         }
