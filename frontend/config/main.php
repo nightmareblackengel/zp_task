@@ -60,8 +60,11 @@ return [
                 [
                     'class' => \yii\log\FileTarget::class,
                     'levels' => ['error', 'warning'],
+                    'exportInterval' => 1,
+                    'logVars' => [],
                 ],
             ],
+            'flushInterval' => 1,
         ],
         'errorHandler' => [
             'errorAction' => 'main/error',
