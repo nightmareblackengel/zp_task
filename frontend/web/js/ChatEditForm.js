@@ -1,15 +1,15 @@
 (function($) {
-    function ChatForm()
+    function ChatEditForm()
     {
 
     }
 
-    ChatForm.prototype.init = function ()
+    ChatEditForm.prototype.init = function ()
     {
         this.initIsChatBtn();
     }
 
-    ChatForm.prototype.initIsChatBtn = function ()
+    ChatEditForm.prototype.initIsChatBtn = function ()
     {
         $('#chatIsChannel').on('input', function(event) {
             if ($(this).is(':checked')) {
@@ -22,7 +22,7 @@
         $('#chatIsChannel').trigger('input');
     }
 
-    window.chatFrm = new ChatForm();
+    window.chatFrm = new ChatEditForm();
     $(document).ready(function() {
         window.chatFrm.init();
     });

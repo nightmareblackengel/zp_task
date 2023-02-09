@@ -2,12 +2,12 @@
 use common\ext\helpers\Html;
 use common\ext\widgets\ActiveForm;
 use conquer\select2\Select2Widget;
-use frontend\assets\ChatFormAsset;
+use frontend\assets\ChatEditFormAsset;
 
 /** @var \frontend\models\forms\ChatCreateForm $formModel */
 /** @var array $userList */
 
-ChatFormAsset::register($this);
+ChatEditFormAsset::register($this);
 
 $this->title = 'Страница создания нового чата';
 ?>
