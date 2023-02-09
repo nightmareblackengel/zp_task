@@ -1,11 +1,11 @@
 (function ($)
 {
-    function ChatLoadPager()
+    function MessageLoader()
     {
         this.ajaxObj = null;
     }
 
-    ChatLoadPager.prototype.init = function ()
+    MessageLoader.prototype.init = function ()
     {
         this.loadData(
             AJAX_REQUEST_INCLUDE,
@@ -14,7 +14,7 @@
         );
     }
 
-    ChatLoadPager.prototype.loadData = function (showChats, showMessages, showAddNewItem)
+    MessageLoader.prototype.loadData = function (showChats, showMessages, showAddNewItem)
     {
         if (this.ajaxObj) {
             this.ajaxObj.abort();
@@ -30,7 +30,7 @@
         ).done(this.parseAjaxResHandler);
     }
 
-    ChatLoadPager.prototype.parseAjaxResHandler = function (data)
+    MessageLoader.prototype.parseAjaxResHandler = function (data)
     {
         var errMsg = 'Возникла ошибка! ';
 
@@ -85,7 +85,7 @@
         return true;
     }
 
-    ChatLoadPager.prototype.scrollChatListTo = function (chatId)
+    MessageLoader.prototype.scrollChatListTo = function (chatId)
     {
         if (!chatId) {
             return;
@@ -107,13 +107,13 @@
         }
     }
 
-    ChatLoadPager.prototype.alwaysOnAjaxDone = function ()
+    MessageLoader.prototype.alwaysOnAjaxDone = function ()
     {
         window.nbeClp.hideAjaxLoader('chats');
         window.nbeClp.hideAjaxLoader('messages');
     }
 
-    ChatLoadPager.prototype.hideAjaxLoader = function (type)
+    MessageLoader.prototype.hideAjaxLoader = function (type)
     {
         if (!type) {
             return;
@@ -121,7 +121,7 @@
         $('.loaderContainer[data-code="' + type + '"]').removeClass('nbeLoading');
     }
 
-    ChatLoadPager.prototype.getAjaxData = function(showChats, showMessages, showAddNewItem)
+    MessageLoader.prototype.getAjaxData = function(showChats, showMessages, showAddNewItem)
     {
         var $chatContainer = $('.nbeAjaxChatContainer');
         var chatId = parseInt($chatContainer.attr('data-chat-id'));
@@ -165,7 +165,7 @@
         };
     }
 
-    ChatLoadPager.prototype.addAttributeParam = function(attrId)
+    MessageLoader.prototype.addAttributeParam = function(attrId)
     {
         return {
             'id': attrId,
@@ -175,7 +175,7 @@
         }
     }
 
-    ChatLoadPager.prototype.initSendForm = function()
+    MessageLoader.prototype.initSendForm = function()
     {
         $('#addNewMessageForm').yiiActiveForm({
             'message': this.addAttributeParam('chatmessageform-message'),
@@ -185,7 +185,7 @@
         });
     }
 
-    window.nbeClp = new ChatLoadPager();
+    window.nbeClp = new MessageLoader();
     $(document).ready(function () {
         window.nbeClp.init();
     });
