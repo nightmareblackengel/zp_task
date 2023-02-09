@@ -20,7 +20,7 @@ class UserChatModel extends MySqlModel
     public function isUserBelongToChat(int $userId, int $chatId): bool
     {
         $queryStr = sprintf(
-            "SELECT userId, chatId, isUserBanned FROM %s WHERE userId = :userId AND chatId = :chatId",
+            "SELECT `userId`, `chatId`, `isUserBanned` FROM %s WHERE `userId` = :userId AND `chatId` = :chatId",
             static::tableName()
         );
         $item = static::getDb()
@@ -34,6 +34,34 @@ class UserChatModel extends MySqlModel
         }
         if (!empty($item['isUserBanned']) && $item['isUserBanned'] === self::IS_USER_BANNED_YES) {
             return false;
+        }
+
+        return true;
+    }
+
+    public function isUserEmailBelongToChat(int $chatId, ?string $userEmail): ?bool
+    {
+        $queryStr = sprintf(
+            "SELECT `userId`, `chatId`, `isUserBanned` "
+                . "FROM %s uc "
+                . "INNER JOIN %s u ON u.id = uc.userId "
+                . "WHERE uc.`chatId` = :chatId "
+                . "AND u.`email` = :userEmail ",
+            UserChatModel::tableName(),
+            UserModel::tableName()
+        );
+
+        $item = static::getDb()
+            ->createCommand($queryStr, [
+                ':userEmail' => $userEmail,
+                ':chatId' => $chatId,
+            ])->queryOne();
+
+        if (empty($item)) {
+            return false;
+        }
+        if (!empty($item['isUserBanned'])) {
+            return null;
         }
 
         return true;

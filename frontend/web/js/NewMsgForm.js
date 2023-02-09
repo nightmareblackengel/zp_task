@@ -8,6 +8,7 @@
     NewMsgForm.prototype.init = function ()
     {
         this.initSendBtn();
+        this.initCommands();
     }
 
     NewMsgForm.prototype.initSendBtn = function ()
@@ -51,6 +52,15 @@
                 }
                 $('.nbeAddNewMsgBtn').attr('data-process', '0');
             });
+        });
+    }
+
+    NewMsgForm.prototype.initCommands = function()
+    {
+        $(document).on('click', '.msgLinkCmd', function() {
+            var $link = $(this);
+
+            $('#chatmessageform-message').val($link.text());
         });
     }
 

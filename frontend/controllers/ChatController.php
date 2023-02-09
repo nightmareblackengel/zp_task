@@ -3,6 +3,7 @@ namespace frontend\controllers;
 
 use common\ext\widgets\ActiveForm;
 use common\models\ChatMessageModel;
+use common\models\mysql\UserChatModel;
 use common\models\mysql\UserModel;
 use frontend\ext\AuthController;
 use frontend\ext\helpers\Url;
@@ -40,7 +41,6 @@ class ChatController extends AuthController
         return $form->prepareData();
     }
 
-    # TODO: throw error on every stage of condition
     public function actionCreateMsg()
     {
         $this->layout = false;
@@ -51,6 +51,14 @@ class ChatController extends AuthController
             return [
                 'result' => AjaxHelper::AJAX_RESPONSE_ERR,
                 'message' => 'Некорректные параметры запроса!',
+            ];
+        }
+
+        $hasAccess = UserChatModel::getInstance()->isUserBelongToChat($formModel->userId, $formModel->chatId);
+        if (!$hasAccess) {
+            return [
+                'result' => AjaxHelper::AJAX_RESPONSE_ERR,
+                'message' => 'Ошибка 403! Доступ запрещен!',
             ];
         }
 
