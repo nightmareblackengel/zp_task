@@ -3,6 +3,7 @@
 namespace common\ext\widgets;
 
 use common\ext\helpers\Html;
+use frontend\models\helpers\MessageCommandHelper;
 use yii\widgets\ActiveField;
 
 class ChatMsgActiveField extends ActiveField
@@ -25,17 +26,36 @@ class ChatMsgActiveField extends ActiveField
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <span class="msgEmptyCmd">Выберите комманду</span>
-                    <li class="msgLinkCmd"><span class="nbeCmdCommandLine">/date</span></li>
-                    <li class="msgLinkCmd"><span class="nbeCmdCommandLine">/me {some string}</span></li>
-                    <li class="msgLinkCmd"><span class="nbeCmdCommandLine">/showmembers</span></li>
-                    <li class="msgLinkCmd"><span class="nbeCmdCommandLine">/kick {email}</span></li>
-                    <li class="msgLinkCmd"><span class="nbeCmdCommandLine">/clearhistory</span></li>
-                    <li class="msgLinkCmd"><span class="nbeCmdCommandLine">/sendwithdelay {N} {message}</span></li>
-                </ul>
+                    <span class="msgEmptyCmd">Выберите комманду</span>'
+                . $this->renderCommands() .
+                '</ul>
             </div>'
             . Html::activeTextInput($this->model, $this->attribute, $options);
 
         return $this;
+    }
+
+    protected function renderCommands()
+    {
+        $list = [];
+        foreach (MessageCommandHelper::$chatDescriptions as $key => $descr) {
+            $list[] = Html::tag(
+                'li',
+                Html::tag(
+                    'span',
+                    $descr, [
+                        'class' => 'nbeCmdCommandLine',
+                    ],
+                ),
+                [
+                    'class' => 'msgLinkCmd',
+                    'data' => [
+                        'cmd' => $key,
+                    ],
+                ]
+            );
+        }
+
+        return implode('',  $list);
     }
 }
