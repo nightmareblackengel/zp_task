@@ -7,7 +7,7 @@ use yii\web\JqueryAsset;
 
 /** @var \frontend\models\forms\UserSettingsForm $formModel */
 /** @var \yii\web\View $this */
-$this->registerJsFile('/js/settings.js', [
+$this->registerJsFile('/js/UserSettings.js', [
     'depends' => [
         JqueryAsset::class,
     ],
