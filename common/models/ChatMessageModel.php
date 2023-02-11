@@ -4,6 +4,7 @@ namespace common\models;
 
 use common\ext\patterns\Singleton;
 use common\models\redis\ChatMessageQueueStorage;
+use common\models\redis\SysMsgCountStringStorage;
 use Exception;
 use frontend\models\forms\ChatMessageForm;
 use yii\base\BaseObject;
@@ -34,7 +35,11 @@ class ChatMessageModel extends BaseObject
 
     public function saveMessageFrom(ChatMessageForm $form): bool
     {
-        return (bool) $this->model->addToTail(
+        if ($form->message[0] === '/') {
+            $form->messageType = self::MESSAGE_TYPE_SYSTEM;
+        }
+
+        $msgSaveRes = (bool) $this->model->addToTail(
             $form->chatId,
             json_encode([
                 'u' => $form->userId,
@@ -44,6 +49,12 @@ class ChatMessageModel extends BaseObject
                 'd' => microtime(true),
             ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
         );
+
+        if ($form->messageType === self::MESSAGE_TYPE_SYSTEM) {
+            SysMsgCountStringStorage::getInstance()->increment($form->chatId);
+        }
+
+        return $msgSaveRes;
     }
 
     public function getChatListMsgCount(array $chatIds): array
@@ -52,12 +63,14 @@ class ChatMessageModel extends BaseObject
             return [];
         }
         // prepare transaction for each 'chatId'
-        $prepareTransList = [];
+        $chatsMsgCountList = [];
+        $chatSysMsgCountList = [];
         try {
             $this->model::getStorage()->multi();
 
             foreach ($chatIds as $numInd => $chatId) {
-                $prepareTransList[$numInd] = $this->model::getInstance()->getQueueLength($chatId);
+                $chatsMsgCountList[$numInd] = $this->model::getInstance()->getQueueLength($chatId);
+                $chatSysMsgCountList[$numInd] = SysMsgCountStringStorage::getInstance()->getValue($chatId);
             }
 
             $chatCountList = $this->model::getStorage()->exec();
@@ -70,10 +83,15 @@ class ChatMessageModel extends BaseObject
         }
         // fill result
         $result = [];
-        foreach ($prepareTransList as $numInd => $transRes) {
+        foreach ($chatsMsgCountList as $numInd => $transRes) {
             $chatCount = 0;
+            // получим общее кол-во сообщений
             if ($transRes === $this->model::TRANSACTION_QUEUED) {
                 $chatCount = (int) $chatCountList[$numInd];
+            }
+            // получим кол-во системных сообщений
+            if (!empty($chatSysMsgCountList[$numInd])) {
+                $chatCount -= (int) $chatSysMsgCountList[$numInd];
             }
             $result[$chatIds[$numInd]] = $chatCount;
 

@@ -19,11 +19,14 @@ abstract class RedisHashes extends RedisBase
         return static::getStorage()->hmget($this->prepareKey($key), ...$values);
     }
 
-    public function getAllFields(string $key)
+    public function getAllFields(string $key): array
     {
         $result = static::getStorage()->hgetall($this->prepareKey($key));
+        if (empty($result)) {
+            return [];
+        }
 
-        return static::prepareArrayListToAssoc($result);
+        return static::prepareArrListToAssocWithKeys($result);
     }
 
     public function getKeys(string $key)

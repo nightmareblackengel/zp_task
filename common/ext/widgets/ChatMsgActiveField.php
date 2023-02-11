@@ -38,6 +38,7 @@ class ChatMsgActiveField extends ActiveField
     protected function renderCommands()
     {
         $list = [];
+        // отобразим список системных комманд в форме отправки сообщения
         foreach (MessageCommandHelper::$chatDescriptions as $key => $descr) {
             $list[] = Html::tag(
                 'li',
