@@ -17,7 +17,7 @@ class SysMsgCountHashStorage extends RedisHashes
         return "uid:$key";
     }
 
-    public function increment($userId, $chatId)
+    public function increment(int $userId, int $chatId)
     {
         return static::getStorage()
             ->hincrby(static::prepareKey($userId), "c:$chatId", 1);

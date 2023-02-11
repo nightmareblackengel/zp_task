@@ -85,7 +85,7 @@ class ChatModel extends MySqlModel
         }
         unset($baseChatList);
         // get count for all chats
-        $chatCountList = ChatMessageModel::getInstance()->getChatListMsgCount($chatIds);
+        $chatCountList = ChatMessageModel::getInstance()->getChatListMsgCount($chatIds, $userId);
         if (empty($chatCountList)) {
             return $chatListRes;
         }

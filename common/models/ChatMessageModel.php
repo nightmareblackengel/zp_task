@@ -57,7 +57,7 @@ class ChatMessageModel extends BaseObject
         return $msgSaveRes;
     }
 
-    public function getChatListMsgCount(array $chatIds): array
+    public function getChatListMsgCount(array $chatIds, int $userId): array
     {
         if (empty($chatIds)) {
             return [];
@@ -65,6 +65,9 @@ class ChatMessageModel extends BaseObject
         // prepare transaction for each 'chatId'
         $prepareTransList = [];
         try {
+            $systemMsgList = SysMsgCountHashStorage::getInstance()
+                ->getAllFields($userId);
+
             $this->model::getStorage()->multi();
 
             foreach ($chatIds as $numInd => $chatId) {
@@ -83,8 +86,13 @@ class ChatMessageModel extends BaseObject
         $result = [];
         foreach ($prepareTransList as $numInd => $transRes) {
             $chatCount = 0;
+            // получим общее кол-во сообщений
             if ($transRes === $this->model::TRANSACTION_QUEUED) {
                 $chatCount = (int) $chatCountList[$numInd];
+            }
+            // получим кол-во системных сообщений
+            if (!empty($systemMsgList[$chatIds[$numInd]])) {
+                $chatCount -= (int) $systemMsgList[$chatIds[$numInd]];
             }
             $result[$chatIds[$numInd]] = $chatCount;
 
