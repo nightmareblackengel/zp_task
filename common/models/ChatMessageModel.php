@@ -4,6 +4,7 @@ namespace common\models;
 
 use common\ext\patterns\Singleton;
 use common\models\redis\ChatMessageQueueStorage;
+use common\models\redis\SysMsgCountHashStorage;
 use Exception;
 use frontend\models\forms\ChatMessageForm;
 use yii\base\BaseObject;
@@ -34,7 +35,11 @@ class ChatMessageModel extends BaseObject
 
     public function saveMessageFrom(ChatMessageForm $form): bool
     {
-        return (bool) $this->model->addToTail(
+        if ($form->message[0] === '/') {
+            $form->messageType = self::MESSAGE_TYPE_SYSTEM;
+        }
+
+        $msgSaveRes = (bool) $this->model->addToTail(
             $form->chatId,
             json_encode([
                 'u' => $form->userId,
@@ -44,6 +49,12 @@ class ChatMessageModel extends BaseObject
                 'd' => microtime(true),
             ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
         );
+
+        if ($form->messageType === self::MESSAGE_TYPE_SYSTEM) {
+            SysMsgCountHashStorage::getInstance()->increment($form->userId, $form->chatId);
+        }
+
+        return $msgSaveRes;
     }
 
     public function getChatListMsgCount(array $chatIds): array
