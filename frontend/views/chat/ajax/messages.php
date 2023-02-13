@@ -1,5 +1,7 @@
 <?php
 use common\ext\helpers\Html;
+use common\models\ChatMessageModel;
+use frontend\models\helpers\MessageCommandHelper;
 
 /** @var stdClass[] $messages */
 /** @var int $currentUserId */
@@ -27,7 +29,14 @@ if ($messages === false) {
                 <?php } ?>
             </div>
             <span class="nbeMessage <?php echo $userId !== $currentUserId ? 'nbeBgLGolden' : 'nbeLCyan'; ?>">
-                <?php echo Html::encode($msgItem->m ?? '[пустое сообщение]'); ?>
+                <?php if ($msgItem->t === ChatMessageModel::MESSAGE_TYPE_SYSTEM) {
+                    echo MessageCommandHelper::printCmd($msgItem->m, [
+                        'msgItem' => $msgItem,
+                    ]);
+                } else {
+                    echo Html::encode($msgItem->m ?? '[пустое сообщение]');
+                }
+                ?>
                 <span class="nbeDate">
                     <?php
                     if (!empty($msgItem->d)) {
