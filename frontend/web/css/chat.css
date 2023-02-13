@@ -212,10 +212,11 @@
 }
 .oneMsgContainer[data-msg-type="2"] {
     width: 100%;
+    font-size: 16px;
+    font-weight: bold;
 }
-.oneMsgContainer[data-msg-type="2"] .nbeMessage {
-    background-color: #ffe0ff;
-    width: 100%;
+.nbeMsgSystem {
+    text-align: center;
 }
 
 .nbeDate {

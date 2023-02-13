@@ -2,6 +2,9 @@
 
 namespace frontend\models\helpers;
 
+use common\ext\helpers\Html;
+use stdClass;
+
 class MessageCommandHelper
 {
     const MSG_CMD_DATE = '/date';
@@ -21,18 +24,20 @@ class MessageCommandHelper
         self::MSG_CHAT_CMD_CLEAR_HISTORY => '/clearhistory',
     ];
 
-    /**
-     * @param string|null $cmd
-     * @param array $params[
-     * 'msgItem'
-     * ]
-     * @return string
-     */
-    public static function printCmd(? string $cmd, array $params): string
+    public static function printCmd(? string $cmd, stdClass $msgItem, array $userList)
     {
-        if ($cmd === self::MSG_CMD_DATE) {
-            return date('Y-m-d H:i:s', (int) $params['msgItem']->d);
+        $cmdList = explode(' ', preg_replace('`[\\ ]+`', ' ', $cmd));
+        if (empty($cmdList)) {
+            return false;
         }
+
+        if ($cmdList[0] === self::MSG_CMD_DATE) {
+            return date('Y-m-d H:i:s', (int) $msgItem->d);
+        } elseif ($cmdList[0] === self::MSG_CMD_ME) {
+            array_shift($cmdList);
+            return $userList[$msgItem->u] . ': ' . Html::encode(implode(' ', $cmdList));
+        }
+
         return $cmd;
     }
 }

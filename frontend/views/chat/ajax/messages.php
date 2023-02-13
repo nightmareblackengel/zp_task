@@ -16,27 +16,29 @@ if ($messages === false) {
 } else {
     foreach ($messages as $msgItem) {
         $userId = $msgItem->u ?? 0;
+
+        $contClasses = 'oneMsgContainer';
+        if ($msgItem->t === ChatMessageModel::MESSAGE_TYPE_SYSTEM) {
+            $contClasses .= ' nbeMsgSystem';
+        } elseif ($userId === $currentUserId) {
+            $contClasses .= ' nbeMsgToRight';
+        }
         ?>
 
-        <div class="oneMsgContainer <?php echo $userId === $currentUserId ? 'nbeMsgToRight' : ''; ?>"
-             data-msg-type="<?php echo $msgItem->t ?? '0'; ?>">
+        <div class="<?php echo $contClasses; ?>" data-msg-type="<?php echo $msgItem->t ?? '0'; ?>">
 
-            <div class="nbeUser">
-                <?php if ($msgItem->u === $currentUserId) { ?>
-                    Вы:
-                <?php } else { ?>
-                    от пользователя: <?php echo Html::encode($userList[$msgItem->u] ?? '-'); ?>
-                <?php } ?>
-            </div>
-            <span class="nbeMessage <?php echo $userId !== $currentUserId ? 'nbeBgLGolden' : 'nbeLCyan'; ?>">
-                <?php if ($msgItem->t === ChatMessageModel::MESSAGE_TYPE_SYSTEM) {
-                    echo MessageCommandHelper::printCmd($msgItem->m, [
-                        'msgItem' => $msgItem,
-                    ]);
-                } else {
-                    echo Html::encode($msgItem->m ?? '[пустое сообщение]');
-                }
-                ?>
+            <?php if ($msgItem->t === ChatMessageModel::MESSAGE_TYPE_SYSTEM) { ?>
+                <?php echo MessageCommandHelper::printCmd($msgItem->m, $msgItem, $userList); ?>
+            <?php } else { ?>
+                <div class="nbeUser">
+                    <?php if ($msgItem->u === $currentUserId) { ?>
+                        Вы:
+                    <?php } else { ?>
+                        от пользователя: <?php echo Html::encode($userList[$msgItem->u] ?? '-'); ?>
+                    <?php } ?>
+                </div>
+                <span class="nbeMessage <?php echo $userId !== $currentUserId ? 'nbeBgLGolden' : 'nbeLCyan'; ?>">
+                <?php echo Html::encode($msgItem->m ?? '[пустое сообщение]'); ?>
                 <span class="nbeDate">
                     <?php
                     if (!empty($msgItem->d)) {
@@ -46,6 +48,7 @@ if ($messages === false) {
                     ?>
                 </span>
             </span>
+            <?php } ?>
         </div>
 
     <?php }
