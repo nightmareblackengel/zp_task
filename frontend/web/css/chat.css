@@ -210,6 +210,14 @@
     display: block;
     margin-top: 13px;
 }
+.oneMsgContainer[data-msg-type="2"] {
+    width: 100%;
+}
+.oneMsgContainer[data-msg-type="2"] .nbeMessage {
+    background-color: #ffe0ff;
+    width: 100%;
+}
+
 .nbeDate {
     font-size: 10px;
     font-weight: bold;

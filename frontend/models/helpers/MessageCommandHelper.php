@@ -20,4 +20,19 @@ class MessageCommandHelper
         self::MSG_CHAT_CMD_KICK => '/kick {email}',
         self::MSG_CHAT_CMD_CLEAR_HISTORY => '/clearhistory',
     ];
+
+    /**
+     * @param string|null $cmd
+     * @param array $params[
+     * 'msgItem'
+     * ]
+     * @return string
+     */
+    public static function printCmd(? string $cmd, array $params): string
+    {
+        if ($cmd === self::MSG_CMD_DATE) {
+            return date('Y-m-d H:i:s', (int) $params['msgItem']->d);
+        }
+        return $cmd;
+    }
 }
