@@ -61,7 +61,7 @@
             // сокроем "общий лоадер" (можно вызывать дважды и более)
             window.nbeClp.hideAjaxLoader('messages');
             // проскролим до последнего сообщения
-            $('.nbeAjaxMessageContainer').scrollTop($('.nbeAjaxMessageContainer').height());
+            $('.nbeAjaxMessageContainer').scrollTop($('.nbeAjaxMessageContainer').prop("scrollHeight"));
             // если есть сообщения
             if (data.messages.messages_count !== false && typeof data.messages.messages_count === 'number') {
                 $('.addNewMsgContainer').removeClass('nbeDisplayNone');
