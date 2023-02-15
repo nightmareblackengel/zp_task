@@ -4,10 +4,11 @@ use frontend\ext\helpers\Url;
 
 $identity = Yii::$app->user->identity;
 $userTitle = !empty($identity) ? $identity->getUserTitle() : '';
+$hideChatBtnClass = (Yii::$app->controller->id === 'chat' && Yii::$app->controller->action->id === 'index') ? '' : 'nbeDisplayNone';
 ?>
 <nav class="navbar-inverse">
     <div class="container-fluid">
-        <button type="button" class="nbeFLeft">
+        <button type="button" class="nbeFLeft <?php echo $hideChatBtnClass; ?>">
             <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
         </button>
 
