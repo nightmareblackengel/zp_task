@@ -263,3 +263,16 @@
 .nbeAddNewMsgBtn[data-process="1"]:hover {
     background: #808080;
 }
+
+.chatMsgHeader {
+    position: absolute;
+    background: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 30px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}

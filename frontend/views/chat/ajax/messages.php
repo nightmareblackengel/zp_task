@@ -6,6 +6,7 @@ use frontend\models\helpers\MessageCommandHelper;
 /** @var stdClass[] $messages */
 /** @var int $currentUserId */
 /** @var array $userList */
+/** @var array $chat */
 ?>
 
 <?php
@@ -14,6 +15,12 @@ if ($messages === false) {
 } elseif (empty($messages)) {
     echo 'Вы не написали еще ни одного сообщения! Теперь есть повод!)';
 } else {
+    if (!empty($chat['isChannel'])) { ?>
+        <div class="chatMsgHeader" data-chat-type="<?php echo $chat['isChannel']; ?>">
+            <?php echo Html::encode($chat['name']); ?>
+        </div>
+        <?php
+    }
     foreach ($messages as $msgItem) {
         $userId = $msgItem->u ?? 0;
 

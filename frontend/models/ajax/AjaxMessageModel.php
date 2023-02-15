@@ -3,6 +3,7 @@
 namespace frontend\models\ajax;
 
 use common\models\ChatMessageModel;
+use common\models\mysql\ChatModel;
 use common\models\mysql\UserModel;
 use frontend\models\helpers\AjaxHelper;
 use Yii;
@@ -32,6 +33,7 @@ class AjaxMessageModel extends AjaxBase
             $messages = ChatMessageModel::getInstance()
                 ->getList($chatId, 0, 2000);
         }
+        $chat = ChatModel::getInstance()->getItemBy(['id' => $chatId]);
 
         return [
             'result' => AjaxHelper::AJAX_RESPONSE_OK,
@@ -40,8 +42,9 @@ class AjaxMessageModel extends AjaxBase
                 'userList' => UserModel::getInstance()->getUserListForChat($chatId),
                 'messages' => $messages,
                 'currentUserId' => $userId,
+                'chat' => $chat,
             ]),
-            'downloaded_at' => time(),
+//            'downloaded_at' => time(),
         ];
     }
 }

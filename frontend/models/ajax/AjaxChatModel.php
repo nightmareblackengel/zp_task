@@ -35,7 +35,7 @@ class AjaxChatModel extends AjaxBase
                 'chatList' => ChatModel::prepareChatListWithCount($userId),
                 'requestChatId' => $chatId,
             ]),
-            'downloaded_at' => time(),
+//            'downloaded_at' => time(),
         ];
     }
 }
