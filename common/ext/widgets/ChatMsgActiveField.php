@@ -51,6 +51,7 @@ class ChatMsgActiveField extends ActiveField
                 [
                     'class' => 'msgLinkCmd',
                     'data' => [
+                        'chat-type' => in_array($key, MessageCommandHelper::$channelList) ? '1' : '0',
                         'cmd' => $key,
                     ],
                 ]

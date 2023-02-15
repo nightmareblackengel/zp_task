@@ -183,6 +183,14 @@
             "chatId": this.addAttributeParam('chatmessageform-chatid'),
             "messageType": this.addAttributeParam('chatmessageform-messagetype'),
         });
+
+        var $chatHeader = $('.chatMsgHeader[data-chat-type="1"]');
+        var $cmdChannelCommands = $('.msgLinkCmd[data-chat-type="1"]');
+        if (!$chatHeader.length) {
+            $cmdChannelCommands.addClass('nbeDisplayNone');
+        } else {
+            $cmdChannelCommands.removeClass('nbeDisplayNone');
+        }
     }
 
     window.nbeClp = new MessageLoader();
