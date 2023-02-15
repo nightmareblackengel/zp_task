@@ -4,6 +4,7 @@ namespace frontend\models\forms;
 
 use common\ext\base\Form;
 use common\models\ChatMessageModel;
+use common\models\mysql\ChatModel;
 use common\models\mysql\UserChatModel;
 use frontend\models\helpers\MessageCommandHelper;
 use Yii;
@@ -66,6 +67,15 @@ class ChatMessageForm extends Form
             $this->addError($attribute, 'Некорректная комманда!');
             return true;
         }
+
+        $chat = ChatModel::getInstance()->getItemBy(['id' => $this->chatId]);
+        $isChannel = $chat['isChannel'] ?? 0;
+
+        if (in_array($cmdList[0], MessageCommandHelper::$channelList) && empty($isChannel)) {
+            $this->addError($attribute, 'Данную комманду можно использовать только в канале.');
+            return true;
+        }
+
         // дополнительные правила
         if ($cmdList[0] === MessageCommandHelper::MSG_CHAT_CMD_KICK) {
             if (count($cmdList) !== 2 || empty($cmdList[1])) {

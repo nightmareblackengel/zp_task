@@ -24,6 +24,12 @@ class MessageCommandHelper
         self::MSG_CHAT_CMD_CLEAR_HISTORY => '/clearhistory',
     ];
 
+    public static $channelList = [
+        self::MSG_CHAT_CMD_SHOW_MEMBERS,
+        self::MSG_CHAT_CMD_KICK,
+        self::MSG_CHAT_CMD_CLEAR_HISTORY,
+    ];
+
     public static function printCmd(? string $cmd, stdClass $msgItem, array $userList)
     {
         $cmdList = explode(' ', preg_replace('`[\\ ]+`', ' ', $cmd));
