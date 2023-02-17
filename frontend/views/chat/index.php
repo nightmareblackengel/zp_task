@@ -2,7 +2,7 @@
 use common\ext\helpers\Html;
 use frontend\widgets\AjaxLoader;
 
-/** @var \frontend\models\forms\ChatMessageForm $formModel */
+/** @var \frontend\models\forms\MessageAddForm $formModel */
 
 $this->title = 'Главная страница';
 ?>

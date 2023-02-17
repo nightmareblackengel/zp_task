@@ -3,7 +3,7 @@
 namespace frontend\models\ajax;
 
 use common\models\ChatMessageModel;
-use frontend\models\forms\ChatMessageForm;
+use frontend\models\forms\MessageAddForm;
 use frontend\models\helpers\AjaxHelper;
 use Yii;
 
@@ -25,7 +25,7 @@ class AjaxNewItemModel extends AjaxBase
             return null;
         }
 
-        $formModel = new ChatMessageForm();
+        $formModel = new MessageAddForm();
         $formModel->chatId = $chatId;
         $formModel->userId = $userId;
         $formModel->messageType = ChatMessageModel::MESSAGE_TYPE_SIMPLE;

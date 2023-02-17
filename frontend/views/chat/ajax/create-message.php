@@ -4,7 +4,7 @@ use common\ext\widgets\ActiveForm;
 use common\ext\widgets\ChatMsgActiveField;
 use frontend\ext\helpers\Url;
 
-/** @var \frontend\models\forms\ChatMessageForm $formModel */
+/** @var \frontend\models\forms\MessageAddForm $formModel */
 ?>
 
 <?php $form = ActiveForm::begin([

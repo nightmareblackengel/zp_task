@@ -8,7 +8,7 @@ use common\models\mysql\UserModel;
 use frontend\ext\AuthController;
 use frontend\ext\helpers\Url;
 use frontend\models\forms\ChatCreateForm;
-use frontend\models\forms\ChatMessageForm;
+use frontend\models\forms\MessageAddForm;
 use frontend\models\forms\UserSettingsForm;
 use frontend\models\helpers\AjaxHelper;
 use frontend\widgets\CookieAlert;
@@ -45,7 +45,7 @@ class ChatController extends AuthController
     {
         $this->layout = false;
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $formModel = new ChatMessageForm();
+        $formModel = new MessageAddForm();
 
         if (!$formModel->load(Yii::$app->request->post())) {
             return [

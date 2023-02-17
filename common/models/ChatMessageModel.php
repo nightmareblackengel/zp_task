@@ -6,7 +6,7 @@ use common\ext\patterns\Singleton;
 use common\models\redis\ChatMessageQueueStorage;
 use common\models\redis\SysMsgCountStringStorage;
 use Exception;
-use frontend\models\forms\ChatMessageForm;
+use frontend\models\forms\MessageAddForm;
 use yii\base\BaseObject;
 
 class ChatMessageModel extends BaseObject
@@ -33,7 +33,7 @@ class ChatMessageModel extends BaseObject
         return $this->model->getOffsetList($chatId, $offset, $limit);
     }
 
-    public function saveMessageFrom(ChatMessageForm $form): bool
+    public function saveMessageFrom(MessageAddForm $form): bool
     {
         if ($form->message[0] === '/') {
             $form->messageType = self::MESSAGE_TYPE_SYSTEM;

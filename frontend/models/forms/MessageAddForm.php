@@ -9,7 +9,7 @@ use common\models\mysql\UserChatModel;
 use frontend\models\helpers\MessageCommandHelper;
 use Yii;
 
-class ChatMessageForm extends Form
+class MessageAddForm extends Form
 {
     public ?string $message = null;
     public ?int $userId = null;
