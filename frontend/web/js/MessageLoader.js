@@ -178,10 +178,10 @@
     MessageLoader.prototype.initSendForm = function()
     {
         $('#addNewMessageForm').yiiActiveForm({
-            'message': this.addAttributeParam('chatmessageform-message'),
-            "userId": this.addAttributeParam('chatmessageform-userid'),
-            "chatId": this.addAttributeParam('chatmessageform-chatid'),
-            "messageType": this.addAttributeParam('chatmessageform-messagetype'),
+            'message': this.addAttributeParam('messageaddform-message'),
+            "userId": this.addAttributeParam('messageaddform-userid'),
+            "chatId": this.addAttributeParam('messageaddform-chatid'),
+            "messageType": this.addAttributeParam('messageaddform-messagetype'),
         });
 
         var $chatHeader = $('.chatMsgHeader[data-chat-type="1"]');

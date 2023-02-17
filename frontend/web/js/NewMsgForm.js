@@ -60,7 +60,7 @@
         $(document).on('click', '.msgLinkCmd', function() {
             var $link = $(this);
 
-            $('#chatmessageform-message').val($link.text());
+            $('#messageaddform-message').val($link.text());
         });
     }
 
