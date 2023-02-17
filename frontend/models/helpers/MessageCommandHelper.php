@@ -42,6 +42,15 @@ class MessageCommandHelper
         } elseif ($cmdList[0] === self::MSG_CMD_ME) {
             array_shift($cmdList);
             return $userList[$msgItem->u] . ': ' . Html::encode(implode(' ', $cmdList));
+        } elseif ($cmdList[0] === self::MSG_CHAT_CMD_SHOW_MEMBERS) {
+            $resUsers = [];
+            if (empty($userList)) {
+                return '';
+            }
+            foreach ($userList as $userId => $userName) {
+                $resUsers[] = Html::tag('span', Html::encode($userName), ['class' => 'userItemInCmdList']);
+            }
+            return 'Список пользователей чата:<br/>' . implode('<br/>', $resUsers);
         }
 
         return $cmd;

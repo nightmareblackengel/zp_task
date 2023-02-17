@@ -81,7 +81,7 @@ class ChatMessageModel extends BaseObject
         if (empty($chatCountList)) {
             return [];
         }
-        // fill result
+
         $result = [];
         foreach ($chatsMsgCountList as $numInd => $transRes) {
             $chatCount = 0;
@@ -94,7 +94,6 @@ class ChatMessageModel extends BaseObject
                 $chatCount -= (int) $chatSysMsgCountList[$numInd];
             }
             $result[$chatIds[$numInd]] = $chatCount;
-
         }
 
         return $result;
