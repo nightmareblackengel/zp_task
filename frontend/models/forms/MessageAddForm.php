@@ -103,6 +103,11 @@ class MessageAddForm extends Form
             if ($cmdList[1] < 1) {
                 $this->addError($attribute, 'Некорректный формат комманды sendwithdelay. Количество секунд указано неверно.');
             }
+        } elseif ($cmdList[0] === MessageCommandHelper::MSG_CHAT_CMD_CLEAR_HISTORY) {
+            $isChatOwner = UserChatModel::getInstance()->isUserChatOwner($this->userId, $this->chatId);
+            if (!$isChatOwner) {
+                $this->addError($attribute, 'Данную комманду может выполнять только владелец канала.');
+            }
         }
 
         return false;

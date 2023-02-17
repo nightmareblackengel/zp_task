@@ -109,4 +109,26 @@ class UserChatModel extends MySqlModel
 
         return array_column($chatIds, 'chatId');
     }
+
+    public function isUserChatOwner(int $userId, int $chatId): bool
+    {
+        $queryStr = sprintf(
+            "SELECT `userId`, `chatId`, `isChatOwner` FROM %s WHERE `userId` = :userId AND `chatId` = :chatId",
+            static::tableName()
+        );
+        $item = static::getDb()
+            ->createCommand($queryStr, [
+                ':userId' => $userId,
+                ':chatId' => $chatId,
+            ])->queryOne();
+
+        if (empty($item)) {
+            return false;
+        }
+        if (empty($item['isChatOwner']) || $item['isChatOwner'] === self::IS_CHAT_OWNER_NO) {
+            return false;
+        }
+
+        return true;
+    }
 }
