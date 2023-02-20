@@ -7,7 +7,7 @@ $this->title = 'Страница Авторизации';
 /** @var \frontend\models\forms\AuthForm $model */
 ?>
 <div class="row">
-    <div class="col-lg-5">
+    <div class="col-lg-offset-4 col-lg-5">
         <?php $form = ActiveForm::begin([]); ?>
 
         <div class="bs-callout bs-callout-warning" id="callout-overview-not-both">
@@ -22,7 +22,7 @@ $this->title = 'Страница Авторизации';
         ]); ?>
 
         <div class="form-group">
-                <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+                <?= Html::submitButton('Авторизироваться', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
             </div>
 
         <?php ActiveForm::end(); ?>

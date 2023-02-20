@@ -26,7 +26,7 @@ class AuthForm extends Form
     public function attributeLabels()
     {
         return [
-            'email' => 'E-mail',
+            'email' => 'Email',
             'cap' => 'Каптча',
         ];
     }
