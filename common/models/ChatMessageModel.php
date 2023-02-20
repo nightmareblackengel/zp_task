@@ -3,6 +3,8 @@
 namespace common\models;
 
 use common\ext\patterns\Singleton;
+use common\models\mysql\UserChatModel;
+use common\models\mysql\UserModel;
 use common\models\redis\ChatMessageQueueStorage;
 use common\models\redis\SysMsgCountStringStorage;
 use Exception;
@@ -37,10 +39,14 @@ class ChatMessageModel extends BaseObject
     public function saveMessageFrom(MessageAddForm $form): bool
     {
         if ($form->message[0] === '/') {
+            $cmdList = explode(' ', $form->message);
             $form->messageType = self::MESSAGE_TYPE_SYSTEM;
             // доп. обработка тех сообщений, которые нужно выполнить
-            if (mb_strpos($form->message, MessageCommandHelper::MSG_CHAT_CMD_CLEAR_HISTORY) === 0) {
-                $this->executeClearhistoryCmd($form);
+            if ($cmdList[0] === MessageCommandHelper::MSG_CHAT_CMD_CLEAR_HISTORY) {
+                $this->executeClearHistoryCmd($form);
+                return true;
+            } elseif ($cmdList[0] === MessageCommandHelper::MSG_CHAT_CMD_KICK && count($cmdList)) {
+                $this->executeKickByEmail($cmdList[1], $form->chatId);
                 return true;
             }
         }
@@ -90,7 +96,24 @@ class ChatMessageModel extends BaseObject
         return $result;
     }
 
-    public function executeClearhistoryCmd(MessageAddForm $form): bool
+    protected function executeKickByEmail(string $userEmail, int $chatId): bool
+    {
+        $userItem = UserModel::getInstance()->getItemByEmail($userEmail);
+        if (empty($userItem)) {
+            return false;
+        }
+
+        $whereParams = ['userId' => $userItem['id'], 'chatId' => $chatId];
+        $userChatItem = UserChatModel::getInstance()->getItemBy($whereParams);
+        if (empty($userChatItem)) {
+            return false;
+        }
+        $userChatItem['isUserBanned'] = UserChatModel::IS_USER_BANNED_YES;
+
+        return (int) UserChatModel::getInstance()->updateBy($userChatItem, $whereParams);
+    }
+
+    protected function executeClearHistoryCmd(MessageAddForm $form): bool
     {
         $this->model->delete($form->chatId);
         $form->message = 'История чата была успешно удалена в ' . date('Y-m-d H:i:s');

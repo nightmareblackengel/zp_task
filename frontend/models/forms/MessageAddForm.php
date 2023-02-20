@@ -88,6 +88,10 @@ class MessageAddForm extends Form
             } elseif (!$userExists) {
                 $this->addError($attribute, 'В этом чате нет пользователя, с указанным емейлом');
             }
+            $isChatOwner = UserChatModel::getInstance()->isUserChatOwner($this->userId, $this->chatId);
+            if (!$isChatOwner) {
+                $this->addError($attribute, 'Данную комманду может выполнять только владелец канала.');
+            }
 
         } elseif ($cmdList[0] === MessageCommandHelper::MSG_CMD_ME) {
             if (count($cmdList) < 2 || empty($cmdList[1])) {
