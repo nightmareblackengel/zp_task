@@ -7,7 +7,7 @@ $this->title = 'Страница Авторизации';
 /** @var \frontend\models\forms\AuthForm $model */
 ?>
 <div class="row">
-    <div class="col-lg-offset-4 col-lg-5">
+    <div class="col-lg-offset-3 col-lg-6">
         <?php $form = ActiveForm::begin([]); ?>
 
         <div class="bs-callout bs-callout-warning" id="callout-overview-not-both">
