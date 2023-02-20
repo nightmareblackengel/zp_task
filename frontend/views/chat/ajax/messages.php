@@ -7,6 +7,7 @@ use frontend\models\helpers\MessageCommandHelper;
 /** @var int $currentUserId */
 /** @var array $userList */
 /** @var array $chat */
+/** @var ?int $chatOwnerId */
 ?>
 
 <?php
@@ -14,7 +15,9 @@ if ($messages === false) {
     echo 'Чтобы просмотреть сообщения выберите, пожалуйста чат из списка слева. <br/>Если нет ни одного чата, то создайте его!';
 } else {
     if (!empty($chat['isChannel'])) { ?>
-        <div class="chatMsgHeader" data-chat-type="<?php echo $chat['isChannel']; ?>">
+        <div class="chatMsgHeader" data-chat-type="<?php echo $chat['isChannel']; ?>"
+            title="<?php echo "Владелец: " . $userList[$chatOwnerId] ?? ''; ?>">
+
             <?php echo Html::encode($chat['name']); ?>
         </div>
     <?php

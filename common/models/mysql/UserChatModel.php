@@ -19,16 +19,10 @@ class UserChatModel extends MySqlModel
 
     public function isUserBelongToChat(int $userId, int $chatId): bool
     {
-        $queryStr = sprintf(
-            "SELECT `userId`, `chatId`, `isUserBanned` FROM %s WHERE `userId` = :userId AND `chatId` = :chatId",
-            static::tableName()
-        );
-        $item = static::getDb()
-            ->createCommand($queryStr, [
-                ':userId' => $userId,
-                ':chatId' => $chatId,
-            ])->queryOne();
-
+        $item = static::getItemBy([
+            'userId' => $userId,
+            'chatId' => $chatId,
+        ], '`userId`, `chatId`, `isUserBanned`');
         if (empty($item)) {
             return false;
         }
@@ -112,16 +106,10 @@ class UserChatModel extends MySqlModel
 
     public function isUserChatOwner(int $userId, int $chatId): bool
     {
-        $queryStr = sprintf(
-            "SELECT `userId`, `chatId`, `isChatOwner` FROM %s WHERE `userId` = :userId AND `chatId` = :chatId",
-            static::tableName()
-        );
-        $item = static::getDb()
-            ->createCommand($queryStr, [
-                ':userId' => $userId,
-                ':chatId' => $chatId,
-            ])->queryOne();
-
+        $item = static::getItemBy([
+            'userId' => $userId,
+            'chatId' => $chatId,
+        ], '`userId`, `chatId`, `isChatOwner`');
         if (empty($item)) {
             return false;
         }
@@ -130,5 +118,18 @@ class UserChatModel extends MySqlModel
         }
 
         return true;
+    }
+
+    public function getChatOwnerId(int $chatId): ?int
+    {
+        $item = static::getItemBy([
+            'chatId' => $chatId,
+            'isChatOwner' => self::IS_CHAT_OWNER_YES,
+        ], '`userId`, `chatId`');
+        if (empty($item['userId'])) {
+            return null;
+        }
+
+        return $item['userId'];
     }
 }
