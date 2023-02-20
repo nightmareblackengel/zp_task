@@ -12,39 +12,40 @@ use frontend\models\helpers\MessageCommandHelper;
 <?php
 if ($messages === false) {
     echo 'Чтобы просмотреть сообщения выберите, пожалуйста чат из списка слева. <br/>Если нет ни одного чата, то создайте его!';
-} elseif (empty($messages)) {
-    echo 'Вы не написали еще ни одного сообщения! Теперь есть повод!)';
 } else {
     if (!empty($chat['isChannel'])) { ?>
         <div class="chatMsgHeader" data-chat-type="<?php echo $chat['isChannel']; ?>">
             <?php echo Html::encode($chat['name']); ?>
         </div>
-        <?php
+    <?php
     }
-    foreach ($messages as $msgItem) {
-        $userId = $msgItem->u ?? 0;
+    if (empty($messages)) {
+        echo Html::tag('div', 'Вы не написали еще ни одного сообщения! Теперь есть повод!)', ['class' => 'oneMsgContainer']);
+    } else {
+        foreach ($messages as $msgItem) {
+            $userId = $msgItem->u ?? 0;
 
-        $contClasses = 'oneMsgContainer';
-        if ($msgItem->t === ChatMessageModel::MESSAGE_TYPE_SYSTEM) {
-            $contClasses .= ' nbeMsgSystem';
-        } elseif ($userId === $currentUserId) {
-            $contClasses .= ' nbeMsgToRight';
-        }
-        ?>
+            $contClasses = 'oneMsgContainer';
+            if ($msgItem->t === ChatMessageModel::MESSAGE_TYPE_SYSTEM) {
+                $contClasses .= ' nbeMsgSystem';
+            } elseif ($userId === $currentUserId) {
+                $contClasses .= ' nbeMsgToRight';
+            }
+            ?>
 
-        <div class="<?php echo $contClasses; ?>" data-msg-type="<?php echo $msgItem->t ?? '0'; ?>">
+            <div class="<?php echo $contClasses; ?>" data-msg-type="<?php echo $msgItem->t ?? '0'; ?>">
 
-            <?php if ($msgItem->t === ChatMessageModel::MESSAGE_TYPE_SYSTEM) { ?>
-                <?php echo MessageCommandHelper::printCmd($msgItem->m, $msgItem, $userList); ?>
-            <?php } else { ?>
-                <div class="nbeUser">
-                    <?php if ($msgItem->u === $currentUserId) { ?>
-                        Вы:
-                    <?php } else { ?>
-                        от пользователя: <?php echo Html::encode($userList[$msgItem->u] ?? '-'); ?>
-                    <?php } ?>
-                </div>
-                <span class="nbeMessage <?php echo $userId !== $currentUserId ? 'nbeBgLGolden' : 'nbeLCyan'; ?>">
+                <?php if ($msgItem->t === ChatMessageModel::MESSAGE_TYPE_SYSTEM) { ?>
+                    <?php echo MessageCommandHelper::printCmd($msgItem->m, $msgItem, $userList); ?>
+                <?php } else { ?>
+                    <div class="nbeUser">
+                        <?php if ($msgItem->u === $currentUserId) { ?>
+                            Вы:
+                        <?php } else { ?>
+                            от пользователя: <?php echo Html::encode($userList[$msgItem->u] ?? '-'); ?>
+                        <?php } ?>
+                    </div>
+                    <span class="nbeMessage <?php echo $userId !== $currentUserId ? 'nbeBgLGolden' : 'nbeLCyan'; ?>">
                 <?php echo Html::encode($msgItem->m ?? '[пустое сообщение]'); ?>
                 <span class="nbeDate">
                     <?php
@@ -55,8 +56,9 @@ if ($messages === false) {
                     ?>
                 </span>
             </span>
-            <?php } ?>
-        </div>
+                <?php } ?>
+            </div>
 
-    <?php }
+        <?php }
+    }
 } ?>
