@@ -3,6 +3,7 @@
 namespace frontend\models\helpers;
 
 use common\ext\traits\ErrorTrait;
+use common\models\mysql\UserChatModel;
 use frontend\models\ajax\AjaxChatModel;
 use frontend\models\ajax\AjaxMessageModel;
 use frontend\models\ajax\AjaxNewItemModel;
@@ -62,7 +63,9 @@ class AjaxHelper
             'send_time' => time(),
             'chats' => $this->chat->prepareResponse($this->userId, $this->chat->id),
             'messages' => $this->message->prepareResponse($this->userId, $this->chat->id),
-            'new_message' => $this->newItem->prepareResponse($this->userId, $this->chat->id, ['isUserBanned' => $userChatItem['isUserBanned']]),
+            'new_message' => $this->newItem->prepareResponse($this->userId, $this->chat->id, [
+                'isUserBanned' => $userChatItem['isUserBanned'] ?? UserChatModel::IS_USER_BANNED_NO,
+            ]),
         ];
     }
 
