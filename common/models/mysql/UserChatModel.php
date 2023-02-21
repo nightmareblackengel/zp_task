@@ -17,22 +17,6 @@ class UserChatModel extends MySqlModel
         return '`user_chat`';
     }
 
-    public function isUserBelongToChat(int $userId, int $chatId): bool
-    {
-        $item = static::getItemBy([
-            'userId' => $userId,
-            'chatId' => $chatId,
-        ], '`userId`, `chatId`, `isUserBanned`');
-        if (empty($item)) {
-            return false;
-        }
-        if (!empty($item['isUserBanned']) && $item['isUserBanned'] === self::IS_USER_BANNED_YES) {
-            return false;
-        }
-
-        return true;
-    }
-
     public function isUserEmailBelongToChat(int $chatId, ?string $userEmail): ?bool
     {
         $queryStr = sprintf(

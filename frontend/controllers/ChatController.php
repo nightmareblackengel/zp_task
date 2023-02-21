@@ -59,11 +59,17 @@ class ChatController extends AuthController
             ];
         }
 
-        $hasAccess = UserChatModel::getInstance()->isUserBelongToChat($formModel->userId, $formModel->chatId);
-        if (!$hasAccess) {
+        $userChatItem = $this->getUserChatItem($formModel->userId, $formModel->chatId);
+        if (empty($userChatItem)) {
             return [
                 'result' => AjaxHelper::AJAX_RESPONSE_ERR,
                 'message' => 'Ошибка 403! Доступ запрещен!',
+            ];
+        }
+        if ($userChatItem['isUserBanned'] === UserChatModel::IS_USER_BANNED_YES) {
+            return [
+                'result' => AjaxHelper::AJAX_RESPONSE_ERR,
+                'message' => 'Вы больше не можете отправлять сообщения в этом чате, т.к. владелец чата Вас забанил!)',
             ];
         }
 

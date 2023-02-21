@@ -43,6 +43,10 @@ class MessageAddForm extends Form
         $user = Yii::$app->controller->getCurrentUser();
         $this->userId = $user['id'];
 
+        if (empty($this->userId) || empty($this->chatId)) {
+            return false;
+        }
+
         return $res;
     }
 
