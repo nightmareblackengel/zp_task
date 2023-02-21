@@ -43,7 +43,7 @@ class ChatController extends AuthController
             return $this->ajaxErr('Ошибка 403! У Вас нет доступа к этому чату');
         }
 
-        return $form->prepareData();
+        return $form->prepareData($userChatItem);
     }
 
     public function actionCreateMsg()
