@@ -11,5 +11,5 @@ abstract class AjaxBase extends BaseObject
 
     abstract public function load(?array $data): bool;
 
-    abstract public function prepareResponse(?int $userId, ?int $chatId): ?array;
+    abstract public function prepareResponse(?int $userId, ?int $chatId, ?array $params = []): ?array;
 }

@@ -23,7 +23,7 @@ class AjaxChatModel extends AjaxBase
         return true;
     }
 
-    public function prepareResponse(?int $userId, ?int $chatId): ?array
+    public function prepareResponse(?int $userId, ?int $chatId, ?array $params = []): ?array
     {
         if ($this->showInResponse === AjaxHelper::AJAX_REQUEST_EXCLUDE) {
             return null;
