@@ -13,6 +13,8 @@
 
     NewMsgForm.prototype.initSendBtn = function ()
     {
+        var selfNmf = this;
+
         $(document).on('click', '.nbeAddNewMsgBtn', function(event) {
             var $sendBtn = $(this);
             if ($sendBtn.attr('data-process') === '1') {
@@ -38,6 +40,7 @@
                 if (data.result === AJAX_RESPONSE_ERR) {
                     if (data.message) {
                         alert(data.message);
+                        selfNmf.ajaxDoneHandler();
                         return;
                     }
                     if (data.form_err) {
@@ -50,9 +53,14 @@
                         AJAX_REQUEST_INCLUDE
                     );
                 }
-                $('.nbeAddNewMsgBtn').attr('data-process', '0');
+                selfNmf.ajaxDoneHandler();
             });
         });
+    }
+
+    NewMsgForm.prototype.ajaxDoneHandler = function ()
+    {
+        $('.nbeAddNewMsgBtn').attr('data-process', '0');
     }
 
     NewMsgForm.prototype.initCommands = function()
