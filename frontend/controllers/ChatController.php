@@ -34,8 +34,13 @@ class ChatController extends AuthController
         }
 
         $form = new AjaxHelper();
-        if (!$form->load(Yii::$app->request->post()) || !$form->hasAccess()) {
+        if (!$form->load(Yii::$app->request->post())) {
             return $this->ajaxErr($form->getDefaultError());
+        }
+
+        $userChatItem = $this->getUserChatItem($form->userId, $form->chat->id);
+        if (empty($userChatItem)) {
+            return $this->ajaxErr('Ошибка 403! У Вас нет доступа к этому чату');
         }
 
         return $form->prepareData();
@@ -128,6 +133,14 @@ class ChatController extends AuthController
             'result' => AjaxHelper::AJAX_RESPONSE_ERR,
             'message' => $message,
         ];
+    }
+
+    protected function getUserChatItem(?int $userId, ?int $chatId): array
+    {
+        return UserChatModel::getInstance()->getItemBy([
+            'userId' => $userId,
+            'chatId' => $chatId,
+        ], '`userId`, `chatId`, `isUserBanned`, `isChatOwner`');
     }
 
 //    public function actionTest()

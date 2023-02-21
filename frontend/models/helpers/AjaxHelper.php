@@ -39,7 +39,7 @@ class AjaxHelper
     {
         $currentUser = Yii::$app->controller->getCurrentUser();
         if (empty($currentUser)) {
-            $this->addError('Ошибка! данный пользователь не найден.');
+            $this->addError(self::DEFAULT_ERR_ATTRIBUTE, 'Ошибка! данный пользователь не найден.');
             return false;
         }
         $this->userId = $currentUser['id'];
@@ -48,17 +48,8 @@ class AjaxHelper
         $this->message->load($data['messages'] ?? []);
         $this->newItem->load($data['new_item'] ?? []);
 
-        return true;
-    }
-
-    public function hasAccess()
-    {
-        if (!empty($this->chat->id)) {
-            $hasAccess = UserChatModel::getInstance()->isUserBelongToChat($this->userId, $this->chat->id);
-            if (!$hasAccess) {
-                $this->addError(self::DEFAULT_ERR_ATTRIBUTE, 'Ошибка 403! У Вас нет доступа к этому чату');
-                return false;
-            }
+        if (empty($this->chat->id)) {
+            $this->addError(self::DEFAULT_ERR_ATTRIBUTE, 'Возникла непредвиденная ошибка!');
         }
 
         return true;
