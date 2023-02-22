@@ -1,0 +1,2 @@
+docker exec -it mphp /var/www/html/ztt.loc/yii delay-message/index
+docker exec -it mphp /var/www/html/ztt.loc/yii delay-message/create-test
