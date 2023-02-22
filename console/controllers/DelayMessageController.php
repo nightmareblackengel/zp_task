@@ -1,6 +1,7 @@
 <?php
 namespace console\controllers;
 
+use common\models\redis\DelayMsgSortedSetStorage;
 use yii\console\Controller;
 
 /**
@@ -27,8 +28,30 @@ class DelayMessageController extends Controller
         return false;
     }
 
-    public function actionCreateTest()
+    public function actionCreateTest($delayInSeconds = 60)
     {
+        echo "action CreateTest started", PHP_EOL;
+        $startAt = time();
+
+        for ($i = 0; $i < 10; $i++) {
+            DelayMsgSortedSetStorage::getInstance()->addTo(
+                $startAt,
+                '[' . date('Y-m-d-H-i-s') . '] message-' . rand(1, 10000));
+        }
+
+//        $res = DelayMsgSortedSetStorage::getInstance()->getData(0, 100000000000, true);
+//        print_r2($res);
+        $res = DelayMsgSortedSetStorage::getInstance()->getData(1677103277, 1677103277, true, true);
+        print_r2($res);
+
+        $resR = DelayMsgSortedSetStorage::getInstance()->removeByScore(1677103277, 1677103277);
+        var_dump($resR); echo PHP_EOL;
+
+        $res = DelayMsgSortedSetStorage::getInstance()->getData(0, 100000000000, true);
+        print_r2($res);
+
+
+        echo PHP_EOL, "action CreateTest ended", PHP_EOL;
         return false;
     }
 }

@@ -6,12 +6,6 @@ $params = array_merge(
     require __DIR__ . '/params-local.php'
 );
 
-$redisConfigs = [
-    'class' => 'yii\redis\Connection',
-    'hostname' => '172.18.0.103',
-    'port' => 6379,
-];
-
 return [
     'id' => 'ztt',
     'basePath' => dirname(__DIR__),
@@ -24,29 +18,6 @@ return [
         'request' => [
             'class' => \common\ext\web\Request::class,
         ],
-        'cache' => [
-            'class' => 'yii\caching\MemCache',
-            'servers' => [
-                [
-                    'host' => '172.18.0.104',
-                    'port' => 11211,
-                    'weight' => 100,
-                ],
-            ],
-            'useMemcached' => true,
-        ],
-//        'cache' => [
-//            'class' => 'yii\redis\Cache',
-//            'redis' => 'redis1',
-//        ],
-        // sessions
-        'redisDb1' => array_merge(['database' => 1], $redisConfigs),
-        // user auth
-        'redisDb2' => array_merge(['database' => 2], $redisConfigs),
-        // chat messages
-        'redisDb3' => array_merge(['database' => 3], $redisConfigs),
-        // количество системных сообщений (mhash: user -> chat)
-        'redisDb4' => array_merge(['database' => 4], $redisConfigs),
         'user' => [
             'class' => \frontend\models\UserAuth::class,
         ],
