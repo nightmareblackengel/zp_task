@@ -34,6 +34,7 @@
             }).done(function (data) {
                 if (!data || !data.result) {
                     alert('Возникла ошибка при сохранении сообщения!');
+                    selfNmf.ajaxDoneHandler();
                     return;
                 }
 

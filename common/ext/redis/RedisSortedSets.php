@@ -4,7 +4,7 @@ namespace common\ext\redis;
 
 abstract class RedisSortedSets extends RedisBase
 {
-    public function addTo(int $num, array &$uniqueData): ?int
+    public function addTo(int $num, array $uniqueData): ?int
     {
         return (int) static::getStorage()
             ->zadd(

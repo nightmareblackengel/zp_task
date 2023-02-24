@@ -117,7 +117,7 @@ class ChatMessageModel extends BaseObject
         return (int) UserChatModel::getInstance()->updateBy($userChatItem, $whereParams);
     }
 
-    protected function executeSendMsgWithDelay(MessageAddForm $form, array &$cmdList)
+    protected function executeSendMsgWithDelay(MessageAddForm $form, array &$cmdList): bool
     {
         if (empty($cmdList)) {
             return false;
@@ -125,15 +125,13 @@ class ChatMessageModel extends BaseObject
         array_shift($cmdList);
         $timeout = array_shift($cmdList);
 
-        DelayMsgSortedSetStorage::getInstance()
+        return (bool) DelayMsgSortedSetStorage::getInstance()
             ->addTo(
                 time() + (int) $timeout, [
                 'c' => $form->chatId,
                 'u' => $form->userId,
                 'm' => implode(' ', $cmdList)
             ]);
-
-        return true;
     }
 
     protected function executeClearHistoryCmd(MessageAddForm $form): bool
