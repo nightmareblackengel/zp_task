@@ -55,7 +55,31 @@ class ChatMessageModel extends BaseObject
             }
         }
 
-        return $this->saveMessage($form);
+        return $this->insertMessage($form->userId, $form->chatId, $form->message, $form->messageType);
+    }
+
+    public function insertMessage(int $userId, int $chatId, string $message, int $messageType, $date = null): bool
+    {
+        if (empty($date)) {
+            $date = microtime(true);
+        }
+
+        $msgSaveRes = (bool) $this->model
+            ->addToTail(
+                $chatId,
+                json_encode([
+                    'u' => $userId,
+                    'm' => $message,
+                    't' => $messageType,
+                    's' => self::STATUS_ACTIVE,
+                    'd' => $date,
+                ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+            );
+        if ($messageType === self::MESSAGE_TYPE_SYSTEM) {
+            SysMsgCountStringStorage::getInstance()->increment($chatId);
+        }
+
+        return $msgSaveRes;
     }
 
     public function getChatListMsgCount(array &$chatIds): array
@@ -141,25 +165,6 @@ class ChatMessageModel extends BaseObject
         // удалим значение "количество системных комманд"
         SysMsgCountStringStorage::getInstance()->delete($form->chatId);
         // сохраним сообщение
-        return $this->saveMessage($form);
-    }
-
-    protected function saveMessage(MessageAddForm $form): bool
-    {
-        $msgSaveRes = (bool) $this->model->addToTail(
-            $form->chatId,
-            json_encode([
-                'u' => $form->userId,
-                'm' => $form->message,
-                't' => $form->messageType,
-                's' => self::STATUS_ACTIVE,
-                'd' => microtime(true),
-            ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
-        );
-        if ($form->messageType === self::MESSAGE_TYPE_SYSTEM) {
-            SysMsgCountStringStorage::getInstance()->increment($form->chatId);
-        }
-
-        return $msgSaveRes;
+        return $this->insertMessage($form->userId, $form->chatId, $form->message, $form->messageType);
     }
 }
