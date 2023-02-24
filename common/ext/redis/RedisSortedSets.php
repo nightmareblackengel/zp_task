@@ -4,9 +4,14 @@ namespace common\ext\redis;
 
 abstract class RedisSortedSets extends RedisBase
 {
-    public function addTo(int $num, $uniqueData): ?int
+    public function addTo(int $num, array &$uniqueData): ?int
     {
-        return (int) static::getStorage()->zadd($this->prepareKey(), $num, $uniqueData);
+        return (int) static::getStorage()
+            ->zadd(
+                $this->prepareKey(),
+                $num,
+                json_encode($uniqueData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+            );
     }
 
     public function getData(int $rangeFrom, int $rangeTill, bool $useByScore = false, bool $useWithScores = false, int $limit = 0): ?array

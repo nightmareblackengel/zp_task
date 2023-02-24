@@ -11,6 +11,9 @@ use Yii;
 
 class MessageAddForm extends Form
 {
+    const SEND_MSG_WITH_DELAY_MIN_THR = 5;
+    const SEND_MSG_WITH_DELAY_MAX_THR = 3600;
+
     public ?string $message = null;
     public ?int $userId = null;
     public ?int $chatId = null;
@@ -108,8 +111,15 @@ class MessageAddForm extends Form
                 return true;
             }
             $cmdList[1] = (int) $cmdList[1];
-            if ($cmdList[1] < 1) {
-                $this->addError($attribute, 'Некорректный формат комманды sendwithdelay. Количество секунд указано неверно.');
+            if ($cmdList[1] < self::SEND_MSG_WITH_DELAY_MIN_THR || $cmdList[1] > self::SEND_MSG_WITH_DELAY_MAX_THR) {
+                $this->addError(
+                    $attribute,
+                    sprintf(
+                        'Некорректный формат комманды sendwithdelay. Количество секунд указано неверно. Минимальное значение =%d. Максмальное значение=%d.',
+                        self::SEND_MSG_WITH_DELAY_MIN_THR,
+                        self::SEND_MSG_WITH_DELAY_MAX_THR
+                    )
+                );
             }
         } elseif ($cmdList[0] === MessageCommandHelper::MSG_CHAT_CMD_CLEAR_HISTORY) {
             $isChatOwner = UserChatModel::getInstance()->isUserChatOwner($this->userId, $this->chatId);

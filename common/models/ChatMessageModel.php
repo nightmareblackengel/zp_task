@@ -6,6 +6,7 @@ use common\ext\patterns\Singleton;
 use common\models\mysql\UserChatModel;
 use common\models\mysql\UserModel;
 use common\models\redis\ChatMessageQueueStorage;
+use common\models\redis\DelayMsgSortedSetStorage;
 use common\models\redis\SysMsgCountStringStorage;
 use Exception;
 use frontend\models\forms\MessageAddForm;
@@ -48,13 +49,16 @@ class ChatMessageModel extends BaseObject
             } elseif ($cmdList[0] === MessageCommandHelper::MSG_CHAT_CMD_KICK && count($cmdList)) {
                 $this->executeKickByEmail($cmdList[1], $form->chatId);
                 return true;
+            } elseif ($cmdList[0] === MessageCommandHelper::MSG_CMD_SEND_MSG_WITH_DELAY) {
+                $this->executeSendMsgWithDelay($form, $cmdList);
+                return true;
             }
         }
 
         return $this->saveMessage($form);
     }
 
-    public function getChatListMsgCount(array $chatIds): array
+    public function getChatListMsgCount(array &$chatIds): array
     {
         if (empty($chatIds)) {
             return [];
@@ -111,6 +115,25 @@ class ChatMessageModel extends BaseObject
         $userChatItem['isUserBanned'] = UserChatModel::IS_USER_BANNED_YES;
 
         return (int) UserChatModel::getInstance()->updateBy($userChatItem, $whereParams);
+    }
+
+    protected function executeSendMsgWithDelay(MessageAddForm $form, array &$cmdList)
+    {
+        if (empty($cmdList)) {
+            return false;
+        }
+        array_shift($cmdList);
+        $timeout = array_shift($cmdList);
+
+        DelayMsgSortedSetStorage::getInstance()
+            ->addTo(
+                time() + (int) $timeout, [
+                'c' => $form->chatId,
+                'u' => $form->userId,
+                'm' => implode(' ', $cmdList)
+            ]);
+
+        return true;
     }
 
     protected function executeClearHistoryCmd(MessageAddForm $form): bool
