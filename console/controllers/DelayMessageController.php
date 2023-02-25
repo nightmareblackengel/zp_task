@@ -26,9 +26,7 @@ use yii\console\Controller;
  */
 class DelayMessageController extends Controller
 {
-    // TODO:
-//    const MAX_CYCLE_TIME = 60;
-    const MAX_CYCLE_TIME = 5;
+    const MAX_CYCLE_TIME = 60;
 
     const TEST_USER_ID = 5;
     const TEST_CHAT_ID = 27;
@@ -52,18 +50,7 @@ class DelayMessageController extends Controller
         // до тех пор, пока скрипт не пройдет по всем секундам (от 0 до 59 включительно) от тек. минуты
         while ($insertTime < $endTime) {
             $currentTime = time();
-
-            ## todo:
-            $testTime  = 1677333900;
-            $this->getFromSoAndInsertIntoList($testTime, $showLog);
-            exit();
-
-            // вставка данных
-
-
-
-            echo PHP_EOL, 'ts=', date('Y-m-d H:i:s', $insertTime);
-            echo PHP_EOL, 'cd=', date('Y-m-d H:i:s', $currentTime);
+            $insertedCount = $this->getFromSoAndInsertIntoList($insertTime, $showLog);
             // если "текущая секунда" больше "секунды вставки", то увеличиваем последнюю на 1
             if ($currentTime > $insertTime) {
                 $insertTime++;
@@ -73,8 +60,9 @@ class DelayMessageController extends Controller
             }
         }
 
-        $startTime = $endTime;
-        $endTime = $endTime + 30;
+        echo PHP_EOL, "LAST CYCLE", PHP_EOL;
+        exit();
+
         $dataExists = true;
         while ($dataExists) {
             // читаем данные
@@ -136,10 +124,11 @@ class DelayMessageController extends Controller
             return 0;
         }
 
-        $insertCount = $this->insertMessages($time, $insertList);
+        $insertCount = $this->insertMessages($time, $insertList, $showLog);
         $delCount = (int) DelayMsgSortedSetStorage::getInstance()->removeByScore($time, $time);
-        $this->print_time($showLog);
-        echo PHP_EOL, 'deleted items=[', $delCount, ']', PHP_EOL;
+        if ($showLog) {
+            echo PHP_EOL, 'deleted items=[', $delCount, ']', PHP_EOL;
+        }
 
         return $insertCount;
     }
