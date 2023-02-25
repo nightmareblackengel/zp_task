@@ -4,6 +4,7 @@ namespace console\controllers;
 use common\models\ChatMessageModel;
 use common\models\redis\DelayMsgSortedSetStorage;
 use DateTime;
+use Faker\Factory;
 use yii\console\Controller;
 
 /**
@@ -35,9 +36,12 @@ class DelayMessageController extends Controller
     // TODO:
     // ограничить запуск скрипта до 2х в минуту
     // до одного в минуту
-    public function actionIndex()
+    public function actionIndex($showLog = 1)
     {
         set_time_limit(120);
+        ini_set('memory_limit', '1024M');
+
+        $showLog = (int) $showLog;
 
         $startTime = $this->getTimeStampWithStartAt0(0);
         $endTime = $startTime + self::MAX_CYCLE_TIME;
@@ -50,8 +54,8 @@ class DelayMessageController extends Controller
             $currentTime = time();
 
             ## todo:
-            $testTime  = 1677330360;
-            $this->getFromSoAndInsertIntoList($testTime);
+            $testTime  = 1677333900;
+            $this->getFromSoAndInsertIntoList($testTime, $showLog);
             exit();
 
             // вставка данных
@@ -84,76 +88,100 @@ class DelayMessageController extends Controller
 
     // создание тестовых записей, с "отрывом в секундах",
     // если значение 60, то будет вставка с timestamp "следующей минуты"
-    public function actionCreateTest($delayInSeconds = 60, $insertCount = 2000)
+    public function actionCreateTest($delayInSeconds = 60, $insertCount = 2000, $showLog = 1)
     {
         echo "action CreateTest started", PHP_EOL;
 
+        $showLog = (int) $showLog;
+        $delayInSeconds = (int) $delayInSeconds;
+        $insertCount = (int) $insertCount;
+        if (empty($insertCount)) {
+            echo PHP_EOL, "Error. Incorrect params. Script exit.", PHP_EOL;
+            return '';
+        }
+        set_time_limit(10);
+        ini_set('memory_limit', '1024M');
+
         $startAt = $this->getTimeStampWithStartAt0($delayInSeconds);
-        $this->print_time();
+        $this->print_time($showLog);
 
         $resInserted = 0;
+        $faker = Factory::create('ru_RU');
         for ($i = 0; $i < 60; $i++) {
-            $this->print_time();
-
+            $this->print_time($showLog);
             for ($j = 0; $j < $insertCount; $j++) {
-                // todo: replace it real structure
                 $resInserted += (int) DelayMsgSortedSetStorage::getInstance()
                     ->addTo(
-                        $startAt + $j, [
+                        $startAt + $i, [
                             'c' => self::TEST_CHAT_ID,
                             'u' => self::TEST_USER_ID,
-                            'm' => '[' . date('Y-m-d_H-i-s') . '] message-' . $j + $i*$j . '-' . rand(10000, 1000000),
+                            'm' => '[' . date('Y-m-d_H-i-s') . '] message-' . rand(100000, 999999). ($j + $i*$j) . '-' . $faker->realText(),
                         ]
                 );
             }
-            $this->print_time();
+            $this->print_time($showLog);
         }
+        echo PHP_EOL, 'action CreateTest ended;', PHP_EOL, 'inserted=[', $resInserted, ']', PHP_EOL;
 
-        echo PHP_EOL, 'inserted=[', $resInserted, ']', PHP_EOL;
-
-        echo PHP_EOL, "action CreateTest ended", PHP_EOL;
         return false;
     }
 
     // реализовать вставку удаление на тестовых данных, а затем переходить на "реальное содержимое"
-    protected function getFromSoAndInsertIntoList($time): ?int
+    protected function getFromSoAndInsertIntoList(int $time, int $showLog): ?int
     {
-        // TODO:
-        // 1. добавление сообщений в "корректном виде"
-        // 2. правки в этом метода
-        // 3. проверка дат на клиенте
-
-        $this->print_time();
+        $this->print_time($showLog);
         $insertList = DelayMsgSortedSetStorage::getInstance()
-            ->getData($time, $time, true, true);
-
-        $insertCount = 0;
-        if (!empty($insertList)) {
-            foreach ($insertList as $item) {
-                $insertCount += (int) ChatMessageModel::getInstance()
-                    ->insertMessage(
-                        self::TEST_USER_ID,
-                        self::TEST_CHAT_ID,
-                        // TODO: CHANGE THERE
-                        $item['v'] ?? '??',
-                        ChatMessageModel::MESSAGE_TYPE_SIMPLE,
-                        // TODO: CHANGE THERE
-                        $item['v'] ?? '',
-                    );
-            }
-            $this->print_time();
-            echo PHP_EOL, 'inserted items=[', $insertCount, ']', PHP_EOL;
+            ->getData($time, $time, true, false);
+        if (empty($insertList)) {
+            return 0;
         }
 
+        $insertCount = $this->insertMessages($time, $insertList);
         $delCount = (int) DelayMsgSortedSetStorage::getInstance()->removeByScore($time, $time);
-        $this->print_time();
+        $this->print_time($showLog);
         echo PHP_EOL, 'deleted items=[', $delCount, ']', PHP_EOL;
 
         return $insertCount;
     }
 
-    protected function print_time()
+    protected function insertMessages($time, array &$list, $showLog = true): int
     {
+        if (empty($list)) {
+            return 0;
+        }
+
+        $insertCount = 0;
+        foreach ($list as $item) {
+            $messageItem = @json_decode($item, true);
+            if (empty($messageItem)) {
+                continue;
+            }
+            if (empty($messageItem['c']) || empty($messageItem['u']) || empty($messageItem['m'])) {
+                continue;
+            }
+
+            $insertCount += (int) ChatMessageModel::getInstance()
+                ->insertMessage(
+                    $messageItem['u'],
+                    $messageItem['c'],
+                    $messageItem['m'],
+                    ChatMessageModel::MESSAGE_TYPE_SIMPLE,
+                    $time
+                );
+        }
+        if ($showLog) {
+            $this->print_time($showLog);
+            echo PHP_EOL, 'inserted items=[', $insertCount, ']', PHP_EOL;
+        }
+
+        return $insertCount;
+    }
+
+    protected function print_time(int $showLog = 1)
+    {
+        if (empty($showLog)) {
+            return;
+        }
         $now = DateTime::createFromFormat('U.u', microtime(true));
         echo PHP_EOL, $now->format("m-d-Y H:i:s.u");
     }
