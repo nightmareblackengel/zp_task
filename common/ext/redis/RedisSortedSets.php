@@ -31,8 +31,20 @@ abstract class RedisSortedSets extends RedisBase
         if (empty($data)) {
             return null;
         }
+        if (!$useWithScores) {
+            return $data;
+        }
 
-        return $data;
+        $parsedRes = [];
+        for ($j = 0; $j < count($data); $j+=2) {
+            $parsedRes[] = [
+                'v' => $data[$j],
+                't' => $data[$j + 1],
+            ];
+        }
+        unset($data);
+
+        return $parsedRes;
     }
 
     public function removeByScore(int $rangeFrom, int $rangeTill): ?int
