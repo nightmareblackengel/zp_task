@@ -52,12 +52,11 @@ class DelayMessageController extends Controller
             $currentTime = time();
             $insertedCount = $this->getFromSoAndInsertIntoList($insertTime, $insertTime, $showLog);
             // если "текущая секунда" больше "секунды вставки", то увеличиваем последнюю на 1
-            if ($currentTime > $insertTime) {
-                $insertTime++;
-            } else {
+            if ($currentTime < $insertTime) {
                 // ожидаем секунду
                 usleep(1000000);
             }
+            $insertTime++;
         }
 
         echo PHP_EOL, "LAST CYCLE", PHP_EOL;
