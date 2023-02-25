@@ -50,7 +50,7 @@ class DelayMessageController extends Controller
         // до тех пор, пока скрипт не пройдет по всем секундам (от 0 до 59 включительно) от тек. минуты
         while ($insertTime < $endTime) {
             $currentTime = time();
-            $insertedCount = $this->getFromSoAndInsertIntoList($insertTime, $showLog);
+            $insertedCount = $this->getFromSoAndInsertIntoList($insertTime, $insertTime, $showLog);
             // если "текущая секунда" больше "секунды вставки", то увеличиваем последнюю на 1
             if ($currentTime > $insertTime) {
                 $insertTime++;
@@ -115,17 +115,17 @@ class DelayMessageController extends Controller
     }
 
     // реализовать вставку удаление на тестовых данных, а затем переходить на "реальное содержимое"
-    protected function getFromSoAndInsertIntoList(int $time, int $showLog): ?int
+    protected function getFromSoAndInsertIntoList(int $timeStart, $timeEnd, int $showLog): ?int
     {
         $this->print_time($showLog);
         $insertList = DelayMsgSortedSetStorage::getInstance()
-            ->getData($time, $time, true, false);
+            ->getData($timeStart, $timeEnd, true, true);
         if (empty($insertList)) {
             return 0;
         }
 
-        $insertCount = $this->insertMessages($time, $insertList, $showLog);
-        $delCount = (int) DelayMsgSortedSetStorage::getInstance()->removeByScore($time, $time);
+        $insertCount = $this->insertMessages($insertList, $showLog);
+        $delCount = (int) DelayMsgSortedSetStorage::getInstance()->removeByScore($timeStart, $timeEnd);
         if ($showLog) {
             echo PHP_EOL, 'deleted items=[', $delCount, ']', PHP_EOL;
         }
@@ -133,7 +133,7 @@ class DelayMessageController extends Controller
         return $insertCount;
     }
 
-    protected function insertMessages($time, array &$list, $showLog = true): int
+    protected function insertMessages(array &$list, $showLog = true): int
     {
         if (empty($list)) {
             return 0;
@@ -141,7 +141,7 @@ class DelayMessageController extends Controller
 
         $insertCount = 0;
         foreach ($list as $item) {
-            $messageItem = @json_decode($item, true);
+            $messageItem = @json_decode($item['v'], true);
             if (empty($messageItem)) {
                 continue;
             }
@@ -155,7 +155,7 @@ class DelayMessageController extends Controller
                     $messageItem['c'],
                     $messageItem['m'],
                     ChatMessageModel::MESSAGE_TYPE_SIMPLE,
-                    $time
+                    $item['t']
                 );
         }
         if ($showLog) {
