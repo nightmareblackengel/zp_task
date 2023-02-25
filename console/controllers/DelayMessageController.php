@@ -44,10 +44,11 @@ class DelayMessageController extends Controller
             return '';
         }
 
+        $insertTotal = 0;
         // до тех пор, пока скрипт не пройдет по всем секундам (от 0 до 59 включительно) от тек. минуты
         while ($insertTime < $endTime) {
             $currentTime = time();
-            $insertedCount = $this->getFromSoAndInsertIntoList($insertTime, $insertTime, $showLog);
+            $insertTotal += $this->getFromSoAndInsertIntoList($insertTime, $insertTime, $showLog);
             // если "текущая секунда" больше "секунды вставки", то увеличиваем последнюю на 1
             if ($currentTime < $insertTime) {
                 // ожидаем секунду
@@ -58,6 +59,7 @@ class DelayMessageController extends Controller
 
         $insertedCount = $this->getFromSoAndInsertIntoList(0, $endTime, false);
         if ($showLog) {
+            echo PHP_EOL, 'inserted message count =[', $insertTotal, ']', PHP_EOL;
             echo 'inserted late message count =[', $insertedCount, ']', PHP_EOL;
         }
 
@@ -116,9 +118,9 @@ class DelayMessageController extends Controller
 
         $insertCount = $this->insertMessages($insertList, $showLog);
         $delCount = (int) DelayMsgSortedSetStorage::getInstance()->removeByScore($timeStart, $timeEnd);
-        if ($showLog) {
-            echo PHP_EOL, 'deleted items=[', $delCount, ']', PHP_EOL;
-        }
+//        if ($showLog) {
+//            echo PHP_EOL, 'deleted items=[', $delCount, ']', PHP_EOL;
+//        }
 
         return $insertCount;
     }
@@ -148,10 +150,10 @@ class DelayMessageController extends Controller
                     $item['t']
                 );
         }
-        if ($showLog) {
-            $this->print_time($showLog);
-            echo PHP_EOL, 'inserted items=[', $insertCount, ']', PHP_EOL;
-        }
+//        if ($showLog) {
+//            $this->print_time($showLog);
+//            echo PHP_EOL, 'inserted items=[', $insertCount, ']', PHP_EOL;
+//        }
 
         return $insertCount;
     }
@@ -173,14 +175,14 @@ class DelayMessageController extends Controller
     }
 
     // удаляет только лишь указанные в score значения
-    protected function removeCertain(int $certainScore)
-    {
-        echo PHP_EOL, 'remove score = ', $certainScore, PHP_EOL;
-        $res = DelayMsgSortedSetStorage::getInstance()->getData($certainScore, $certainScore, true, true);
-        print_r2($res, 'Elements for remove');
-        $resR = DelayMsgSortedSetStorage::getInstance()->removeByScore($certainScore, $certainScore);
-        var_dump($resR); echo PHP_EOL;
-        $res = DelayMsgSortedSetStorage::getInstance()->getData(0, 100000000000, true);
-        print_r2($res, 'least elements');
-    }
+//    protected function removeCertain(int $certainScore)
+//    {
+//        echo PHP_EOL, 'remove score = ', $certainScore, PHP_EOL;
+//        $res = DelayMsgSortedSetStorage::getInstance()->getData($certainScore, $certainScore, true, true);
+//        print_r2($res, 'Elements for remove');
+//        $resR = DelayMsgSortedSetStorage::getInstance()->removeByScore($certainScore, $certainScore);
+//        var_dump($resR); echo PHP_EOL;
+//        $res = DelayMsgSortedSetStorage::getInstance()->getData(0, 100000000000, true);
+//        print_r2($res, 'least elements');
+//    }
 }
