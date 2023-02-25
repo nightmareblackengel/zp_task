@@ -2,6 +2,7 @@
 namespace console\controllers;
 
 use common\models\ChatMessageModel;
+use common\models\redis\CronDelayMsgRunner;
 use common\models\redis\DelayMsgSortedSetStorage;
 use DateTime;
 use Faker\Factory;
@@ -26,21 +27,22 @@ class DelayMessageController extends Controller
     const TEST_USER_ID = 5;
     const TEST_CHAT_ID = 27;
 
-    // TODO:
-    // ограничить запуск скрипта до 2х в минуту
-    // до одного в минуту
     public function actionIndex($showLog = 1)
     {
         set_time_limit(120);
         ini_set('memory_limit', '1024M');
-
         $showLog = (int) $showLog;
 
         $startTime = $this->getTimeStampWithStartAt0(0);
         $endTime = $startTime + self::MAX_CYCLE_TIME;
-
         $insertTime = $startTime;
         echo PHP_EOL, date('Y-m-d H:i:s', $insertTime), PHP_EOL;
+
+        $canRun = CronDelayMsgRunner::getInstance()->canRunCronAction($startTime);
+        if (!$canRun) {
+            echo PHP_EOL, "Can't run second script on certain time", PHP_EOL;
+            return '';
+        }
 
         // до тех пор, пока скрипт не пройдет по всем секундам (от 0 до 59 включительно) от тек. минуты
         while ($insertTime < $endTime) {
