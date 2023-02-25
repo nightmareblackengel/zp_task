@@ -32,7 +32,8 @@ class AjaxMessageModel extends AjaxBase
         $messages = false;
         if (!empty($chatId)) {
             $messages = ChatMessageModel::getInstance()
-                ->getList($chatId, 0, 2000);
+                // TODO: replace it count on userSettings
+                ->getList($chatId, 0, 1999);
         }
         $chat = ChatModel::getInstance()->getItemBy(['id' => $chatId]);
         $chatOwnerId = UserChatModel::getInstance()->getChatOwnerId($chatId);

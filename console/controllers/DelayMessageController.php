@@ -1,6 +1,7 @@
 <?php
 namespace console\controllers;
 
+use common\models\ChatMessageModel;
 use common\models\redis\DelayMsgSortedSetStorage;
 use DateTime;
 use yii\console\Controller;
@@ -25,9 +26,15 @@ use yii\console\Controller;
 class DelayMessageController extends Controller
 {
     // TODO:
-    const MAX_CYCLE_TIME = 60;
-//    const MAX_CYCLE_TIME = 5;
+//    const MAX_CYCLE_TIME = 60;
+    const MAX_CYCLE_TIME = 5;
 
+    const TEST_USER_ID = 5;
+    const TEST_CHAT_ID = 27;
+
+    // TODO:
+    // ограничить запуск скрипта до 2х в минуту
+    // до одного в минуту
     public function actionIndex()
     {
         set_time_limit(120);
@@ -42,10 +49,13 @@ class DelayMessageController extends Controller
         while ($insertTime < $endTime) {
             $currentTime = time();
 
+            ## todo:
+            $testTime  = 1677330360;
+            $this->getFromSoAndInsertIntoList($testTime);
+            exit();
 
             // вставка данных
 
-            // если данных нет, то ожидаем
 
 
             echo PHP_EOL, 'ts=', date('Y-m-d H:i:s', $insertTime);
@@ -86,11 +96,15 @@ class DelayMessageController extends Controller
             $this->print_time();
 
             for ($j = 0; $j < $insertCount; $j++) {
+                // todo: replace it real structure
                 $resInserted += (int) DelayMsgSortedSetStorage::getInstance()
                     ->addTo(
-                        $startAt,
-                        '[' . date('Y-m-d-H-i-s') . '] message-' . rand(1, 10000000)
-                    );
+                        $startAt + $j, [
+                            'c' => self::TEST_CHAT_ID,
+                            'u' => self::TEST_USER_ID,
+                            'm' => '[' . date('Y-m-d_H-i-s') . '] message-' . $j + $i*$j . '-' . rand(10000, 1000000),
+                        ]
+                );
             }
             $this->print_time();
         }
@@ -99,6 +113,43 @@ class DelayMessageController extends Controller
 
         echo PHP_EOL, "action CreateTest ended", PHP_EOL;
         return false;
+    }
+
+    // реализовать вставку удаление на тестовых данных, а затем переходить на "реальное содержимое"
+    protected function getFromSoAndInsertIntoList($time): ?int
+    {
+        // TODO:
+        // 1. добавление сообщений в "корректном виде"
+        // 2. правки в этом метода
+        // 3. проверка дат на клиенте
+
+        $this->print_time();
+        $insertList = DelayMsgSortedSetStorage::getInstance()
+            ->getData($time, $time, true, true);
+
+        $insertCount = 0;
+        if (!empty($insertList)) {
+            foreach ($insertList as $item) {
+                $insertCount += (int) ChatMessageModel::getInstance()
+                    ->insertMessage(
+                        self::TEST_USER_ID,
+                        self::TEST_CHAT_ID,
+                        // TODO: CHANGE THERE
+                        $item['v'] ?? '??',
+                        ChatMessageModel::MESSAGE_TYPE_SIMPLE,
+                        // TODO: CHANGE THERE
+                        $item['v'] ?? '',
+                    );
+            }
+            $this->print_time();
+            echo PHP_EOL, 'inserted items=[', $insertCount, ']', PHP_EOL;
+        }
+
+        $delCount = (int) DelayMsgSortedSetStorage::getInstance()->removeByScore($time, $time);
+        $this->print_time();
+        echo PHP_EOL, 'deleted items=[', $delCount, ']', PHP_EOL;
+
+        return $insertCount;
     }
 
     protected function print_time()
