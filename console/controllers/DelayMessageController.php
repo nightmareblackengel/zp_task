@@ -50,7 +50,7 @@ class DelayMessageController extends Controller
             $currentTime = time();
             $insertTotal += $this->getFromSoAndInsertIntoList($insertTime, $insertTime, $showLog);
             // если "текущая секунда" больше "секунды вставки", то увеличиваем последнюю на 1
-            if ($currentTime < $insertTime) {
+            if ($currentTime <= $insertTime) {
                 // ожидаем секунду
                 usleep(1000000);
             }
@@ -160,9 +160,9 @@ class DelayMessageController extends Controller
 
     protected function print_time(int $showLog = 1)
     {
-        if (empty($showLog)) {
+//        if (empty($showLog)) {
             return;
-        }
+//        }
         $now = DateTime::createFromFormat('U.u', microtime(true));
         echo PHP_EOL, $now->format("m-d-Y H:i:s.u");
     }
