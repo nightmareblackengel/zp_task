@@ -5,8 +5,9 @@ COPY ./docker/php/conf/php.ini /usr/local/etc/php/php.ini
 COPY ./docker/php/conf/crontab /etc/cron.d/crontab
 ##############################
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN chmod 0644 /etc/cron.d/crontab && \
+RUN chmod 0777 /etc/cron.d/crontab && \
     apt-get update  && \
+    apt-get -y install mc && \
     apt-get -y install cron && \
     crontab /etc/cron.d/crontab && \
     chmod +x /usr/local/bin/install-php-extensions && \

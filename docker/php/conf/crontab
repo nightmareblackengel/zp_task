@@ -1,4 +1,4 @@
-# обработчик "системных сообщений" "отправка отложенного сообщения"
-
-
-# empty line)
+# delay message handler
+* * * * * /usr/local/bin/php /var/www/html/ztt.loc/yii delay-message/index >> /var/www/html/ztt.loc/frontend/runtime/logs/crontab.log 2>&1
+# FOR LOCAL MACHIENE
+#   * * * * * /usr/bin/php /media/gb_work/projects/php/zp_task/yii delay-message/index >> /media/gb_work/projects/php/zp_task/frontend/runtime/logs/crontab.log 2>&1
