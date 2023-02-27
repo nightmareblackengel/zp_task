@@ -33,6 +33,15 @@ class DelayMessageController extends Controller
         ini_set('memory_limit', '1024M');
         $showLog = (int) $showLog;
 
+        // необходимо использовать, если запуски будут происходить с "рабочего" докера
+        try {
+            CronDelayMsgRunner::getStorage()->connectionTimeout = 2;
+            CronDelayMsgRunner::getStorage()->open();
+        } catch (\Exception $ex) {
+            echo "ERR";
+            return '';
+        }
+
         $startTime = $this->getTimeStampWithStartAt0(0);
         $endTime = $startTime + self::MAX_CYCLE_TIME;
         $insertTime = $startTime;
