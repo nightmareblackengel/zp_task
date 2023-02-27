@@ -60,8 +60,7 @@
             $('.nbeAjaxMessageContainer').html(data.messages.html);
             // сокроем "общий лоадер" (можно вызывать дважды и более)
             window.nbeClp.hideAjaxLoader('messages');
-            // проскролим до последнего сообщения
-            $('.nbeAjaxMessageContainer').scrollTop($('.nbeAjaxMessageContainer').prop("scrollHeight"));
+            window.nbeClp.scrollToLastMessage(data.chat_id);
             // если есть сообщения
             if (data.messages.messages_count !== false && typeof data.messages.messages_count === 'number') {
                 $('.addNewMsgContainer').removeClass('nbeDisplayNone');
@@ -105,6 +104,31 @@
         if (scrollHeight) {
             $('.nbeChatContainer').scrollTop(scrollHeight/2);
         }
+    }
+
+    MessageLoader.prototype.scrollToLastMessage = function (chatId, hasNewMsg)
+    {
+        var $chatNameItem = $('.nbeAjaxChatContainer .list-group-item[data-id="' + chatId + '"]');
+        var clientHeight = parseInt($('.nbeAjaxMessageContainer').prop('clientHeight'));
+        var scrollHeight = parseInt($('.nbeAjaxMessageContainer').prop('scrollHeight'));
+        var scrollTop = parseInt($('.nbeAjaxMessageContainer').scrollTop());
+
+        if (isNaN(clientHeight) || isNaN(scrollHeight) || isNaN(scrollTop)) {
+            return;
+        }
+        // первый раз при загрузке данных - всегда происходит скрол вниз
+        if ($chatNameItem.attr('data-scrolled') !== '1' || hasNewMsg) {
+            $chatNameItem.attr('data-scrolled', '1');
+            $('.nbeAjaxMessageContainer').scrollTop(scrollHeight);
+            return;
+        }
+        // если пользователь сильно проскроллил вверх - то не будем перемещать скрол вниз
+        if ((scrollHeight - scrollTop)/1.5 > clientHeight) {
+            return;
+        }
+
+        $('.nbeAjaxMessageContainer').scrollTop(scrollHeight);
+        return;
     }
 
     MessageLoader.prototype.alwaysOnAjaxDone = function ()
