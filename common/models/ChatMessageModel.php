@@ -3,6 +3,7 @@
 namespace common\models;
 
 use common\ext\patterns\Singleton;
+use common\ext\redis\RedisBase;
 use common\models\mysql\UserChatModel;
 use common\models\mysql\UserModel;
 use common\models\redis\ChatMessageQueueStorage;
@@ -88,19 +89,22 @@ class ChatMessageModel extends BaseObject
             return [];
         }
         // prepare transaction for each 'chatId'
-        $chatsMsgCountList = [];
-        $chatSysMsgCountList = [];
+        $queuedMsgCountList = [];
+        $queuedSysMsgCountList = [];
         try {
             $this->model::getStorage()->multi();
+            SysMsgCountStringStorage::getStorage()->multi();
 
             foreach ($chatIds as $numInd => $chatId) {
-                $chatsMsgCountList[$numInd] = $this->model::getInstance()->getQueueLength($chatId);
-                $chatSysMsgCountList[$numInd] = SysMsgCountStringStorage::getInstance()->getValue($chatId);
+                $queuedMsgCountList[$numInd] = $this->model::getInstance()->getQueueLength($chatId);
+                $queuedSysMsgCountList[$numInd] = SysMsgCountStringStorage::getInstance()->getValue($chatId);
             }
 
             $chatCountList = $this->model::getStorage()->exec();
+            $sysMsgCountList = SysMsgCountStringStorage::getStorage()->exec();
         } catch (Exception $ex) {
             $this->model::getStorage()->discard();
+            SysMsgCountStringStorage::getStorage()->discard();
         }
 
         if (empty($chatCountList)) {
@@ -108,15 +112,18 @@ class ChatMessageModel extends BaseObject
         }
 
         $result = [];
-        foreach ($chatsMsgCountList as $numInd => $transRes) {
-            $chatCount = 0;
+        foreach ($queuedMsgCountList as $numInd => $transRes) {
             // получим общее кол-во сообщений
-            if ($transRes === $this->model::TRANSACTION_QUEUED) {
-                $chatCount = (int) $chatCountList[$numInd];
+            if ($transRes !== RedisBase::TRANSACTION_QUEUED) {
+                continue;
             }
+            $chatCount = (int) $chatCountList[$numInd];
             // получим кол-во системных сообщений
-            if (!empty($chatSysMsgCountList[$numInd])) {
-                $chatCount -= (int) $chatSysMsgCountList[$numInd];
+            if (
+                $queuedSysMsgCountList[$numInd] === RedisBase::TRANSACTION_QUEUED
+                && !empty($sysMsgCountList[$numInd])
+            ) {
+                $chatCount -= (int) $sysMsgCountList[$numInd];
             }
             $result[$chatIds[$numInd]] = $chatCount;
         }
