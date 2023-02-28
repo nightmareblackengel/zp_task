@@ -16,9 +16,9 @@ class AjaxChatModel extends AjaxBase
         if (empty($data)) {
             return false;
         }
-        $this->id = (int) $data['id'] ?? 0;
-        $this->lastUpdatedAt = (int) $data['last_updated_at'] ?? 0;
-        $this->showInResponse = (int) $data['show_in_response'] ?? 0;
+        $this->id = (int) ($data['id'] ?? 0);
+        $this->lastUpdatedAt = (int) ($data['last_updated_at'] ?? 0);
+        $this->showInResponse = (int) ($data['show_in_response'] ?? 0);
 
         return true;
     }

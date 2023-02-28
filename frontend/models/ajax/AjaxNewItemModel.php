@@ -15,7 +15,7 @@ class AjaxNewItemModel extends AjaxBase
         if (empty($data)) {
             return false;
         }
-        $this->showInResponse = (int) $data['show_in_response'] ?? 0;
+        $this->showInResponse = (int) ($data['show_in_response'] ?? 0);
 
         return true;
     }
