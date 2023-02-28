@@ -88,7 +88,7 @@ class DelayMessageController extends Controller
             echo PHP_EOL, "Error. Incorrect params. Script exit.", PHP_EOL;
             return '';
         }
-        set_time_limit(10);
+        set_time_limit(120);
         ini_set('memory_limit', '1024M');
 
         $startAt = $this->getTimeStampWithStartAt0($delayInSeconds);

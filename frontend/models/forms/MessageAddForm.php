@@ -23,7 +23,7 @@ class MessageAddForm extends Form
     {
         return [
             [['message', 'chatId', 'userId', 'messageType'], 'required'],
-            [['message'], 'string'],
+            [['message'], 'string', 'max' => 1000],
             [['message'], 'allowedCommandsRule'],
             [['chatId', 'userId', 'messageType'], 'integer'],
         ];

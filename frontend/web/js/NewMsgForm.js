@@ -9,6 +9,7 @@
     {
         this.initSendBtn();
         this.initCommands();
+        this.initForm();
     }
 
     NewMsgForm.prototype.initSendBtn = function ()
@@ -70,6 +71,16 @@
             var $link = $(this);
 
             $('#messageaddform-message').val($link.text());
+        });
+    }
+
+    NewMsgForm.prototype.initForm = function()
+    {
+        $(document).on('submit', '#addNewMessageForm', function(event) {
+            $('.nbeAddNewMsgBtn').trigger('click');
+
+            event.preventDefault();
+            return false;
         });
     }
 
