@@ -39,12 +39,20 @@ class AjaxMessageModel extends AjaxBase
                 'html' => Yii::$app->controller->render('/chat/ajax/messages_empty'),
             ];
         }
+        $messagesCount = (int) ChatMessageQueueStorage::getInstance()->getQueueLength($chatId);
+        if (!empty($this->maxMsgCount) && $this->maxMsgCount === $messagesCount) {
+            return [
+                'result' => AjaxHelper::AJAX_RESPONSE_OK,
+                'messages_count' => $messagesCount,
+                'html' => null,
+            ];
+        }
+
         $messages = ChatMessageModel::getInstance()
             // TODO: replace it count on userSettings
             ->getList($chatId, 0, 1999);
         $chat = ChatModel::getInstance()->getItemBy(['id' => $chatId]);
         $chatOwnerId = UserChatModel::getInstance()->getChatOwnerId($chatId);
-        $messagesCount = ChatMessageQueueStorage::getInstance()->getQueueLength($chatId);
 
         return [
             'result' => AjaxHelper::AJAX_RESPONSE_OK,

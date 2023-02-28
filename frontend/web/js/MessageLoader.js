@@ -65,6 +65,10 @@
             window.nbeClp.hideAjaxLoader('messages');
             window.nbeClp.scrollToLastMessage(data.chat_id);
             $('.addNewMsgContainer').removeClass('nbeDisplayNone');
+            if (data.chat_id) {
+                // установим кол-во сообщений
+                $('.nbeAjaxChatContainer .list-group-item[data-id="' + data.chat_id + '"]').attr('data-msg-count', data.messages.messages_count);
+            }
         }
         if (data.new_message && data.new_message.result === AJAX_RESPONSE_OK && data.new_message.html) {
             $('.addNewMsgContainer').html(data.new_message.html);
@@ -164,16 +168,19 @@
             chatUpdatedAt = 0;
         }
 
+        var messagesParam = {
+            'show_in_response': showMessages,
+            'max_msg_count': $('.nbeAjaxChatContainer .list-group-item[data-id="' + chatId + '"]').attr('data-msg-count'),
+            'last_updated_at': null,
+        }
+
         var sendData = {
             'chats': {
                 'show_in_response': showChats,
                 'id': chatId,
                 'last_updated_at': chatUpdatedAt,
             },
-            'messages': {
-                'show_in_response': showMessages,
-                'last_updated_at': null,
-            },
+            'messages': messagesParam,
             'new_item': {
                 'show_in_response': showAddNewItem,
             },
