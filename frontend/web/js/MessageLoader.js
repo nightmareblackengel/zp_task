@@ -56,16 +56,15 @@
             // выполним скролл
             window.nbeClp.scrollChatListTo(data.chat_id);
         }
-        if (data.messages && data.messages.result === AJAX_RESPONSE_OK && data.messages.html) {
-            // TODO: new engine
-            $('.nbeAjaxMessageContainer').html(data.messages.html);
+        if (data.messages && data.messages.result === AJAX_RESPONSE_OK) {
+            if (data.messages.html) {
+                // TODO: new engine
+                $('.nbeAjaxMessageContainer').html(data.messages.html);
+            }
             // сокроем "общий лоадер" (можно вызывать дважды и более)
             window.nbeClp.hideAjaxLoader('messages');
             window.nbeClp.scrollToLastMessage(data.chat_id);
-            // если есть сообщения
-            if (data.messages.messages_count !== false && typeof data.messages.messages_count === 'number') {
-                $('.addNewMsgContainer').removeClass('nbeDisplayNone');
-            }
+            $('.addNewMsgContainer').removeClass('nbeDisplayNone');
         }
         if (data.new_message && data.new_message.result === AJAX_RESPONSE_OK && data.new_message.html) {
             $('.addNewMsgContainer').html(data.new_message.html);
@@ -74,10 +73,15 @@
         window.nbeClp.alwaysOnAjaxDone();
         console.log('success loaded', data);
 
+        var showMessages = AJAX_REQUEST_EXCLUDE;
+        if (data.chat_id) {
+            showMessages = AJAX_REQUEST_INCLUDE;
+        }
+
         setTimeout(function () {
             window.nbeClp.loadData(
                 AJAX_REQUEST_EXCLUDE,
-                data.chat_id ? AJAX_REQUEST_INCLUDE : AJAX_REQUEST_EXCLUDE,
+                showMessages,
                 AJAX_REQUEST_EXCLUDE
             );
         }, 5000);
