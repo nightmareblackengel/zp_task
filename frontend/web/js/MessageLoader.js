@@ -57,6 +57,7 @@
             window.nbeClp.scrollChatListTo(data.chat_id);
         }
         if (data.messages && data.messages.result === AJAX_RESPONSE_OK && data.messages.html) {
+            // TODO: new engine
             $('.nbeAjaxMessageContainer').html(data.messages.html);
             // сокроем "общий лоадер" (можно вызывать дважды и более)
             window.nbeClp.hideAjaxLoader('messages');
@@ -76,7 +77,7 @@
         setTimeout(function () {
             window.nbeClp.loadData(
                 AJAX_REQUEST_EXCLUDE,
-                AJAX_REQUEST_INCLUDE,
+                data.chat_id ? AJAX_REQUEST_INCLUDE : AJAX_REQUEST_EXCLUDE,
                 AJAX_REQUEST_EXCLUDE
             );
         }, 5000);
@@ -84,6 +85,7 @@
         return true;
     }
 
+    // скролл до выделенного чата, в области списка чатов
     MessageLoader.prototype.scrollChatListTo = function (chatId)
     {
         if (!chatId) {
@@ -106,6 +108,7 @@
         }
     }
 
+    // скролл вниз, в области сообщений
     MessageLoader.prototype.scrollToLastMessage = function (chatId, hasNewMsg)
     {
         var $chatNameItem = $('.nbeAjaxChatContainer .list-group-item[data-id="' + chatId + '"]');
@@ -189,6 +192,7 @@
         };
     }
 
+    // получение значений для формы средствами Yii2
     MessageLoader.prototype.addAttributeParam = function(attrId)
     {
         return {
@@ -199,6 +203,7 @@
         }
     }
 
+    // инициализация Формы отправки средствами Yii2
     MessageLoader.prototype.initSendForm = function()
     {
         $('#addNewMessageForm').yiiActiveForm({

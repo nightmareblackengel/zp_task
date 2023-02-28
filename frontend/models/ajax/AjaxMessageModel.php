@@ -29,12 +29,16 @@ class AjaxMessageModel extends AjaxBase
         if ($this->showInResponse === AjaxHelper::AJAX_REQUEST_EXCLUDE) {
             return null;
         }
-        $messages = false;
-        if (!empty($chatId)) {
-            $messages = ChatMessageModel::getInstance()
-                // TODO: replace it count on userSettings
-                ->getList($chatId, 0, 1999);
+        if (empty($chatId)) {
+            return [
+                'result' => AjaxHelper::AJAX_RESPONSE_OK,
+                'messages_count' => false,
+                'html' => Yii::$app->controller->render('/chat/ajax/messages_empty'),
+            ];
         }
+        $messages = ChatMessageModel::getInstance()
+            // TODO: replace it count on userSettings
+            ->getList($chatId, 0, 1999);
         $chat = ChatModel::getInstance()->getItemBy(['id' => $chatId]);
         $chatOwnerId = UserChatModel::getInstance()->getChatOwnerId($chatId);
 
@@ -48,7 +52,6 @@ class AjaxMessageModel extends AjaxBase
                 'chat' => $chat,
                 'chatOwnerId' => $chatOwnerId,
             ]),
-//            'downloaded_at' => time(),
         ];
     }
 }
