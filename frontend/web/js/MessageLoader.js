@@ -3,6 +3,8 @@
     function MessageLoader()
     {
         this.ajaxObj = null;
+        this.ajaxTimer = null;
+        this.ajaxCount = 0;
     }
 
     MessageLoader.prototype.init = function ()
@@ -16,18 +18,17 @@
 
     MessageLoader.prototype.loadData = function (showChats, showMessages, showAddNewItem)
     {
-        if (this.ajaxObj) {
-            this.ajaxObj.abort();
-            this.ajaxObj = null;
-        }
+        window.nbeClp.ajaxCount++;
+        console.log(window.nbeClp.ajaxCount);
+        window.nbeClp.clearAjaxTimer();
 
-        this.ajaxObj = $.ajax(
-            this.getAjaxData(
+        window.nbeClp.ajaxObj = $.ajax(
+            window.nbeClp.getAjaxParams(
                 showChats,
                 showMessages,
                 showAddNewItem
             )
-        ).done(this.parseAjaxResHandler);
+        ).done(window.nbeClp.parseAjaxResHandler);
     }
 
     MessageLoader.prototype.parseAjaxResHandler = function (data)
@@ -75,20 +76,28 @@
             window.nbeClp.initSendForm();
         }
         window.nbeClp.alwaysOnAjaxDone();
-        console.log('success loaded', data);
+        console.log('данные загружены', data);
 
         var showMessages = AJAX_REQUEST_EXCLUDE;
         if (data.chat_id) {
             showMessages = AJAX_REQUEST_INCLUDE;
         }
+        window.nbeClp.ajaxCount--;
 
-        setTimeout(function () {
-            window.nbeClp.loadData(
-                AJAX_REQUEST_EXCLUDE,
-                showMessages,
-                AJAX_REQUEST_EXCLUDE
-            );
-        }, 5000);
+        console.log("попытка установки таймаута", window.nbeClp.ajaxCount);
+        // бывают случаи из-за задержки, при которых возможен "двойной запуск"
+        // для предотвращения этой проблемы запускать будем только в тех случаях, когда таймер обнулен
+        if (window.nbeClp.ajaxCount < 1) {
+            console.log("таймаут запущен", window.nbeClp.ajaxCount);
+            window.nbeClp.ajaxTimer = setTimeout(function () {
+                console.log('таймаут выполняется', window.nbeClp.ajaxCount);
+                window.nbeClp.loadData(
+                    AJAX_REQUEST_EXCLUDE,
+                    showMessages,
+                    AJAX_REQUEST_EXCLUDE
+                );
+            }, 5000);
+        }
 
         return true;
     }
@@ -156,7 +165,7 @@
         $('.loaderContainer[data-code="' + type + '"]').removeClass('nbeLoading');
     }
 
-    MessageLoader.prototype.getAjaxData = function(showChats, showMessages, showAddNewItem)
+    MessageLoader.prototype.getAjaxParams = function(showChats, showMessages, showAddNewItem)
     {
         var $chatContainer = $('.nbeAjaxChatContainer');
         var chatId = parseInt($chatContainer.attr('data-chat-id'));
@@ -199,6 +208,9 @@
                 // TODO:
                 console.log(errMsg);
                 // alert(errMsg);
+                // TODO: ?будет ли выполняться если здесь возникнет ошибка
+                window.nbeClp.ajaxCount--;
+                console.log(window.nbeClp.ajaxCount);
             },
         };
     }
@@ -230,6 +242,15 @@
             $cmdChannelCommands.addClass('nbeDisplayNone');
         } else {
             $cmdChannelCommands.removeClass('nbeDisplayNone');
+        }
+    }
+
+    // удаляем таймер подгрузки новых сообщений
+    MessageLoader.prototype.clearAjaxTimer = function()
+    {
+        if (window.nbeClp.ajaxTimer) {
+            clearTimeout(window.nbeClp.ajaxTimer);
+            window.nbeClp.ajaxTimer = null;
         }
     }
 

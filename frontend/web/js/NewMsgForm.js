@@ -22,6 +22,7 @@
                 return;
             }
             $sendBtn.attr('data-process', '1');
+            window.nbeClp.clearAjaxTimer();
 
             $.ajax({
                 'url': '/chat/create-msg',
@@ -30,7 +31,7 @@
                 'error': function (data) {
                     var errMsg = 'Возникла ошибка при сохранении сообщения!';
                     alert(errMsg);
-                    $sendBtn.attr('data-process', '0');
+                    selfNmf.ajaxDoneHandler();
                 },
             }).done(function (data) {
                 if (!data || !data.result) {
@@ -49,11 +50,7 @@
                         $('#addNewMessageForm').yiiActiveForm('updateMessages', data.form_err)
                     }
                 } else if (data.result === AJAX_RESPONSE_OK) {
-                    window.nbeClp.loadData(
-                        AJAX_REQUEST_INCLUDE,
-                        AJAX_REQUEST_INCLUDE,
-                        AJAX_REQUEST_INCLUDE
-                    );
+
                 }
                 selfNmf.ajaxDoneHandler();
             });
@@ -62,6 +59,11 @@
 
     NewMsgForm.prototype.ajaxDoneHandler = function ()
     {
+        window.nbeClp.loadData(
+            AJAX_REQUEST_INCLUDE,
+            AJAX_REQUEST_INCLUDE,
+            AJAX_REQUEST_INCLUDE
+        );
         $('.nbeAddNewMsgBtn').attr('data-process', '0');
     }
 
