@@ -19,7 +19,6 @@
     MessageLoader.prototype.loadData = function (showChats, showMessages, showAddNewItem)
     {
         window.nbeClp.ajaxCount++;
-        console.log(window.nbeClp.ajaxCount);
         window.nbeClp.clearAjaxTimer();
 
         window.nbeClp.ajaxObj = $.ajax(
@@ -84,13 +83,10 @@
         }
         window.nbeClp.ajaxCount--;
 
-        console.log("попытка установки таймаута", window.nbeClp.ajaxCount);
-        // бывают случаи из-за задержки, при которых возможен "двойной запуск"
-        // для предотвращения этой проблемы запускать будем только в тех случаях, когда таймер обнулен
+        // из-за задержки ответа со стороны сервера - возможен "двойной запуск"
+        // (здесь "двойной" запуск нужен, т.к. у пользователя должно обновиться окно сразу после того, как он напечатал сообщение)
         if (window.nbeClp.ajaxCount < 1) {
-            console.log("таймаут запущен", window.nbeClp.ajaxCount);
             window.nbeClp.ajaxTimer = setTimeout(function () {
-                console.log('таймаут выполняется', window.nbeClp.ajaxCount);
                 window.nbeClp.loadData(
                     AJAX_REQUEST_EXCLUDE,
                     showMessages,
@@ -205,12 +201,9 @@
                     // statusText
                     errMsg = errMsg + 'Подробнее: ' + err.responseText;
                 }
-                // TODO:
-                console.log(errMsg);
-                // alert(errMsg);
-                // TODO: ?будет ли выполняться если здесь возникнет ошибка
+                // повторный запуск "подгрузки сообщений" выполнятся не будет (т.к. возникает ошибка)
                 window.nbeClp.ajaxCount--;
-                console.log(window.nbeClp.ajaxCount);
+                alert(errMsg);
             },
         };
     }
