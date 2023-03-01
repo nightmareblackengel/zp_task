@@ -70,9 +70,11 @@ class AuthController extends Controller
         $result = null;
 
         if ($runAction && $this->beforeAction($action)) {
-            if (!$this->hasAccess()) {
-                $this->layout = 'main';
-                return $this->render('/main/page403');
+            if (empty($this->allowedUnAuthActions) || !in_array($this->action->id, $this->allowedUnAuthActions)) {
+                if (!$this->hasAccess()) {
+                    $this->layout = 'main';
+                    return $this->render('/main/page403');
+                }
             }
             // run the action
             $result = $action->runWithParams($params);

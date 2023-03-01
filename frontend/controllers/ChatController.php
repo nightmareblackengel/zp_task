@@ -17,6 +17,8 @@ use yii\web\Response;
 
 class ChatController extends AuthController
 {
+    public $allowedUnAuthActions = ['ajax-load'];
+
     public function actionIndex()
     {
         $this->layout = '_chat_index';
@@ -31,6 +33,9 @@ class ChatController extends AuthController
 
         if (!Yii::$app->request->isAjax || !Yii::$app->request->isPost) {
             return $this->ajaxErr('Ошибка! Некорректный тип переданных данных');
+        }
+        if (!$this->hasAccess()) {
+            return $this->ajaxErr('Время авторизации истекло. Обновите пожалуйста страницу, для повторной авторизации.');
         }
 
         $form = new AjaxHelper();
