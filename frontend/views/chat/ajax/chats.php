@@ -22,7 +22,7 @@ if (empty($chatList) || !is_array($chatList)) {
             $linkContent =
                 Html::tag('span', '', ['class' => implode(' ', $chatIconClasses)])
                 . Html::tag('span', $chatItem['count'] ?? 0, ['class' => 'badge'])
-                . Html::encode($chatItem['name']);
+                . Html::tag('span', Html::encode($chatItem['name']), ['class' => 'nbeChatContent']);
 
             echo Html::tag(
                 'a',

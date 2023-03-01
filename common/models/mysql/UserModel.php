@@ -80,6 +80,6 @@ class UserModel extends MySqlModel
 
     public static function getUserNameQuery()
     {
-        return "CONCAT(`name`, '(', `email`, ')') as name";
+        return "CONCAT(IFNULL(`name`, ''), '(', `email`, ')') as name";
     }
 }

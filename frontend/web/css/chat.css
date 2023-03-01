@@ -68,12 +68,27 @@
     margin-bottom: 20px;
     width: 100%;
 }
-
-.nbeChatIcon {
-    margin-right: 5px;
+.nbeAjaxChatContainer .list-group-item {
+    padding: 6px 1px 4px;
+}
+.nbeAjaxChatContainer .list-group-item .badge {
+    position: absolute;
+    right: 3px;
+    z-index: 100;
+    top: 8px;
+}
+.nbeChatContent {
+    max-width: 168px;
+    overflow: hidden;
+    display: inline-block;
+    padding-left: 24px;
+    white-space: nowrap;
 }
 .nbeChatIcon {
     color: lightblue;
+    position: absolute !important;
+    left: 5px;
+    top: 10px !important;
 }
 .nbeChatIcon.glyphicon-user {
     color: lightsalmon;
