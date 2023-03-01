@@ -9,11 +9,18 @@
 
     MessageLoader.prototype.init = function ()
     {
+        var isMessagePage = this.isMessagesListPage();
+        // первая загрузка данных
         this.loadData(
             AJAX_REQUEST_INCLUDE,
-            AJAX_REQUEST_INCLUDE,
-            AJAX_REQUEST_INCLUDE
+            isMessagePage ? AJAX_REQUEST_INCLUDE : AJAX_REQUEST_EXCLUDE,
+            isMessagePage ? AJAX_REQUEST_INCLUDE : AJAX_REQUEST_EXCLUDE
         );
+    }
+
+    MessageLoader.prototype.isMessagesListPage = function()
+    {
+        return $('.nbeAjaxMessageContainer').length && $('.addNewMsgContainer').length;
     }
 
     MessageLoader.prototype.loadData = function (showChats, showMessages, showAddNewItem)
@@ -64,7 +71,6 @@
             // сокроем "общий лоадер" (можно вызывать дважды и более)
             window.nbeClp.hideAjaxLoader('messages');
             window.nbeClp.scrollToLastMessage(data.chat_id);
-            $('.addNewMsgContainer').removeClass('nbeDisplayNone');
             if (data.chat_id) {
                 // установим кол-во сообщений
                 $('.nbeAjaxChatContainer .list-group-item[data-id="' + data.chat_id + '"]').attr('data-msg-count', data.messages.messages_count);
@@ -73,19 +79,18 @@
         if (data.new_message && data.new_message.result === AJAX_RESPONSE_OK && data.new_message.html) {
             $('.addNewMsgContainer').html(data.new_message.html);
             window.nbeClp.initSendForm();
+            $('.addNewMsgContainer').removeClass('nbeDisplayNone');
         }
         window.nbeClp.alwaysOnAjaxDone();
         console.log('данные загружены', data);
 
-        var showMessages = AJAX_REQUEST_EXCLUDE;
-        if (data.chat_id) {
-            showMessages = AJAX_REQUEST_INCLUDE;
-        }
+        var showMessages = data.chat_id ? AJAX_REQUEST_INCLUDE : AJAX_REQUEST_EXCLUDE;
         window.nbeClp.ajaxCount--;
 
-        // из-за задержки ответа со стороны сервера - возможен "двойной запуск"
+        // 1. из-за задержки ответа со стороны сервера - возможен "двойной запуск"
         // (здесь "двойной" запуск нужен, т.к. у пользователя должно обновиться окно сразу после того, как он напечатал сообщение)
-        if (window.nbeClp.ajaxCount < 1) {
+        // 2. повторно данные будут обновляться только для страницы сообщений
+        if (window.nbeClp.ajaxCount < 1 && window.nbeClp.isMessagesListPage()) {
             window.nbeClp.ajaxTimer = setTimeout(function () {
                 window.nbeClp.loadData(
                     AJAX_REQUEST_EXCLUDE,

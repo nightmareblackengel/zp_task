@@ -25,6 +25,11 @@ class AjaxNewItemModel extends AjaxBase
         if ($this->showInResponse === AjaxHelper::AJAX_REQUEST_EXCLUDE) {
             return null;
         }
+        if (empty($chatId)) {
+            return [
+                'result' => AjaxHelper::AJAX_RESPONSE_NOT_FILLED,
+            ];
+        }
 
         $formModel = new MessageAddForm();
         $formModel->chatId = $chatId;
