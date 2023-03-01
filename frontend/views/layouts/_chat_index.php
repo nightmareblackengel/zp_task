@@ -12,7 +12,7 @@ MessagesAsset::register($this);
     <tbody>
         <tr class="nbeTrHeader">
             <td colspan="2">
-                <?php echo $this->render('_top_menu'); ?>
+                <?php echo $this->render('_top_menu', ['chatId' => Yii::$app->request->get('chat_id')]); ?>
             </td>
         </tr>
         <tr>

@@ -1,10 +1,17 @@
 <?php
 use common\ext\helpers\Html;
+use common\models\mysql\UserChatModel;
 use frontend\ext\helpers\Url;
+
+/** @var $chatId */
 
 $identity = Yii::$app->user->identity;
 $userTitle = !empty($identity) ? $identity->getUserTitle() : '';
 $hideChatBtnClass = (Yii::$app->controller->id === 'chat' && Yii::$app->controller->action->id === 'index') ? '' : 'nbeDisplayNone';
+
+if (!empty($chatId)) {
+    $isChatOwner = UserChatModel::getInstance()->isUserChatOwner($identity->getId(), $chatId);
+}
 ?>
 <nav class="navbar-inverse">
     <div class="container-fluid">
@@ -52,7 +59,10 @@ $hideChatBtnClass = (Yii::$app->controller->id === 'chat' && Yii::$app->controll
                 </div>
             </form>
             <ul class="nav navbar-nav">
-                <li><a href="<?= Url::to('/chat/index') ?>">Главная страница</a></li>
+                <li><a href="<?= Url::to('/chat/index'); ?>">Главная страница</a></li>
+                <?php if (!empty($isChatOwner)) { ?>
+                    <li><a href="<?= Url::to(['/chat/add-user-to-channel', 'chat_id' => $chatId]); ?>">Добавить пользователя</a></li>
+                <?php } ?>
             </ul>
         </div>
     </div>

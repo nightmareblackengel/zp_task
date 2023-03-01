@@ -33,7 +33,7 @@ $this->title = 'Страница создания нового чата';
                         'class' => 'help-block',
                         'encode' => false,
                     ]
-                ])->widget(Select2Widget::className(), [
+                ])->widget(Select2Widget::class, [
                     'items' => $userList,
                     'multiple' => 'multiple',
                 ]); ?>

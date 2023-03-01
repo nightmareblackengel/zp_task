@@ -47,6 +47,7 @@ return [
             'showScriptName' => false,
             'rules' => [
                 'chat/index/<chat_id>' => 'chat/index',
+                'chat/add-user-to-channel/<chat_id>' => 'chat/add-user-to-channel',
             ],
         ],
     ],

@@ -3,16 +3,19 @@ namespace frontend\controllers;
 
 use common\ext\widgets\ActiveForm;
 use common\models\ChatMessageModel;
+use common\models\mysql\ChatModel;
 use common\models\mysql\UserChatModel;
 use common\models\mysql\UserModel;
 use frontend\ext\AuthController;
 use frontend\ext\helpers\Url;
+use frontend\models\forms\ChatAddUserForm;
 use frontend\models\forms\ChatCreateForm;
 use frontend\models\forms\MessageAddForm;
 use frontend\models\forms\UserSettingsForm;
 use frontend\models\helpers\AjaxHelper;
 use frontend\widgets\CookieAlert;
 use Yii;
+use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
 class ChatController extends AuthController
@@ -113,7 +116,7 @@ class ChatController extends AuthController
             $chatId = $formModel->save();
             if ($chatId) {
                 return $this->redirect(
-                    Url::to(['/chat/index', 'chat_id' => $chatId /*, '#' => 'divChatId' . $chatId*/])
+                    Url::to(['/chat/index', 'chat_id' => $chatId])
                 );
             }
         }
@@ -121,6 +124,44 @@ class ChatController extends AuthController
         return $this->render('create-chat', [
             'formModel' => $formModel,
             'userList' => $userList,
+        ]);
+    }
+
+    public function actionAddUserToChannel()
+    {
+        $this->layout = '_chat_index';
+        $userItem = $this->getCurrentUser();
+        $chatId = Yii::$app->request->get('chat_id');
+        if (empty($chatId)) {
+            throw new ForbiddenHttpException('Некорректные параметры');
+        }
+        $isChatOwner = UserChatModel::getInstance()->isUserChatOwner($userItem['id'], $chatId);
+        if (!$isChatOwner) {
+            throw new ForbiddenHttpException('У Вас нет прав редактировать этот чат');
+        }
+
+        $usersForm = new ChatAddUserForm(['chatId' => $chatId]);
+        if ($usersForm->load(Yii::$app->request->post())) {
+            $usersForm->chatId = $chatId;
+            $saveRes = $usersForm->save();
+            var_dump($saveRes);
+            if ($saveRes) {
+
+                echo "SAVE SUCC";
+                exit();
+                // TODO: Добавить сообщения в чат, о том, что эти пользователи были добавлены
+
+                return $this->redirect(
+                    Url::to(['/chat/index', 'chat_id' => $chatId])
+                );
+            }
+        }
+
+        $chat = ChatModel::getInstance()->getItemBy(['id' => $chatId]);
+
+        return $this->render('add-user-to-channel', [
+            'usersForm' => $usersForm,
+            'chat' => $chat,
         ]);
     }
 
