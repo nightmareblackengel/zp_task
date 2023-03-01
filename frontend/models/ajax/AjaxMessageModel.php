@@ -12,6 +12,8 @@ use Yii;
 
 class AjaxMessageModel extends AjaxBase
 {
+    const MAX_MSG_GET_AT_ONCE = 200;
+
     public ?int $lastUpdatedAt = null;
     public ?int $maxMsgCount = null;
 
@@ -47,10 +49,14 @@ class AjaxMessageModel extends AjaxBase
                 'html' => null,
             ];
         }
+        $offset = 0;
+        if ($messagesCount > self::MAX_MSG_GET_AT_ONCE) {
+            $offset -= self::MAX_MSG_GET_AT_ONCE;
+        }
 
         $messages = ChatMessageModel::getInstance()
             // TODO: replace it count on userSettings
-            ->getList($chatId, 0, 1999);
+            ->getList($chatId, $offset);
         $chat = ChatModel::getInstance()->getItemBy(['id' => $chatId]);
         $chatOwnerId = UserChatModel::getInstance()->getChatOwnerId($chatId);
 
