@@ -139,6 +139,10 @@ class ChatController extends AuthController
         if (!$isChatOwner) {
             throw new ForbiddenHttpException('У Вас нет прав редактировать этот чат');
         }
+        $chat = ChatModel::getInstance()->getItemBy(['id' => $chatId]);
+        if ($chat['isChannel'] !== ChatModel::IS_CHANNEL_TRUE) {
+            throw new ForbiddenHttpException('Вы не можете добавлять пользователей');
+        }
 
         $usersForm = new ChatAddUserForm(['chatId' => $chatId]);
         $usersForm->existsUsers = UserModel::getInstance()->getUserListForChat($chatId);
@@ -156,7 +160,6 @@ class ChatController extends AuthController
                 }
             }
         }
-        $chat = ChatModel::getInstance()->getItemBy(['id' => $chatId]);
 
         return $this->render('add-user-to-channel', [
             'usersForm' => $usersForm,

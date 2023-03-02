@@ -224,6 +224,7 @@
 .oneMsgContainer {
     display: block;
     margin-top: 13px;
+    word-break: break-word;
 }
 .oneMsgContainer[data-msg-type="2"] {
     width: 100%;
@@ -250,7 +251,7 @@
     font-size: 16px;
     border: 1px solid #aaa;
     position: relative;
-    padding: 5px 70px 15px 5px;
+    padding: 5px 5px 15px 5px;
     min-width: 200px;
     text-align: left;
 }

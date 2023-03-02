@@ -53,6 +53,6 @@ class MessageCommandHelper
             return 'Список пользователей чата:<br/>' . implode('<br/>', $resUsers);
         }
 
-        return $cmd;
+        return Html::encode($cmd);
     }
 }
