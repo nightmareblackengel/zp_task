@@ -78,6 +78,36 @@ class UserModel extends MySqlModel
         return array_column($users, 'name', 'id');
     }
 
+    public function getUserListForAddToChannel(?int $chatId): array
+    {
+        if (empty($chatId)) {
+            return [];
+        }
+
+        $query = sprintf("
+            SELECT u.`id`, " . static::getUserNameQuery() . "
+            FROM %s u
+            WHERE 1=1
+            AND u.`status` = :status
+            AND u.`id` NOT IN (
+                SELECT uc1.`userId`
+                FROM %s uc1
+                WHERE uc1.`chatId`  = :chatId
+            )",
+            self::tableName(),
+            UserChatModel::tableName()
+        );
+
+        $users = static::getDb()
+            ->createCommand($query, [
+                'chatId' => $chatId,
+                'status' => self::STATUS_ENABLED,
+            ])
+            ->queryAll();
+
+        return array_column($users, 'name', 'id');
+    }
+
     public static function getUserNameQuery()
     {
         return "CONCAT(IFNULL(`name`, ''), '(', `email`, ')') as name";

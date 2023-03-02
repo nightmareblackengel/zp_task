@@ -141,22 +141,21 @@ class ChatController extends AuthController
         }
 
         $usersForm = new ChatAddUserForm(['chatId' => $chatId]);
+        $usersForm->existsUsers = UserModel::getInstance()->getUserListForChat($chatId);
+        $usersForm->userCanAddIds = UserModel::getInstance()->getUserListForAddToChannel($chatId);
+
         if ($usersForm->load(Yii::$app->request->post())) {
             $usersForm->chatId = $chatId;
-            $saveRes = $usersForm->save();
-            var_dump($saveRes);
-            if ($saveRes) {
 
-                echo "SAVE SUCC";
-                exit();
-                // TODO: Добавить сообщения в чат, о том, что эти пользователи были добавлены
-
-                return $this->redirect(
-                    Url::to(['/chat/index', 'chat_id' => $chatId])
-                );
+            if (!empty($usersForm->userCanAddIds)) {
+                $saveRes = $usersForm->save();
+                if ($saveRes) {
+                    return $this->redirect(
+                        Url::to(['/chat/index', 'chat_id' => $chatId])
+                    );
+                }
             }
         }
-
         $chat = ChatModel::getInstance()->getItemBy(['id' => $chatId]);
 
         return $this->render('add-user-to-channel', [

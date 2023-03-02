@@ -30,14 +30,24 @@ $this->title = 'Добавление пользователей';
                     'encode' => false,
                 ]
             ])->widget(Select2Widget::class, [
-                'items' => [],
+                'items' => $usersForm->userCanAddIds,
                 'multiple' => 'multiple',
             ]); ?>
 
             <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']); ?>
             <?php ActiveForm::end(); ?>
         </div>
+
+        <?php if (!empty($usersForm->existsUsers)) { ?>
+            <br/>
+            <div><strong>Список пользователей в канале:</strong></div>
+            <ul>
+                <?php
+                foreach ($usersForm->existsUsers as $userId => $userName) {
+                    echo Html::tag('li', Html::encode($userName));
+                }
+                ?>
+            </ul>
+        <?php } ?>
     </div>
 </div>
-
-// TODO: список пользователей этого канала
