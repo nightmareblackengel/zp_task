@@ -4,6 +4,7 @@ namespace common\ext\base;
 
 use common\ext\traits\ErrorTrait;
 use common\ext\patterns\Singleton;
+use common\ext\traits\LocalCacheTrait;
 use Exception;
 use Yii;
 use yii\base\BaseObject;
@@ -13,6 +14,7 @@ abstract class MySqlModel extends BaseObject
 {
     use Singleton;
     use ErrorTrait;
+    use LocalCacheTrait;
 
     const DEFAULT_ERR_ATTRIBUTE = '-';
 
