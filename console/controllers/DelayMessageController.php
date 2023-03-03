@@ -27,7 +27,7 @@ class DelayMessageController extends Controller
     const TEST_USER_ID = 5;
     const TEST_CHAT_ID = 27;
 
-    public function actionIndex($showLog = 1)
+    public function actionIndex($showLog = 0)
     {
         set_time_limit(120);
         ini_set('memory_limit', '1024M');
@@ -38,14 +38,13 @@ class DelayMessageController extends Controller
             CronDelayMsgRunner::getStorage()->connectionTimeout = 2;
             CronDelayMsgRunner::getStorage()->open();
         } catch (\Exception $ex) {
-            echo "ERR";
             return '';
         }
 
         $startTime = $this->getTimeStampWithStartAt0(0);
         $endTime = $startTime + self::MAX_CYCLE_TIME;
         $insertTime = $startTime;
-        echo PHP_EOL, date('Y-m-d H:i:s', $insertTime), PHP_EOL;
+        echo PHP_EOL, 'Started at=', date('Y-m-d H:i:s', $insertTime), PHP_EOL;
 
         $canRun = CronDelayMsgRunner::getInstance()->canRunCronAction($startTime);
         if (!$canRun) {
@@ -67,10 +66,9 @@ class DelayMessageController extends Controller
         }
 
         $insertedCount = $this->getFromSoAndInsertIntoList(0, $endTime, false);
-        if ($showLog) {
-            echo PHP_EOL, 'inserted message count =[', $insertTotal, ']', PHP_EOL;
-            echo 'inserted late message count =[', $insertedCount, ']', PHP_EOL;
-        }
+//        if ($showLog) {
+            echo 'inserted message count =[', $insertTotal, '] Inserted late message count =[', $insertedCount, ']', PHP_EOL;
+//        }
 
         return '';
     }
