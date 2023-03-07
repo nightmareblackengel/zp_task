@@ -7,7 +7,7 @@ use frontend\ext\helpers\Url;
 /** @var $chatId */
 
 $identity = Yii::$app->user->identity;
-$userTitle = !empty($identity) ? $identity->getUserTitle() : '';
+$userTitle = !empty($identity) ? Html::encode($identity->getUserTitle()) : '';
 $hideChatBtnClass = (Yii::$app->controller->id === 'chat' && Yii::$app->controller->action->id === 'index') ? '' : 'nbeDisplayNone';
 
 if (!empty($chatId)) {
@@ -41,7 +41,7 @@ if (!empty($chatId)) {
                             <li>
                                 <?php
                                 echo Html::beginForm(['/main/logout'], 'post')
-                                    . Html::submitButton('Выйти (' . Yii::$app->user->identity->getUserTitle() . ')', ['class' => 'nbeLiLink'])
+                                    . Html::submitButton('Выйти (' . $userTitle . ')', ['class' => 'nbeLiLink'])
                                     . Html::endForm();
                                 ?>
                             </li>
