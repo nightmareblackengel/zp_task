@@ -179,4 +179,16 @@ abstract class MySqlModel extends BaseObject
 
         return !empty($updateRes) ? $updateRes :  null;
     }
+
+    public function getList(array $whereParams = [], $select = '*'): ?array
+    {
+        $query = 'SELECT ' . $select . ' FROM ' . static::tableName() . ' ';
+        $colParams = [];
+        if (!empty($whereParams)) {
+            list($where, $colParams) = $this->prepareWhereStr($whereParams);
+            $query .= ' WHERE ' . $where;
+        }
+
+        return static::getDb()->createCommand($query, $colParams)->queryAll();
+    }
 }
