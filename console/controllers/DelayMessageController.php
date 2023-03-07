@@ -1,12 +1,12 @@
 <?php
 namespace console\controllers;
 
+use common\ext\console\ConsoleController;
 use common\models\ChatMessageModel;
 use common\models\redis\CronDelayMsgRunner;
 use common\models\redis\DelayMsgSortedSetStorage;
 use DateTime;
 use Faker\Factory;
-use yii\console\Controller;
 
 /**
  * index:
@@ -20,7 +20,7 @@ use yii\console\Controller;
         с 60й по 90 секунду (если есть данные в SortOrder), то
             выполняются те же действия выше, только выбираются все данные с 0 до "текущей секунды"
  */
-class DelayMessageController extends Controller
+class DelayMessageController extends ConsoleController
 {
     const MAX_CYCLE_TIME = 60;
 
@@ -29,15 +29,10 @@ class DelayMessageController extends Controller
 
     public function actionIndex($showLog = 0)
     {
-        set_time_limit(120);
-        ini_set('memory_limit', '1024M');
         $showLog = (int) $showLog;
 
-        // необходимо использовать, если запуски будут происходить с "рабочего" докера
-        try {
-            CronDelayMsgRunner::getStorage()->connectionTimeout = 2;
-            CronDelayMsgRunner::getStorage()->open();
-        } catch (\Exception $ex) {
+        $this->setMaxTimeAndMemory(120, '1024M');
+        if (!$this->checkIfCorrectDockerRun()) {
             return '';
         }
 
