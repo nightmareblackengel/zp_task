@@ -68,6 +68,10 @@ services:
         ipv4_address: 172.18.0.103
     volumes:
       - ztt-redis-data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 4GB
   memcached:
     image: memcached:1.6.17
     container_name: mymemcached
