@@ -41,7 +41,7 @@ $this->title = 'Добавление пользователей';
         <?php if (!empty($usersForm->existsUsers)) { ?>
             <br/>
             <div><strong>Список пользователей в канале:</strong></div>
-            <ul>
+            <ul class="existsUserList">
                 <?php
                 foreach ($usersForm->existsUsers as $userId => $userName) {
                     echo Html::tag('li', Html::encode($userName));

@@ -9,6 +9,12 @@ MessagesAsset::register($this);
 <?php $this->beginContent('@frontend/views/layouts/chat.php'); ?>
 
 <table class="nbeTableLayout">
+    <thead>
+        <tr>
+            <td class="firstLayoutColumn"></td>
+            <td></td>
+        </tr>
+    </thead>
     <tbody>
         <tr class="nbeTrHeader">
             <td colspan="2">
@@ -16,7 +22,7 @@ MessagesAsset::register($this);
             </td>
         </tr>
         <tr>
-            <td id="nbeLeftSideBar" class="nbeLeftNavBar">
+            <td id="nbeLeftSideBar" class="firstLayoutColumn">
                 <?php echo $this->render('_chat_left_bar'); ?>
             </td>
             <td class="nbeContainer">

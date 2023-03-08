@@ -7,14 +7,14 @@
     ChatPanel.prototype.init = function ()
     {
         $('.nbeFLeft').on('click', function () {
-            var $sideBar = $('#nbeLeftSideBar');
+            var $firstColumns = $('.firstLayoutColumn');
             var $chatBtn = $(this);
 
             if ($chatBtn.hasClass('nbeSelected')) {
-                $sideBar.addClass('nbeDisplayNone');
+                $firstColumns.addClass('hideFlc');
                 $chatBtn.removeClass('nbeSelected');
             } else {
-                $sideBar.removeClass('nbeDisplayNone');
+                $firstColumns.removeClass('hideFlc');
                 $chatBtn.addClass('nbeSelected');
             }
         });
