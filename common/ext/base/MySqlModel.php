@@ -90,8 +90,13 @@ abstract class MySqlModel extends BaseObject
         $columnParams = [];
         foreach ($params as $colName => $colValue) {
             $paramName = ":$colName";
-            $where[] = '`' . $colName . '`=' . $paramName;
-            $columnParams[$paramName] = $colValue;
+
+            if (is_array($colValue)) {
+                $where[] = '`' . $colName . "` IN ('" . implode("','", $colValue) . "')";
+            } else {
+                $where[] = '`' . $colName . '`=' . $paramName;
+                $columnParams[$paramName] = $colValue;
+            }
         }
 
         return [
@@ -188,11 +193,11 @@ abstract class MySqlModel extends BaseObject
             list($where, $colParams) = $this->prepareWhereStr($whereParams);
             $query .= ' WHERE ' . $where;
         }
-        if (!empty($offset)) {
-            $query .= ' OFFSET ' . $offset . ' ';
-        }
         if (!empty($limit)) {
             $query .= ' LIMIT ' . $limit;
+        }
+        if (!empty($offset)) {
+            $query .= ' OFFSET ' . $offset . ' ';
         }
 
         return static::getDb()->createCommand($query, $colParams)->queryAll();

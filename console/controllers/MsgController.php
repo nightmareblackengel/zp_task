@@ -3,6 +3,8 @@ namespace console\controllers;
 
 use common\ext\console\ConsoleController;
 use common\models\mysql\ChatModel;
+use console\models\helpers\UserSettingsHelper;
+use console\models\UserSettingsModel;
 
 class MsgController extends ConsoleController
 {
@@ -29,8 +31,16 @@ class MsgController extends ConsoleController
 
         echo "Старт метода очистки сообщений. Время=", date('Y-m-d H:i:s'), PHP_EOL;
 
+        $offset = 0;
+        $limit = 0;
+        $ids = [3, 4, 25, 27, 30];
+
         // для каждого чата
-        $chats = ChatModel::getInstance()->getList(['status' => ChatModel::STATUS_ENABLED], '`id`, `name`');
+        $chats = ChatModel::getInstance()->getList([
+            'status' => ChatModel::STATUS_ENABLED,
+            // TODO: REMOVE IT
+            'id' => $ids,
+        ], '`id`, `name`', $offset, $limit);
         if (empty($chats)) {
             echo 'Чаты отсуствуют!', PHP_EOL;
             return '';
@@ -38,8 +48,17 @@ class MsgController extends ConsoleController
 
         foreach ($chats as $chat) {
             print_r2($chat);
-            list($maxDay, $maxMessage) = $this->getChatUserSettingParams($chat['id']);
+            list($maxMessages, $maxDays) = $this->getChatUserSettingParams($chat['id']);
+
+            echo PHP_EOL;
+            var_dump($maxMessages);
+            echo PHP_EOL;
+            var_dump($maxDays);
+            echo PHP_EOL;
+
+            //        exit();
         }
+
 
 
 
@@ -51,10 +70,13 @@ class MsgController extends ConsoleController
         return '';
     }
 
+    /**
+     * @return array|int[messageCount, daysCount]
+     */
     protected function getChatUserSettingParams(int $chatId): array
     {
-        var_dump($chatId); echo PHP_EOL;
+        $settings = UserSettingsModel::getInstance()->getChatUserSettings($chatId);
 
-        return [null, null];
+        return UserSettingsHelper::prepareSettings($settings);
     }
 }

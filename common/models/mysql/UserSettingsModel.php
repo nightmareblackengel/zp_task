@@ -42,6 +42,25 @@ class UserSettingsModel extends MySqlModel
         ];
     }
 
+    public static function getTimeByValue(int $value): int
+    {
+        if (self::HISTORY_STORE_MSG_1DAY === $value) {
+            return 1;
+        } elseif (self::HISTORY_STORE_MSG_7DAY === $value) {
+            return 7;
+        } elseif (self::HISTORY_STORE_MSG_30DAY === $value) {
+            return 30;
+        } elseif (self::HISTORY_STORE_MSG_500MSG === $value) {
+            return 500;
+        } elseif (self::HISTORY_STORE_MSG_1000MSG === $value) {
+            return 1000;
+        } elseif (self::HISTORY_STORE_MSG_5000MSG === $value) {
+            return 5000;
+        }
+
+        return 0;
+    }
+
     public static function getHistoryStoreTime(?int $historyType = 0): array
     {
         $result = [];
