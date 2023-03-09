@@ -267,7 +267,8 @@
     border: 1px solid #aaa;
     position: relative;
     padding: 5px 5px 15px 5px;
-    min-width: 200px;
+    min-width: 150px;
+    max-width: 90%;
     text-align: left;
 }
 .nbeBgLGolden {

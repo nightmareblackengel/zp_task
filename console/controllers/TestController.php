@@ -6,6 +6,8 @@ use common\ext\console\ConsoleController;
 use common\models\mysql\ChatModel;
 use common\models\mysql\UserModel;
 use common\models\mysql\UserSettingsModel;
+use console\models\helpers\MessageHelper;
+use Faker\Factory;
 
 class TestController extends ConsoleController
 {
@@ -25,6 +27,7 @@ class TestController extends ConsoleController
         }
 
         echo "Будет создано " . $chatCount . " чатов", PHP_EOL;
+        $faker = Factory::create('ru_RU');
 
         for ($c = 0; $c < $chatCount; $c++) {
             $usersCount = rand(5, 20);
@@ -47,7 +50,10 @@ class TestController extends ConsoleController
                     $userIds,
                     $userIds[0],
                 );
-                echo "Чат id=" . $newChatId . " был создан", PHP_EOL;
+                if (!empty($newChatId)) {
+                    $insertedMsgCount = MessageHelper::generateNewMessages($faker, $userIds, $newChatId, rand(1000, 10000));
+                    echo "Чат id=" . $newChatId . ' был создан; В этот чат добавленое ', $insertedMsgCount, ' сообщений', PHP_EOL;
+                }
             }
         }
         echo "Создание тестовых данных - завершено", PHP_EOL;

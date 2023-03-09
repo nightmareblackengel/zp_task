@@ -117,7 +117,7 @@ class DelayMessageController extends ConsoleController
             return 0;
         }
 
-        $insertCount = MessageHelper::insertMsgFrom($insertList);
+        $insertCount = MessageHelper::insertDelayMsgFrom($insertList);
         $delCount = (int) DelayMsgSortedSetStorage::getInstance()->removeByScore($timeStart, $timeEnd);
 //        if ($showLog) {
 //            echo PHP_EOL, 'deleted items=[', $delCount, ']', PHP_EOL;
