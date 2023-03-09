@@ -2,6 +2,7 @@
 namespace common\ext\console;
 
 use common\models\redis\CronDelayMsgRunner;
+use DateTime;
 use yii\console\Controller;
 
 class ConsoleController extends Controller
@@ -29,5 +30,14 @@ class ConsoleController extends Controller
         }
 
         return true;
+    }
+
+    protected function print_time(int $showLog = 1)
+    {
+        //        if (empty($showLog)) {
+        return;
+        //        }
+        $now = DateTime::createFromFormat('U.u', microtime(true));
+        echo PHP_EOL, $now->format("m-d-Y H:i:s.u");
     }
 }

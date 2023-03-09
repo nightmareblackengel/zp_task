@@ -2,10 +2,9 @@
 namespace console\controllers;
 
 use common\ext\console\ConsoleController;
-use common\models\ChatMessageModel;
 use common\models\redis\CronDelayMsgRunner;
 use common\models\redis\DelayMsgSortedSetStorage;
-use DateTime;
+use console\models\helpers\MessageHelper;
 use Faker\Factory;
 
 /**
@@ -118,55 +117,13 @@ class DelayMessageController extends ConsoleController
             return 0;
         }
 
-        $insertCount = $this->insertMessages($insertList, $showLog);
+        $insertCount = MessageHelper::insertMsgFrom($insertList);
         $delCount = (int) DelayMsgSortedSetStorage::getInstance()->removeByScore($timeStart, $timeEnd);
 //        if ($showLog) {
 //            echo PHP_EOL, 'deleted items=[', $delCount, ']', PHP_EOL;
 //        }
 
         return $insertCount;
-    }
-
-    protected function insertMessages(array &$list, $showLog = true): int
-    {
-        if (empty($list)) {
-            return 0;
-        }
-
-        $insertCount = 0;
-        foreach ($list as $item) {
-            $messageItem = @json_decode($item['v'], true);
-            if (empty($messageItem)) {
-                continue;
-            }
-            if (empty($messageItem['c']) || empty($messageItem['u']) || empty($messageItem['m'])) {
-                continue;
-            }
-
-            $insertCount += (int) ChatMessageModel::getInstance()
-                ->insertMessage(
-                    $messageItem['u'],
-                    $messageItem['c'],
-                    $messageItem['m'],
-                    ChatMessageModel::MESSAGE_TYPE_SIMPLE,
-                    $item['t']
-                );
-        }
-//        if ($showLog) {
-//            $this->print_time($showLog);
-//            echo PHP_EOL, 'inserted items=[', $insertCount, ']', PHP_EOL;
-//        }
-
-        return $insertCount;
-    }
-
-    protected function print_time(int $showLog = 1)
-    {
-//        if (empty($showLog)) {
-            return;
-//        }
-        $now = DateTime::createFromFormat('U.u', microtime(true));
-        echo PHP_EOL, $now->format("m-d-Y H:i:s.u");
     }
 
     protected function getTimeStampWithStartAt0($delayInSeconds)
