@@ -35,7 +35,7 @@ class ChatMessageModel extends BaseObject
 
     public function getList($chatId, $startPosition = 0, $endPosition = -1): array
     {
-        return $this->model->getOffsetList($chatId, $startPosition, $endPosition);
+        return $this->model->getList($chatId, $startPosition, $endPosition);
     }
 
     public function saveMessageFrom(MessageAddForm $form): bool
