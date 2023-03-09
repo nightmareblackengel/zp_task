@@ -33,7 +33,7 @@ if (!empty($chatId)) {
                 <ul class="nav navbar-nav nbeAvatarCont">
                     <li class="dropdown">
                         <a class="nbeAvatar dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            <?= $userTitle; ?>
+                            <span class="nbeUserNick" title="<?php echo $userTitle; ?>"><?php echo $userTitle; ?></span>
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
@@ -41,7 +41,7 @@ if (!empty($chatId)) {
                             <li>
                                 <?php
                                 echo Html::beginForm(['/main/logout'], 'post')
-                                    . Html::submitButton('Выйти (' . $userTitle . ')', ['class' => 'nbeLiLink'])
+                                    . Html::submitButton('Выйти (' . $userTitle . ')', ['class' => 'nbeLiLink', 'title' => $userTitle])
                                     . Html::endForm();
                                 ?>
                             </li>

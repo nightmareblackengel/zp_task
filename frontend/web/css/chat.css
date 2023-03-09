@@ -129,6 +129,8 @@
     white-space: nowrap;
     background: none;
     border: none;
+    max-width: 200px;
+    overflow: hidden;
 }
 .nbeLiLink:hover {
     color: #262626;
@@ -314,4 +316,9 @@
 }
 .existsUserList > li {
     word-wrap: break-word;
+}
+.nbeUserNick {
+    max-width: 200px;
+    overflow: hidden;
+    display: inline-block;
 }

@@ -193,10 +193,8 @@ abstract class MySqlModel extends BaseObject
             list($where, $colParams) = $this->prepareWhereStr($whereParams);
             $query .= ' WHERE ' . $where;
         }
-        if (!empty($limit)) {
+        if (!empty($limit) || !empty($offset)) {
             $query .= ' LIMIT ' . $limit;
-        }
-        if (!empty($offset)) {
             $query .= ' OFFSET ' . $offset . ' ';
         }
 
