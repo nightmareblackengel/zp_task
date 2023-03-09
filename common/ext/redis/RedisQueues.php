@@ -24,13 +24,24 @@ abstract class RedisQueues extends RedisBase
         return static::getStorage()->llen($this->prepareKey($key));
     }
 
-    public function getRemoveFromHead(string $key)
+    public function getRemoveOneFromHead(string $key)
     {
         return static::getStorage()->lpop($this->prepareKey($key));
     }
 
-    public function getRemoveFromTail(string $key)
+    public function getRemoveOneFromTail(string $key)
     {
         return static::getStorage()->rpop($this->prepareKey($key));
+    }
+
+    /**
+     * @param string $key
+     * @param int $start - позиция, до которой все элементы будут удалены
+     * @param int $end - позиция, после которой все элементы будут удалены (-1 = эта часть удаления не будет выполняться)
+     * @return mixed
+     */
+    public function removeItemCount(string $key, int $start, int $end = -1)
+    {
+        return static::getStorage()->ltrim($this->prepareKey($key), $start, $end);
     }
 }

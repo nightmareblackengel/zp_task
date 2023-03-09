@@ -3,6 +3,7 @@ namespace console\controllers;
 
 use common\ext\console\ConsoleController;
 use common\models\mysql\ChatModel;
+use common\models\redis\ChatMessageQueueStorage;
 use console\models\helpers\UserSettingsHelper;
 use console\models\UserSettingsModel;
 
@@ -56,7 +57,15 @@ class MsgController extends ConsoleController
             var_dump($maxDays);
             echo PHP_EOL;
 
-            //        exit();
+            if (!empty($maxDays)) {
+                $removeCount = $this->removeMessagesByDay($chat['id'], $maxDays);
+            } else {
+                $removeCount = $this->removeMessagesByCount($chat['id'], $maxMessages);
+            }
+            echo 'Для чата id=[', $chat['id'], '] было удалено ' . $removeCount . ' сообщений.', PHP_EOL;
+
+
+            exit();
         }
 
 
@@ -68,6 +77,35 @@ class MsgController extends ConsoleController
 
         echo "Метод успешно выполнен", PHP_EOL;
         return '';
+    }
+
+
+    protected function removeMessagesByDay(int $chatId): int
+    {
+
+        echo PHP_EOL, "Remove By Days Count", PHP_EOL;
+
+        return 0;
+    }
+
+    protected function removeMessagesByCount(int $chatId, int $allowedMsgCount): int
+    {
+        if (empty($allowedMsgCount) || empty($chatId) || $allowedMsgCount < 1) {
+            return 0;
+        }
+
+        $queueMsgCount = (int) ChatMessageQueueStorage::getInstance()->getQueueLength($chatId);
+        if ($queueMsgCount <= $allowedMsgCount) {
+            return 0;
+        }
+        $diffCount = $queueMsgCount - $allowedMsgCount;
+
+        $result = ChatMessageQueueStorage::getInstance()->removeItemCount($chatId, $diffCount);
+        if ($result) {
+            return $diffCount;
+        }
+
+        return 0;
     }
 
     /**
