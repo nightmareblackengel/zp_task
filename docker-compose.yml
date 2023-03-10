@@ -41,7 +41,7 @@ services:
       - USERMAP_UID=1000
       - USERMAP_GID=1000
   db:
-    image: mysql:8.0
+    image: mysql:8.0.32
     container_name: msql8
     restart: "no"
     ports:
