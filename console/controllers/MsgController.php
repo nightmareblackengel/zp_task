@@ -34,18 +34,13 @@ class MsgController extends ConsoleController
         if (!$this->checkIfCorrectDockerRun()) {
             return '';
         }
-
         echo "Старт метода очистки сообщений. Время=", date('Y-m-d H:i:s'), PHP_EOL;
 
         $offset = 0;
         $limit = 0;
-        $ids = [3, 4, 25, 27, 29, 30];
-
         // для каждого чата
         $chats = ChatModel::getInstance()->getList([
             'status' => ChatModel::STATUS_ENABLED,
-            // TODO: REMOVE IT
-            'id' => $ids,
         ], '`id`, `name`', $offset, $limit);
         if (empty($chats)) {
             echo 'Чаты отсуствуют!', PHP_EOL;
@@ -53,16 +48,12 @@ class MsgController extends ConsoleController
         }
 
         foreach ($chats as $chat) {
-            print_r2($chat);
             list($maxMessages, $maxDays) = $this->getChatUserSettingParams($chat['id']);
-
-            echo PHP_EOL;
-            var_dump($maxMessages, $maxDays);
-
-            if (!empty($maxDays)) {
-                $removeCount = $this->removeMessagesByDayCount($chat['id'], $maxDays);
-            } else {
+            // если не пустое значение для кол-ва сообщений - то процесс удаления будет по кол-ву сообщений
+            if (!empty($maxMessages)) {
                 $removeCount = $this->removeMessagesByMsgCount($chat['id'], $maxMessages);
+            } else {
+                $removeCount = $this->removeMessagesByDayCount($chat['id'], $maxDays);
             }
             echo 'Для чата id=[', $chat['id'], '] было удалено ' . $removeCount . ' сообщений.', PHP_EOL;
         }
