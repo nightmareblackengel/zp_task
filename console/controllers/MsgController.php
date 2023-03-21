@@ -4,24 +4,18 @@ namespace console\controllers;
 use common\ext\console\ConsoleController;
 use common\models\mysql\ChatModel;
 use common\models\redis\ChatMessageQueueStorage;
+use common\models\redis\CronMsgRunner;
 use console\models\helpers\UserSettingsHelper;
 use console\models\UserSettingsModel;
+use Exception;
 
 class MsgController extends ConsoleController
 {
-    const MAX_DAY_COUNT = 30;
-    const MAX_MESSAGE_COUNT = 5000;
-
-    const RECIEVE_QUEUE_MSG_COUNT = 1000;
+    const RECEIVE_QUEUE_MSG_COUNT = 1000;
 
     // docker exec -it mphp /var/www/html/ztt.loc/yii msg/delete-by-settings
-
-    // TODO;
-    // запуск каждую минуту, но нельзя запустить, больше 1го экземпляра
-
     // поддержка истории до [1 / 7 / 30 дней | 500 / 1000 / 5000 сообщений] в зависимости от настройки на пользователе / канале.
     // Внимание! Если 2 пользователя ведут диалог и у одного из них настройка 30 дней, а у второго 7 дней - история хранится по максимальному сроку / количеству сообщений.
-
     /**
      *  запуск раз в час
      * выполняет удаление сообщений согласно настройкам пользователя.
@@ -34,30 +28,38 @@ class MsgController extends ConsoleController
         if (!$this->checkIfCorrectDockerRun()) {
             return '';
         }
-        echo "Старт метода очистки сообщений. Время=", date('Y-m-d H:i:s'), PHP_EOL;
-
-        $offset = 0;
-        $limit = 0;
-        // для каждого чата
-        $chats = ChatModel::getInstance()->getList([
-            'status' => ChatModel::STATUS_ENABLED,
-        ], '`id`, `name`', $offset, $limit);
-        if (empty($chats)) {
-            echo 'Чаты отсуствуют!', PHP_EOL;
+        if (!CronMsgRunner::getInstance()->canRunCronAction()) {
             return '';
         }
 
-        foreach ($chats as $chat) {
-            list($maxMessages, $maxDays) = $this->getChatUserSettingParams($chat['id']);
-            // если не пустое значение для кол-ва сообщений - то процесс удаления будет по кол-ву сообщений
-            if (!empty($maxMessages)) {
-                $removeCount = $this->removeMessagesByMsgCount($chat['id'], $maxMessages);
-            } else {
-                $removeCount = $this->removeMessagesByDayCount($chat['id'], $maxDays);
+        echo "Старт метода очистки сообщений. Время=", date('Y-m-d H:i:s'), PHP_EOL;
+        try {
+            $offset = 0;
+            $limit = 0;
+            // для каждого чата
+            $chats = ChatModel::getInstance()->getList([
+                'status' => ChatModel::STATUS_ENABLED,
+            ], '`id`, `name`', $offset, $limit);
+            if (empty($chats)) {
+                echo 'Чаты отсуствуют!', PHP_EOL;
+                CronMsgRunner::getInstance()->removeKey();
+                return '';
             }
-            echo 'Для чата id=[', $chat['id'], '] было удалено ' . $removeCount . ' сообщений.', PHP_EOL;
-        }
+
+            foreach ($chats as $chat) {
+                list($maxMessages, $maxDays) = $this->getChatUserSettingParams($chat['id']);
+                // если не пустое значение для кол-ва сообщений - то процесс удаления будет по кол-ву сообщений
+                if (!empty($maxMessages)) {
+                    $removeCount = $this->removeMessagesByMsgCount($chat['id'], $maxMessages);
+                } else {
+                    $removeCount = $this->removeMessagesByDayCount($chat['id'], $maxDays);
+                }
+                echo 'Для чата id=[', $chat['id'], '] было удалено ' . $removeCount . ' сообщений.', PHP_EOL;
+            }
+        } catch (Exception $ex) {}
+        CronMsgRunner::getInstance()->removeKey();
         echo "Метод успешно выполнен", PHP_EOL;
+
         return '';
     }
 
@@ -125,7 +127,7 @@ class MsgController extends ConsoleController
         $running = true;
 
         while ($running) {
-            $messages = ChatMessageQueueStorage::getInstance()->getList($chatId, $receiveMsgIndex, $receiveMsgIndex + self::RECIEVE_QUEUE_MSG_COUNT - 1);
+            $messages = ChatMessageQueueStorage::getInstance()->getList($chatId, $receiveMsgIndex, $receiveMsgIndex + self::RECEIVE_QUEUE_MSG_COUNT - 1);
             if (empty($messages)) {
                 $running = false;
                 continue;
