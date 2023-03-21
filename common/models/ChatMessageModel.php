@@ -8,7 +8,6 @@ use common\models\mysql\UserChatModel;
 use common\models\mysql\UserModel;
 use common\models\redis\ChatMessageQueueStorage;
 use common\models\redis\DelayMsgSortedSetStorage;
-use common\models\redis\SysMsgCountStringStorage;
 use Exception;
 use frontend\models\forms\MessageAddForm;
 use frontend\models\helpers\MessageCommandHelper;
@@ -76,9 +75,6 @@ class ChatMessageModel extends BaseObject
                     'd' => $date,
                 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
             );
-        if ($messageType === self::MESSAGE_TYPE_SYSTEM) {
-            SysMsgCountStringStorage::getInstance()->increment($chatId);
-        }
 
         return $msgSaveRes;
     }
@@ -90,21 +86,16 @@ class ChatMessageModel extends BaseObject
         }
         // prepare transaction for each 'chatId'
         $queuedMsgCountList = [];
-        $queuedSysMsgCountList = [];
         try {
             $this->model::getStorage()->multi();
-            SysMsgCountStringStorage::getStorage()->multi();
 
             foreach ($chatIds as $numInd => $chatId) {
                 $queuedMsgCountList[$numInd] = $this->model::getInstance()->getQueueLength($chatId);
-                $queuedSysMsgCountList[$numInd] = SysMsgCountStringStorage::getInstance()->getValue($chatId);
             }
 
             $chatCountList = $this->model::getStorage()->exec();
-            $sysMsgCountList = SysMsgCountStringStorage::getStorage()->exec();
         } catch (Exception $ex) {
             $this->model::getStorage()->discard();
-            SysMsgCountStringStorage::getStorage()->discard();
         }
 
         if (empty($chatCountList)) {
@@ -117,15 +108,7 @@ class ChatMessageModel extends BaseObject
             if ($transRes !== RedisBase::TRANSACTION_QUEUED) {
                 continue;
             }
-            $chatCount = (int) $chatCountList[$numInd];
-            // получим кол-во системных сообщений
-            if (
-                $queuedSysMsgCountList[$numInd] === RedisBase::TRANSACTION_QUEUED
-                && !empty($sysMsgCountList[$numInd])
-            ) {
-                $chatCount -= (int) $sysMsgCountList[$numInd];
-            }
-            $result[$chatIds[$numInd]] = $chatCount;
+            $result[$chatIds[$numInd]] = (int) $chatCountList[$numInd];;
         }
 
         return $result;
@@ -169,8 +152,6 @@ class ChatMessageModel extends BaseObject
     {
         $this->model->delete($form->chatId);
         $form->message = 'История чата была успешно удалена в ' . date('Y-m-d H:i:s');
-        // удалим значение "количество системных комманд"
-        SysMsgCountStringStorage::getInstance()->delete($form->chatId);
         // сохраним сообщение
         return $this->insertMessage($form->userId, $form->chatId, $form->message, $form->messageType);
     }

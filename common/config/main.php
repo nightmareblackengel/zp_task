@@ -37,8 +37,6 @@ return [
         'redisDb2' => array_merge(['database' => 2], $redisConfigs),
         // chat messages
         'redisDb3' => array_merge(['database' => 3], $redisConfigs),
-        // количество системных сообщений (mhash: user -> chat)
-        'redisDb4' => array_merge(['database' => 4], $redisConfigs),
         // "отложенные сообщения"
         'redisDb5' => array_merge(['database' => 5], $redisConfigs),
     ],
