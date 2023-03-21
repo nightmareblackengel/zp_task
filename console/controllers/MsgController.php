@@ -39,7 +39,7 @@ class MsgController extends ConsoleController
             // для каждого чата
             $chats = ChatModel::getInstance()->getList([
                 'status' => ChatModel::STATUS_ENABLED,
-            ], '`id`, `name`', $offset, $limit);
+            ], '`id`', $offset, $limit);
             if (empty($chats)) {
                 echo 'Чаты отсуствуют!', PHP_EOL;
                 CronMsgRunner::getInstance()->removeKey();
