@@ -22,16 +22,18 @@ class ChatModel extends MySqlModel
     public static function getChatList(int $userId): ?array
     {
         $query = sprintf(
-            "SELECT c.id as chatId, "
-            . "CASE WHEN c.isChannel=1 THEN c.name "
-            . "ELSE vw.email END as name, "
-            . "c.isChannel "
-            . "FROM %s c "
-            . "INNER JOIN %s uc ON uc.chatId = c.id "
-            . "LEFT JOIN vw_chat_user_name vw ON vw.user1 = uc.userId AND uc.chatId = vw.chatId "
-            . "WHERE uc.userId = :userId "
-            . "AND c.status = 1 ",
+            "SELECT uc1.chatId, c.isChannel,"
+                . " CASE WHEN c.isChannel=1 THEN c.name"
+                . " ELSE GROUP_CONCAT(u.email) END AS 'name'"
+                . " FROM %s uc1"
+                . " INNER JOIN %s c ON c.id = uc1.chatId"
+                . " LEFT JOIN %s u ON u.id = uc1.userId AND c.isChannel = 0"
+                . " WHERE chatId IN (SELECT uc2.chatId FROM %s uc2 WHERE uc2.userId = :userId)"
+                . " AND userId <> :userId"
+                . " GROUP BY chatId",
+            UserChatModel::tableName(),
             ChatModel::tableName(),
+            UserModel::tableName(),
             UserChatModel::tableName()
         );
 

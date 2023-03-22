@@ -16,7 +16,7 @@ class m221030_220922_chat_init extends \yii\db\Migration
 			"CREATE TABLE `chat` (
 				`id` INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`name` VARCHAR(255) NOT NULL,
-				`isChannel` SMALLINT,
+				`isChannel` SMALLINT NOT NULL DEFAULT 0,
 				`status` SMALLINT NOT NULL DEFAULT 0,
 				`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				INDEX `chat__name` (`name`(100))
@@ -44,13 +44,6 @@ class m221030_220922_chat_init extends \yii\db\Migration
 				`historyStoreType` SMALLINT NOT NULL DEFAULT 0,
 				`historyStoreTime` SMALLINT NOT NULL DEFAULT 0
 			) ENGINE=InnoDB;",
-            "CREATE OR REPLACE ALGORITHM = MERGE VIEW `vw_chat_user_name` AS
-                SELECT uc1.`chatId`, uc1.`userId` AS user1, uc2.`userId` AS user2, u1.`email`, u1.`name`
-                FROM `user_chat` uc1
-                INNER JOIN `chat` c1 ON c1.`id` = uc1.`chatId`
-                INNER JOIN `user_chat` uc2 ON uc2.`chatId` = uc1.`chatId` AND uc2.`userId` <> uc1.`userId`
-                INNER JOIN `user` u1 ON u1.`id` = uc2.`userId`
-                WHERE c1.`isChannel` IS NULL",
 		];
 
 		foreach ($sqlCommands as $sql) {
