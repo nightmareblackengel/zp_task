@@ -52,14 +52,14 @@ if (!empty($chatId)) {
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <form class="navbar-form navbar-left">
+            <!-- <form class="navbar-form navbar-left">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Введите название чата">
                     <span class="input-group-btn">
                         <button class="btn btn-default" type="button">Поиск</button>
                     </span>
                 </div>
-            </form>
+            </form> -->
             <ul class="nav navbar-nav">
                 <li><a href="<?= Url::to('/chat/index'); ?>">Главная страница</a></li>
                 <?php if (!empty($isChatOwner) && !empty($chat['isChannel']) && $chat['isChannel'] === ChatModel::IS_CHANNEL_TRUE) { ?>
