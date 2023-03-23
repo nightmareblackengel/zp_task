@@ -3,7 +3,7 @@
 namespace common\models\mysql;
 
 use common\ext\base\MySqlModel;
-use yii\db\Connection;
+use yii\db\Query;
 
 class UserModel extends MySqlModel
 {
@@ -29,29 +29,34 @@ class UserModel extends MySqlModel
             ->queryOne() ?: null;
     }
 
-    public function getExceptList(int $exceptUserId, string $namePart, int $limit = 20): array
-    {
+    public function getExceptList(
+        int $exceptUserId,
+        string $namePart,
+        array $exceptIds = [],
+        int $limit = 20
+    ): array {
         if (empty($exceptUserId)) {
             return [];
         }
 
-        $params = [
-            ':pid' => $exceptUserId,
-            ':status' => self::STATUS_ENABLED,
-            ':name' => '%' . $namePart . '%',
-        ];
-        $selectQueryStr =
-            "SELECT `id`, " . static::getUserNameQuery('text')
-            . " FROM " . static::tableName()
-            . " WHERE `id` <> :pid "
-            . " AND `status` = :status "
-            . " AND (`name` LIKE :name OR `email` LIKE :name) "
-            . " LIMIT " . $limit;
+        $query = new Query();
+        $query->select([
+                '[[id]]',
+                static::getUserNameQuery('text')
+            ])
+            ->from(static::tableName())
+            ->where(['NOT IN', 'id', $exceptIds])
+            ->andWhere([
+                '[[status]]' => self::STATUS_ENABLED,
+            ])
+            ->andWhere([
+                'OR',
+                ['LIKE', '[[name]]', $namePart],
+                ['LIKE', '[[email]]', $namePart]
+            ])
+            ->limit($limit);
 
-        $selectRes = static::getDb()
-            ->createCommand($selectQueryStr, $params)
-            ->queryAll();
-
+        $selectRes = $query->all();
         if (empty($selectRes)) {
             return [];
         }
