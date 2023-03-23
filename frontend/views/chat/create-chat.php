@@ -34,7 +34,7 @@ $this->title = 'Страница создания нового чата';
                     ]
                 ])->widget(Select2Widget::class, [
                     'multiple' => 'multiple',
-                    'ajax' => ['chat/user-list'],
+                    'ajax' => ['chat/user-list', 'chat_id' => -1],
                     'settings' => [
                         'ajax' => ['delay' => 250],
                         'minimumInputLength' => 2,

@@ -128,15 +128,24 @@ class ChatController extends AuthController
         $this->layout = false;
         Yii::$app->response->format = Response::FORMAT_JSON;
 
+        $exceptParam = (int) Yii::$app->request->get('except_users');
+        $chatId = (int) Yii::$app->request->get('chat_id');
+
         $searchText = Yii::$app->request->get('q');
         $userItem = $this->getCurrentUser();
-        if (empty($userItem) || empty($searchText) || mb_strlen($searchText) < 2) {
+        if (empty($userItem['id']) || empty($chatId) || empty($searchText) || mb_strlen($searchText) < 2) {
             return [];
+        }
+        $exceptList = [$userItem['id']];
+        if ($exceptParam === 1) {
+            $userIds = array_keys(UserModel::getInstance()->getUserListForChat($chatId));
+            if (!empty($userIds)) {
+                $exceptList = $userIds;
+            }
         }
 
         return [
-            'results' =>  UserModel::getInstance()
-                ->getExceptList([$userItem['id']], $searchText),
+            'results' =>  UserModel::getInstance()->getExceptList($exceptList, $searchText),
         ];
     }
 
@@ -159,6 +168,7 @@ class ChatController extends AuthController
 
         $usersForm = new ChatAddUserForm(['chatId' => $chatId]);
         $usersForm->existsUsers = UserModel::getInstance()->getUserListForChat($chatId);
+        // TODO: переделать функционал, чтобы не держать 1млн пользователей
         $usersForm->userCanAddIds = UserModel::getInstance()->getUserListForAddToChannel($chatId);
 
         if ($usersForm->load(Yii::$app->request->post())) {

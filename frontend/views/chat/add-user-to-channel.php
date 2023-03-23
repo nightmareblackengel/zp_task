@@ -30,8 +30,12 @@ $this->title = 'Добавление пользователей';
                     'encode' => false,
                 ]
             ])->widget(Select2Widget::class, [
-                'items' => $usersForm->userCanAddIds,
                 'multiple' => 'multiple',
+                'ajax' => ['chat/user-list', 'except_users' => 1, 'chat_id' => $chat['id']],
+                'settings' => [
+                    'ajax' => ['delay' => 250],
+                    'minimumInputLength' => 2,
+                ]
             ]); ?>
 
             <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']); ?>
