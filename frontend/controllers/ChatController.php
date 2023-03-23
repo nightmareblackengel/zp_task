@@ -136,7 +136,7 @@ class ChatController extends AuthController
 
         return [
             'results' =>  UserModel::getInstance()
-                ->getExceptList($userItem['id'], $searchText, [$userItem['id']]),
+                ->getExceptList([$userItem['id']], $searchText),
         ];
     }
 

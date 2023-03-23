@@ -29,13 +29,8 @@ class UserModel extends MySqlModel
             ->queryOne() ?: null;
     }
 
-    public function getExceptList(
-        int $exceptUserId,
-        string $namePart,
-        array $exceptIds = [],
-        int $limit = 20
-    ): array {
-        if (empty($exceptUserId)) {
+    public function getExceptList(array $exceptIds, string $namePart, int $limit = 20): array {
+        if (empty($exceptIds)) {
             return [];
         }
 
