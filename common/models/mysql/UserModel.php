@@ -29,7 +29,7 @@ class UserModel extends MySqlModel
             ->queryOne() ?: null;
     }
 
-    public function getShortListExcept(int $exceptUserId): array
+    public function getExceptList(int $exceptUserId, string $namePart, int $limit = 20): array
     {
         if (empty($exceptUserId)) {
             return [];
@@ -38,21 +38,25 @@ class UserModel extends MySqlModel
         $params = [
             ':pid' => $exceptUserId,
             ':status' => self::STATUS_ENABLED,
+            ':name' => '%' . $namePart . '%',
         ];
+        $selectQueryStr =
+            "SELECT `id`, " . static::getUserNameQuery('text')
+            . " FROM " . static::tableName()
+            . " WHERE `id` <> :pid "
+            . " AND `status` = :status "
+            . " AND (`name` LIKE :name OR `email` LIKE :name) "
+            . " LIMIT " . $limit;
 
-        $selectQueryStr = sprintf(
-            "SELECT `id`, " . static::getUserNameQuery() . " FROM %s "
-            . " WHERE `id` <> :pid AND `status` = :status",
-            static::tableName()
-        );
         $selectRes = static::getDb()
             ->createCommand($selectQueryStr, $params)
             ->queryAll();
+
         if (empty($selectRes)) {
             return [];
         }
 
-        return array_column($selectRes, 'name', 'id');
+        return $selectRes;
     }
 
     public function getUserListForChat(?int $chatId): array
@@ -108,8 +112,8 @@ class UserModel extends MySqlModel
         return array_column($users, 'name', 'id');
     }
 
-    public static function getUserNameQuery()
+    public static function getUserNameQuery(string $resFieldName = 'name'): string
     {
-        return "CONCAT(IFNULL(`name`, ''), '(', `email`, ')') as name";
+        return sprintf("CONCAT(IFNULL(`name`, ''), '(', `email`, ')') as %s", $resFieldName);
     }
 }

@@ -5,7 +5,6 @@ use conquer\select2\Select2Widget;
 use frontend\assets\ChatEditFormAsset;
 
 /** @var \frontend\models\forms\ChatCreateForm $formModel */
-/** @var array $userList */
 
 ChatEditFormAsset::register($this);
 
@@ -34,8 +33,12 @@ $this->title = 'Страница создания нового чата';
                         'encode' => false,
                     ]
                 ])->widget(Select2Widget::class, [
-                    'items' => $userList,
                     'multiple' => 'multiple',
+                    'ajax' => ['chat/user-list'],
+                    'settings' => [
+                        'ajax' => ['delay' => 250],
+                        'minimumInputLength' => 2,
+                    ]
                 ]); ?>
 
             <?= $form->field($formModel, 'currentUserId')->hiddenInput()->label(false); ?>

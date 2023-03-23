@@ -107,10 +107,7 @@ class ChatController extends AuthController
     public function actionCreateChat()
     {
         $this->layout = '_chat_index';
-        $userItem = $this->getCurrentUser();
-
         $formModel = new ChatCreateForm();
-        $userList = UserModel::getInstance()->getShortListExcept($userItem['id']);
 
         if ($formModel->load(Yii::$app->request->post())) {
             $chatId = $formModel->save();
@@ -123,8 +120,24 @@ class ChatController extends AuthController
 
         return $this->render('create-chat', [
             'formModel' => $formModel,
-            'userList' => $userList,
         ]);
+    }
+
+    public function actionUserList()
+    {
+        $this->layout = false;
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $searchText = Yii::$app->request->get('q');
+        $userItem = $this->getCurrentUser();
+        if (empty($userItem) || empty($searchText) || mb_strlen($searchText) < 2) {
+            return [];
+        }
+
+        return [
+            'results' =>  UserModel::getInstance()
+                ->getExceptList($userItem['id'], $searchText),
+        ];
     }
 
     public function actionAddUserToChannel()
