@@ -4,8 +4,8 @@ namespace console\controllers;
 use common\ext\console\ConsoleController;
 use common\models\mysql\ChatModel;
 use common\models\redis\ChatMessageQueueStorage;
-use common\models\redis\CronMsgRunner;
 use console\models\helpers\UserSettingsHelper;
+use console\models\redis\CronCheckerForMsgRunStorage;
 use console\models\UserSettingsModel;
 use Exception;
 
@@ -28,7 +28,7 @@ class MsgController extends ConsoleController
         if (!$this->checkIfCorrectDockerRun()) {
             return '';
         }
-        if (!CronMsgRunner::getInstance()->canRunCronAction()) {
+        if (!CronCheckerForMsgRunStorage::getInstance()->canRunCronAction()) {
             return '';
         }
 
@@ -40,7 +40,7 @@ class MsgController extends ConsoleController
             ], '`id`');
             if (empty($chats)) {
                 echo 'Чаты отсуствуют!', PHP_EOL;
-                CronMsgRunner::getInstance()->removeKey();
+                CronCheckerForMsgRunStorage::getInstance()->removeKey();
                 return '';
             }
 
@@ -55,7 +55,7 @@ class MsgController extends ConsoleController
                 echo 'Для чата id=[', $chat['id'], '] было удалено ' . $removeCount . ' сообщений.', PHP_EOL;
             }
         } catch (Exception $ex) {}
-        CronMsgRunner::getInstance()->removeKey();
+        CronCheckerForMsgRunStorage::getInstance()->removeKey();
         echo "Метод успешно выполнен", PHP_EOL;
 
         return '';

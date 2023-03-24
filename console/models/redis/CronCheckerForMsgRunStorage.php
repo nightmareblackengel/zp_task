@@ -1,12 +1,12 @@
 <?php
 
-namespace common\models\redis;
+namespace console\models\redis;
 
 use common\ext\redis\RedisStrings;
 use Yii;
 use yii\redis\Connection;
 
-class CronMsgRunner extends RedisStrings
+class CronCheckerForMsgRunStorage extends RedisStrings
 {
     public static function getStorage(): Connection
     {
