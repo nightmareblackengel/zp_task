@@ -168,19 +168,15 @@ class ChatController extends AuthController
 
         $usersForm = new ChatAddUserForm(['chatId' => $chatId]);
         $usersForm->existsUsers = UserModel::getInstance()->getUserListForChat($chatId);
-        // TODO: переделать функционал, чтобы не держать 1млн пользователей
-        $usersForm->userCanAddIds = UserModel::getInstance()->getUserListForAddToChannel($chatId);
 
         if ($usersForm->load(Yii::$app->request->post())) {
             $usersForm->chatId = $chatId;
 
-            if (!empty($usersForm->userCanAddIds)) {
-                $saveRes = $usersForm->save();
-                if ($saveRes) {
-                    return $this->redirect(
-                        Url::to(['/chat/index', 'chat_id' => $chatId])
-                    );
-                }
+            $saveRes = $usersForm->save();
+            if ($saveRes) {
+                return $this->redirect(
+                    Url::to(['/chat/index', 'chat_id' => $chatId])
+                );
             }
         }
 
