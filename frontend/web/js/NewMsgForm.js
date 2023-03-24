@@ -49,20 +49,30 @@
                     if (data.form_err) {
                         $('#addNewMessageForm').yiiActiveForm('updateMessages', data.form_err)
                     }
+                    selfNmf.ajaxDoneHandler(AJAX_REQUEST_INCLUDE, AJAX_REQUEST_INCLUDE);
                 } else if (data.result === AJAX_RESPONSE_OK) {
-
+                    selfNmf.ajaxDoneHandler(AJAX_REQUEST_INCLUDE, AJAX_REQUEST_INCLUDE, AJAX_REQUEST_INCLUDE);
                 }
-                selfNmf.ajaxDoneHandler();
             });
         });
     }
 
-    NewMsgForm.prototype.ajaxDoneHandler = function ()
+    NewMsgForm.prototype.ajaxDoneHandler = function (showChats, showMessages, showAddNewItem)
     {
+        if (!showChats) {
+            showChats = AJAX_REQUEST_EXCLUDE;
+        }
+        if (!showMessages) {
+            showMessages = AJAX_REQUEST_EXCLUDE;
+        }
+        if (!showAddNewItem) {
+            showAddNewItem = AJAX_REQUEST_EXCLUDE;
+        }
+
         window.nbeClp.loadData(
-            AJAX_REQUEST_INCLUDE,
-            AJAX_REQUEST_INCLUDE,
-            AJAX_REQUEST_INCLUDE
+            showChats,
+            showMessages,
+            showAddNewItem
         );
         $('.nbeAddNewMsgBtn').attr('data-process', '0');
     }
