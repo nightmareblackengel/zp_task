@@ -1,7 +1,7 @@
 <?php
 namespace console\models\helpers;
 
-use console\models\UserSettingsModel;
+use console\models\mysql\UserSettingsModel;
 
 /**
  * Испрользуется для вычисления настроек чата.

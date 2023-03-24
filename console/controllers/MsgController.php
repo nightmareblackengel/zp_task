@@ -5,8 +5,8 @@ use common\ext\console\ConsoleController;
 use common\models\mysql\ChatModel;
 use common\models\redis\ChatMessageQueueStorage;
 use console\models\helpers\UserSettingsHelper;
+use console\models\mysql\UserSettingsModel;
 use console\models\redis\CronCheckerForMsgRunStorage;
-use console\models\UserSettingsModel;
 use Exception;
 
 class MsgController extends ConsoleController

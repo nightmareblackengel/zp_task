@@ -1,5 +1,5 @@
 <?php
-namespace console\models;
+namespace console\models\mysql;
 
 use common\models\mysql\UserChatModel;
 
