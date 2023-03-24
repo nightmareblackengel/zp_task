@@ -222,9 +222,4 @@ class ChatController extends AuthController
             'chatId' => $chatId,
         ], '`userId`, `chatId`, `isUserBanned`, `isChatOwner`');
     }
-
-//    public function actionTest()
-//    {
-//
-//    }
 }

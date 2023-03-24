@@ -68,7 +68,7 @@ class UserChatModel extends MySqlModel
                 FROM %s uc
                 INNER JOIN %s c ON c.`id` = uc.`chatId`
                 WHERE uc.`userId` = :firstUser
-                AND c.`isChannel` IS NULL
+                AND c.`isChannel`=0
             )
             AND `userId` = :secondUser",
             static::tableName(),
