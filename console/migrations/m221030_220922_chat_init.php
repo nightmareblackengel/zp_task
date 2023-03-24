@@ -24,8 +24,8 @@ class m221030_220922_chat_init extends \yii\db\Migration
 			"CREATE TABLE `user_chat` (
 				`userId` INT UNSIGNED NOT NULL,
 				`chatId` INT UNSIGNED NOT NULL,
-				`isUserBanned` SMALLINT,
-				`isChatOwner` SMALLINT,
+				`isUserBanned` SMALLINT NOT NULL DEFAULT 0,
+				`isChatOwner` SMALLINT NOT NULL DEFAULT 0,
 				`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				PRIMARY KEY (`chatId`, `userId`),
 				INDEX `user_chat__user_idx` (`userId`)
