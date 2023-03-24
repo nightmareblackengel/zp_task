@@ -1,7 +1,7 @@
 <?php
 namespace common\ext\console;
 
-use common\models\redis\CronDelayMsgRunner;
+use console\models\redis\CronCheckerForRunStorage;
 use DateTime;
 use yii\console\Controller;
 
@@ -11,8 +11,8 @@ class ConsoleController extends Controller
     protected function checkIfCorrectDockerRun(): bool
     {
         try {
-            CronDelayMsgRunner::getStorage()->connectionTimeout = 2;
-            CronDelayMsgRunner::getStorage()->open();
+            CronCheckerForRunStorage::getStorage()->connectionTimeout = 2;
+            CronCheckerForRunStorage::getStorage()->open();
         } catch (\Exception $ex) {
             return false;
         }

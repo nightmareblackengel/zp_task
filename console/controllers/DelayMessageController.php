@@ -2,9 +2,9 @@
 namespace console\controllers;
 
 use common\ext\console\ConsoleController;
-use common\models\redis\CronDelayMsgRunner;
 use common\models\redis\DelayMsgSortedSetStorage;
 use console\models\helpers\MessageHelper;
+use console\models\redis\CronCheckerForRunStorage;
 use Faker\Factory;
 
 /**
@@ -26,6 +26,7 @@ class DelayMessageController extends ConsoleController
     const TEST_USER_ID = 5;
     const TEST_CHAT_ID = 27;
 
+    // docker exec -it mphp /var/www/html/ztt.loc/yii delay-message/index
     public function actionIndex($showLog = 0)
     {
         $showLog = (int) $showLog;
@@ -40,7 +41,7 @@ class DelayMessageController extends ConsoleController
         $insertTime = $startTime;
         echo PHP_EOL, 'Started at=', date('Y-m-d H:i:s', $insertTime), PHP_EOL;
 
-        $canRun = CronDelayMsgRunner::getInstance()->canRunCronAction($startTime);
+        $canRun = CronCheckerForRunStorage::getInstance()->canRunCronAction($startTime);
         if (!$canRun) {
             echo PHP_EOL, "Can't run second script on certain time", PHP_EOL;
             return '';
@@ -132,16 +133,4 @@ class DelayMessageController extends ConsoleController
 
         return $startAt - ($startAt % 60);
     }
-
-    // удаляет только лишь указанные в score значения
-//    protected function removeCertain(int $certainScore)
-//    {
-//        echo PHP_EOL, 'remove score = ', $certainScore, PHP_EOL;
-//        $res = DelayMsgSortedSetStorage::getInstance()->getData($certainScore, $certainScore, true, true);
-//        print_r2($res, 'Elements for remove');
-//        $resR = DelayMsgSortedSetStorage::getInstance()->removeByScore($certainScore, $certainScore);
-//        var_dump($resR); echo PHP_EOL;
-//        $res = DelayMsgSortedSetStorage::getInstance()->getData(0, 100000000000, true);
-//        print_r2($res, 'least elements');
-//    }
 }
