@@ -55,7 +55,8 @@ class UserSettingsForm extends Form
         } else {
             $values = $this->getAttributes();
             unset($values['userId']);
-            $saveRes = UserSettingsModel::getInstance()->updateBy($values, ['userId' => $this->userId]);
+            UserSettingsModel::getInstance()->updateBy($values, ['userId' => $this->userId]);
+            $saveRes = true;
         }
 
         return !empty($saveRes) ? true : false;

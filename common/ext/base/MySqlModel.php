@@ -8,6 +8,7 @@ use Exception;
 use Yii;
 use yii\base\BaseObject;
 use yii\db\Connection;
+use yii\db\Query;
 
 abstract class MySqlModel extends BaseObject
 {
@@ -31,78 +32,28 @@ abstract class MySqlModel extends BaseObject
         return array_shift($this->_errors[self::DEFAULT_ERR_ATTRIBUTE]);
     }
 
-    protected function prepareInsertStr(array $params): array
+    public function getItemBy(array $whereParams, string $select = '*'): ?array
     {
-        if (empty($params)) {
-            return [null, null];
-        }
-        $colNames = [];
-        $colValues = [];
-        $colParams = [];
-        foreach ($params as $columnName => $columnValue) {
-            $colNames[] = "`$columnName`";
-            $valueParam = ":$columnName";
-            $colValues[] = $valueParam;
-            $colParams[$valueParam] = $columnValue;
+        if (empty($whereParams) || empty($select)) {
+            return null;
         }
 
-        $insertStr = "INSERT INTO " . static::tableName()
-            . "(" . implode(',', $colNames) . ") "
-            . "VALUES (" . implode(',', $colValues) . ")";
+        $query = new Query();
+        $query->select($select)
+            ->from(static::tableName())
+            ->where($whereParams)
+            ->all();
 
-        return [$insertStr, $colParams];
-    }
-
-    public function prepareUpdateStr(array $values, array $whereCond): array
-    {
-        if (empty($values) || empty($whereCond)) {
-            return [null, null];
+        try {
+            $result = $query->one();
+        } catch (Exception $ex) {
+            $this->addError(self::DEFAULT_ERR_ATTRIBUTE, 'Ошибка БД:' . $ex->getMessage());
         }
-        $colNames = [];
-        $colParams = [];
-        foreach ($values as $columnName => $columnValue) {
-            $valueParam = ":$columnName";
-            $colNames[] = "`$columnName` = $valueParam";
-            $colParams[$valueParam] = $columnValue;
+        if (empty($result)) {
+            return null;
         }
 
-        $whereColumns = [];
-        foreach ($whereCond as $columnName => $columnValue) {
-            $valueParam = ":$columnName";
-            $whereColumns[] = "`$columnName` = $valueParam";
-            $colParams[$valueParam] = $columnValue;
-        }
-
-        $updateStr = "UPDATE " . static::tableName() . " SET "
-            . implode(', ', $colNames)
-            . " WHERE " . implode(' AND ', $whereColumns);
-
-        return [$updateStr, $colParams];
-    }
-
-    public function prepareWhereStr(?array $params): array
-    {
-        if (empty($params)) {
-            return [null, null];
-        }
-
-        $where = [];
-        $columnParams = [];
-        foreach ($params as $colName => $colValue) {
-            $paramName = ":$colName";
-
-            if (is_array($colValue)) {
-                $where[] = '`' . $colName . "` IN ('" . implode("','", $colValue) . "')";
-            } else {
-                $where[] = '`' . $colName . '`=' . $paramName;
-                $columnParams[$paramName] = $colValue;
-            }
-        }
-
-        return [
-            implode(' AND ', $where),
-            $columnParams
-        ];
+        return $result;
     }
 
     public function insertBy(array $params): ?int
@@ -112,55 +63,15 @@ abstract class MySqlModel extends BaseObject
             return null;
         }
 
-        list($insertStr, $insertParams) = $this->prepareInsertStr($params);
-        if (empty($insertStr)) {
-            return null;
-        }
-        try {
-            $insertRes = static::getDb()
-                ->createCommand($insertStr, $insertParams)
-                ->execute();
-        } catch (Exception $ex) {
-            $this->addError(self::DEFAULT_ERR_ATTRIBUTE, 'Ошибка! При вставке данных в БД:' . $ex->getMessage());
-        }
+        $insertRes = static::getDb()
+            ->createCommand()
+            ->insert(static::tableName(), $params)
+            ->execute();
         if (empty($insertRes)) {
             return null;
         }
 
         return static::getDb()->lastInsertID;
-    }
-
-    public function getItemBy(array $whereParams, string $select = '*'): ?array
-    {
-        if (empty($whereParams) || empty($select)) {
-            return null;
-        }
-
-        list($where, $colParams) = $this->prepareWhereStr($whereParams);
-        if (empty($where)) {
-            return null;
-        }
-
-        $selectQueryStr = sprintf(
-            "SELECT %s FROM %s "
-            . " WHERE " . $where,
-            $select,
-            static::tableName()
-        );
-        try {
-            $selectRes = static::getDb()
-                ->createCommand($selectQueryStr, $colParams)
-                ->queryOne();
-        } catch (Exception $ex) {
-//            echo $ex->getMessage();
-//            Yii::$app->end();
-//            exit();
-        }
-        if (empty($selectRes)) {
-            return null;
-        }
-
-        return $selectRes;
     }
 
     public function updateBy(array $values, array $whereCond): ?int
@@ -170,13 +81,10 @@ abstract class MySqlModel extends BaseObject
             return null;
         }
 
-        list($updateStr, $params) = $this->prepareUpdateStr($values, $whereCond);
-        if (empty($updateStr)) {
-            return null;
-        }
         try {
             $updateRes = static::getDb()
-                ->createCommand($updateStr, $params)
+                ->createCommand()
+                ->update(static::tableName(), $values, $whereCond)
                 ->execute();
         } catch (Exception $ex) {
             $this->addError(self::DEFAULT_ERR_ATTRIBUTE, 'Ошибка! При обновлении данных в БД:' . $ex->getMessage());
@@ -185,19 +93,23 @@ abstract class MySqlModel extends BaseObject
         return !empty($updateRes) ? $updateRes :  null;
     }
 
-    public function getList(array $whereParams = [], $select = '*', int $offset = 0, int $limit = 0): ?array
+    public function getList(array $whereParams = [], $select = '*', ?int $offset = null, ?int $limit = null): ?array
     {
-        $query = 'SELECT ' . $select . ' FROM ' . static::tableName() . ' ';
-        $colParams = [];
-        if (!empty($whereParams)) {
-            list($where, $colParams) = $this->prepareWhereStr($whereParams);
-            $query .= ' WHERE ' . $where;
+        $query = new Query();
+
+        try {
+            $list = $query->select($select)
+                ->from(static::tableName())
+                ->andWhere($whereParams)
+                ->offset($offset)
+                ->limit($limit)
+                ->all();
+        } catch (Exception $ex) {
         }
-        if (!empty($limit) || !empty($offset)) {
-            $query .= ' LIMIT ' . $limit;
-            $query .= ' OFFSET ' . $offset . ' ';
+        if (empty($list)) {
+            return [];
         }
 
-        return static::getDb()->createCommand($query, $colParams)->queryAll();
+        return $list;
     }
 }

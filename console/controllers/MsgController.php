@@ -34,12 +34,10 @@ class MsgController extends ConsoleController
 
         echo "Старт метода очистки сообщений. Время=", date('Y-m-d H:i:s'), PHP_EOL;
         try {
-            $offset = 0;
-            $limit = 0;
             // для каждого чата
             $chats = ChatModel::getInstance()->getList([
                 'status' => ChatModel::STATUS_ENABLED,
-            ], '`id`', $offset, $limit);
+            ], '`id`');
             if (empty($chats)) {
                 echo 'Чаты отсуствуют!', PHP_EOL;
                 CronMsgRunner::getInstance()->removeKey();
