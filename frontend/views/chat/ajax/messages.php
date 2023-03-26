@@ -34,7 +34,6 @@ if (empty($messages)) {
         ?>
 
         <div class="<?php echo $contClasses; ?>" data-msg-type="<?php echo $msgItem->t ?? '0'; ?>">
-
             <?php if ($msgItem->t === ChatMessageModel::MESSAGE_TYPE_SYSTEM) { ?>
                 <?php echo MessageCommandHelper::printCmd($msgItem->m, $msgItem, $userList); ?>
             <?php } else { ?>
@@ -46,16 +45,16 @@ if (empty($messages)) {
                     <?php } ?>
                 </div>
                 <span class="nbeMessage <?php echo $userId !== $currentUserId ? 'nbeBgLGolden' : 'nbeLCyan'; ?>">
-            <?php echo Html::encode($msgItem->m ?? '[пустое сообщение]'); ?>
-            <span class="nbeDate">
-                <?php
-                if (!empty($msgItem->d)) {
-                    $createdAt = date('Y-m-d H:i:s', (int) $msgItem->d);
-                }
-                echo $createdAt ?? '-';
-                ?>
-            </span>
-        </span>
+                    <?php echo Html::encode($msgItem->m ?? '[пустое сообщение]'); ?>
+                    <span class="nbeDate">
+                        <?php
+                        if (!empty($msgItem->d)) {
+                            $createdAt = date('Y-m-d H:i:s', (int) $msgItem->d);
+                        }
+                        echo $createdAt ?? '-';
+                        ?>
+                    </span>
+                </span>
             <?php } ?>
         </div>
 
