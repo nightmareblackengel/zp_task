@@ -42,13 +42,6 @@ class AjaxMessageModel extends AjaxBase
             ];
         }
         $messagesCount = (int) ChatMessageQueueStorage::getInstance()->getQueueLength($chatId);
-        if (!empty($this->maxMsgCount) && $this->maxMsgCount === $messagesCount) {
-            return [
-                'result' => AjaxHelper::AJAX_RESPONSE_OK,
-                'messages_count' => $messagesCount,
-                'html' => null,
-            ];
-        }
         $offset = 0;
         if ($messagesCount > self::MAX_MSG_GET_AT_ONCE) {
             $offset -= self::MAX_MSG_GET_AT_ONCE;
