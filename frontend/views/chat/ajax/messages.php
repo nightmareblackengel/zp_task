@@ -2,6 +2,7 @@
 use common\ext\helpers\Html;
 use common\models\ChatMessageModel;
 use frontend\models\helpers\MessageCommandHelper;
+use frontend\models\redis\FlashMsgSetStorage;
 
 /** @var stdClass[] $messages */
 /** @var int $currentUserId */
@@ -24,6 +25,7 @@ if (empty($messages)) {
 } else {
     foreach ($messages as $msgItem) {
         $userId = $msgItem->u ?? 0;
+        $flash = FlashMsgSetStorage::getInstance()->getAndRemove($userId);
 
         $contClasses = 'oneMsgContainer';
         if ($msgItem->t === ChatMessageModel::MESSAGE_TYPE_SYSTEM) {
@@ -57,6 +59,12 @@ if (empty($messages)) {
                 </span>
             <?php } ?>
         </div>
+
+        <?php if (!empty($flash)) { ?>
+            <div class="alert alert-success" role="alert">
+                <?php echo $flash; ?>
+            </div>
+        <?php } ?>
 
     <?php }
 }

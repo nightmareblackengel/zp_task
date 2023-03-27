@@ -11,6 +11,7 @@ use common\models\redis\DelayMsgSortedSetStorage;
 use Exception;
 use frontend\models\forms\MessageAddForm;
 use frontend\models\helpers\MessageCommandHelper;
+use frontend\models\redis\FlashMsgSetStorage;
 use yii\base\BaseObject;
 
 class ChatMessageModel extends BaseObject
@@ -150,8 +151,10 @@ class ChatMessageModel extends BaseObject
 
     protected function executeClearHistoryCmd(MessageAddForm $form): bool
     {
+        $existsMsgCount = $this->model->getQueueLength($form->chatId);
         $this->model->delete($form->chatId);
         $form->message = 'История чата была успешно удалена в ' . date('Y-m-d H:i:s');
+        FlashMsgSetStorage::getInstance()->setExValue($form->userId, 'Было удалено ' . $existsMsgCount . ' сообщений.');
         // сохраним сообщение
         return $this->insertMessage($form->userId, $form->chatId, $form->message, $form->messageType);
     }

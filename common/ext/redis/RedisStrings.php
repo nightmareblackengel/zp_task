@@ -18,4 +18,9 @@ abstract class RedisStrings extends RedisBase
     {
         return static::getStorage()->setex($this->prepareKey($key), $timeout, $value);
     }
+
+    public function getAndRemove(string $key)
+    {
+        return static::getStorage()->executeCommand('GETDEL', [$this->prepareKey($key)]);
+    }
 }
