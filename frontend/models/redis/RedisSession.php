@@ -1,5 +1,5 @@
 <?php
-namespace frontend\models;
+namespace frontend\models\redis;
 
 use yii\redis\Session;
 

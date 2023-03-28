@@ -1,5 +1,5 @@
 <?php
-namespace frontend\models;
+namespace frontend\models\redis;
 
 use Exception;
 use frontend\models\helpers\AuthCookieHelper;

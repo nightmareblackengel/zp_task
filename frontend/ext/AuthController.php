@@ -1,11 +1,11 @@
 <?php
 namespace frontend\ext;
 
-use frontend\models\UserAuthIdentity;
+use frontend\models\redis\UserAuthIdentity;
+use Yii;
 use yii\base\InvalidRouteException;
 use yii\base\Module;
 use yii\web\Controller;
-use Yii;
 
 class AuthController extends Controller
 {

@@ -19,11 +19,11 @@ return [
             'class' => \common\ext\web\Request::class,
         ],
         'user' => [
-            'class' => \frontend\models\UserAuth::class,
+            'class' => \frontend\models\redis\UserAuth::class,
         ],
         'session' => [
             'name' => 'ztt-session',
-            'class' => \frontend\models\RedisSession::class,
+            'class' => \frontend\models\redis\RedisSession::class,
             'redis' => 'redisDb1',
             'keyPrefix' => 'sess_',
         ],
