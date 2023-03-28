@@ -81,19 +81,28 @@ class UserAuth extends \yii\web\User
 
         $redisAuthData = @unserialize($redisValue);
         if (empty($redisAuthData['auth'])) {
-            AuthStorageHelper::getInstance()->delete($authCook->value);
+            AuthStorageHelper::getInstance()->delete($authCook->value, null, false);
+            return AuthCookieHelper::removeAuthCookie();
+        }
+        if (empty($redisAuthData['session'])) {
+            AuthStorageHelper::getInstance()->delete($authCook->value, null, false);
+            return AuthCookieHelper::removeAuthCookie();
+        }
+        Yii::$app->session->open();
+        if (Yii::$app->session->getId() !== $redisAuthData['session']) {
+            AuthStorageHelper::getInstance()->delete($authCook->value, null, false);
             return AuthCookieHelper::removeAuthCookie();
         }
 
         $userId = AuthEncryptHelper::decode($authCook->value, $redisAuthData['auth'], 31);
         if (empty($userId)) {
-            AuthStorageHelper::getInstance()->delete($authCook->value);
+            AuthStorageHelper::getInstance()->delete($authCook->value, $userId);
             return AuthCookieHelper::removeAuthCookie();
         }
 
         $this->userIdentity = UserAuthIdentity::findIdentity((int) $userId);
         if (empty($this->userIdentity)) {
-            AuthStorageHelper::getInstance()->delete($authCook->value);
+            AuthStorageHelper::getInstance()->delete($authCook->value, $userId);
             return AuthCookieHelper::removeAuthCookie();
         }
 
@@ -127,11 +136,13 @@ class UserAuth extends \yii\web\User
             return null;
         }
 
+        Yii::$app->session->open();
         $redisKey = $userIdHash;
         $redisHashData = serialize([
             'auth' => $userEmailHash,
             'uip' => Yii::$app->request->getUserIP(),
-            'date' => date('Y-m-d H:i:s'), // change to time
+            'date' => date('Y-m-d H:i:s'),
+            'session' => Yii::$app->session->getId(),
         ]);
 
         $saveRes = AuthStorageHelper::getInstance()->save($userData['id'], $redisKey, $redisHashData, $this->authTimeout);

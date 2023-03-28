@@ -36,7 +36,7 @@ class AuthStorageHelper extends BaseObject
 
     public function delete($key, $userId, $clearUserId = true)
     {
-        if ($clearUserId) {
+        if ($clearUserId && !empty($userId)) {
             $this->userStorage->delete($userId);
         }
 
