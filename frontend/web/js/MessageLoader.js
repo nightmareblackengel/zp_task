@@ -180,7 +180,7 @@
 
         var messagesParam = {
             'show_in_response': showMessages,
-            'max_msg_count': $('.nbeAjaxChatContainer .list-group-item[data-id="' + chatId + '"]').attr('data-msg-count'),
+            'chat_msg_count': $('.nbeAjaxChatContainer .list-group-item[data-id="' + chatId + '"]').attr('data-msg-count'),
             'last_updated_at': null,
         }
 

@@ -22,7 +22,7 @@ class AjaxNewItemModel extends AjaxBase
 
     public function prepareResponse(?int $userId, ?int $chatId, ?array $params = []): ?array
     {
-        if ($this->showInResponse === AjaxHelper::AJAX_REQUEST_EXCLUDE) {
+        if (empty($this->showInResponse) || $this->showInResponse === AjaxHelper::AJAX_REQUEST_EXCLUDE) {
             return null;
         }
         if (empty($chatId)) {

@@ -24,14 +24,14 @@ class AjaxMessageModel extends AjaxBase
         }
         $this->lastUpdatedAt = (int) ($data['last_updated_at'] ?? 0);
         $this->showInResponse = (int) ($data['show_in_response'] ?? 0);
-        $this->maxMsgCount = (int) ($data['max_msg_count'] ?? 0);
+        $this->maxMsgCount = (int) ($data['chat_msg_count'] ?? 0);
 
         return true;
     }
 
     public function prepareResponse(?int $userId, ?int $chatId, ?array $params = []): ?array
     {
-        if ($this->showInResponse === AjaxHelper::AJAX_REQUEST_EXCLUDE) {
+        if (empty($this->showInResponse) || $this->showInResponse === AjaxHelper::AJAX_REQUEST_EXCLUDE) {
             return null;
         }
         if (empty($chatId)) {
