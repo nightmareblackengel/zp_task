@@ -49,9 +49,9 @@
                     if (data.form_err) {
                         $('#addNewMessageForm').yiiActiveForm('updateMessages', data.form_err)
                     }
-                    selfNmf.ajaxDoneHandler(AJAX_REQUEST_INCLUDE, AJAX_REQUEST_INCLUDE);
+                    selfNmf.ajaxDoneHandler(AJAX_REQUEST_INCLUDE, AJAX_REQUEST_CHECK_NEW);
                 } else if (data.result === AJAX_RESPONSE_OK) {
-                    selfNmf.ajaxDoneHandler(AJAX_REQUEST_INCLUDE, AJAX_REQUEST_INCLUDE, AJAX_REQUEST_INCLUDE);
+                    selfNmf.ajaxDoneHandler(AJAX_REQUEST_INCLUDE, AJAX_REQUEST_CHECK_NEW, AJAX_REQUEST_INCLUDE);
                 }
             });
         });

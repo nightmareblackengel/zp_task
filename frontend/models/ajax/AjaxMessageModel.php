@@ -12,10 +12,11 @@ use Yii;
 
 class AjaxMessageModel extends AjaxBase
 {
-    const MAX_MSG_GET_AT_ONCE = 200;
+    const MAX_MSG_GET_AT_ONCE = 50;
 
     public ?int $lastUpdatedAt = null;
-    public ?int $maxMsgCount = null;
+    public ?int $prevMsgCount = null;
+    public ?int $showedMsgCount = null;
 
     public function load(?array $data): bool
     {
@@ -24,7 +25,8 @@ class AjaxMessageModel extends AjaxBase
         }
         $this->lastUpdatedAt = (int) ($data['last_updated_at'] ?? 0);
         $this->showInResponse = (int) ($data['show_in_response'] ?? 0);
-        $this->maxMsgCount = (int) ($data['chat_msg_count'] ?? 0);
+        $this->prevMsgCount = (int) ($data['chat_msg_count'] ?? 0);
+        $this->showedMsgCount = (int) ($data['showed_msg_count'] ?? 0);
 
         return true;
     }
@@ -41,27 +43,64 @@ class AjaxMessageModel extends AjaxBase
                 'html' => Yii::$app->controller->render('/chat/ajax/messages_empty'),
             ];
         }
-        $messagesCount = (int) ChatMessageQueueStorage::getInstance()->getQueueLength($chatId);
-        $offset = 0;
-        if ($messagesCount > self::MAX_MSG_GET_AT_ONCE) {
-            $offset -= self::MAX_MSG_GET_AT_ONCE;
-        }
 
-        $messages = ChatMessageModel::getInstance()
-            // TODO: replace it count on userSettings
-            ->getList($chatId, $offset);
         $chat = ChatModel::getInstance()->getItemBy(['id' => $chatId]);
         $chatOwnerId = UserChatModel::getInstance()->getChatOwnerId($chatId);
+        $messagesCount = (int) ChatMessageQueueStorage::getInstance()->getQueueLength($chatId);
+        $responsePlace = AjaxHelper::AJAX_RESPONSE_PLACE_APPEND;
+        $offset = 0;
+        $messages = [];
+        $previousMsgEnd = 0;
+        $showLoader = false;
+
+        if ($this->showInResponse === AjaxHelper::AJAX_REQUEST_INCLUDE) {
+            $responsePlace = AjaxHelper::AJAX_RESPONSE_PLACE_NEW;
+
+            if ($messagesCount > self::MAX_MSG_GET_AT_ONCE) {
+                $showLoader = true;
+                if (($messagesCount - self::MAX_MSG_GET_AT_ONCE) >= 0) {
+                    $offset = $messagesCount - self::MAX_MSG_GET_AT_ONCE;
+                }
+            }
+            $messages = ChatMessageModel::getInstance()
+                ->getList($chatId, $offset, - 1);
+        } elseif ($this->showInResponse === AjaxHelper::AJAX_REQUEST_CHECK_NEW) {
+            $responsePlace = AjaxHelper::AJAX_RESPONSE_PLACE_APPEND;
+            if ($this->prevMsgCount <> $messagesCount) {
+                $messages = ChatMessageModel::getInstance()
+                    ->getList($chatId, $this->prevMsgCount, $messagesCount - 1);
+            }
+        } elseif ($this->showInResponse === AjaxHelper::AJAX_REQUEST_CHECK_PREV) {
+            $responsePlace = AjaxHelper::AJAX_RESPONSE_PLACE_PREPEND;
+            if (!empty($this->showedMsgCount)) {
+                $endPos = $messagesCount - $this->showedMsgCount;
+                $startPos = $endPos - self::MAX_MSG_GET_AT_ONCE;
+                if ($startPos <= 0) {
+                    $previousMsgEnd = 1;
+                    $startPos = 0;
+                } else {
+                    $showLoader = true;
+                }
+
+                $messages = ChatMessageModel::getInstance()
+                    ->getList($chatId, $startPos, $endPos - 1);
+            }
+        }
 
         return [
             'result' => AjaxHelper::AJAX_RESPONSE_OK,
+            'msgAddType' => $responsePlace,
             'messages_count' => $messagesCount,
+            'previous_msg_is_end' => $previousMsgEnd,
             'html' => Yii::$app->controller->render('/chat/ajax/messages', [
                 'userList' => UserModel::getInstance()->getUserListForChat($chatId),
                 'messages' => $messages,
                 'currentUserId' => $userId,
                 'chat' => $chat,
                 'chatOwnerId' => $chatOwnerId,
+                'messageCount' => $messagesCount,
+                'responsePlace' => $responsePlace,
+                'showLoader' => $showLoader,
             ]),
         ];
     }

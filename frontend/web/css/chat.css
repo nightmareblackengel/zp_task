@@ -322,3 +322,6 @@
     overflow: hidden;
     display: inline-block;
 }
+.newMessageCircle {
+    text-align: center;
+}

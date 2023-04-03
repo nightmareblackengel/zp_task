@@ -10,6 +10,7 @@
     MessageLoader.prototype.init = function ()
     {
         var isMessagePage = this.isMessagesListPage();
+        this.initScrollChecker();
         // первая загрузка данных
         this.loadData(
             AJAX_REQUEST_INCLUDE,
@@ -21,6 +22,31 @@
     MessageLoader.prototype.isMessagesListPage = function()
     {
         return $('.nbeAjaxMessageContainer').length && $('.addNewMsgContainer').length;
+    }
+
+    MessageLoader.prototype.initScrollChecker = function()
+    {
+        var selfMl = this;
+        selfMl.canCheckScroll = true;
+
+        $('.nbeAjaxMessageContainer').on('scroll', function(event) {
+            if (!selfMl.canCheckScroll) {
+                return false;
+            }
+
+            var scrollTop = parseInt($('.nbeAjaxMessageContainer').scrollTop());
+            if (!isNaN(scrollTop) && $('.nbeAjaxMessageContainer').find('.newMessageCircle').length) {
+                // если скрол приближается к элементу "загрузка данных"
+                if (scrollTop < 200) {
+                    selfMl.canCheckScroll = false;
+                    selfMl.loadData(
+                        AJAX_REQUEST_EXCLUDE,
+                        AJAX_REQUEST_CHECK_PREV,
+                        AJAX_REQUEST_EXCLUDE
+                    );
+                }
+            }
+        });
     }
 
     MessageLoader.prototype.loadData = function (showChats, showMessages, showAddNewItem)
@@ -63,28 +89,49 @@
             // выполним скролл
             window.nbeClp.scrollChatListTo(data.chat_id);
         }
-        if (data.messages && data.messages.result === AJAX_RESPONSE_OK) {
-            if (data.messages.html) {
-                // TODO: new engine
-                $('.nbeAjaxMessageContainer').html(data.messages.html);
-            }
-            // сокроем "общий лоадер" (можно вызывать дважды и более)
-            window.nbeClp.hideAjaxLoader('messages');
-            window.nbeClp.scrollToLastMessage(data.chat_id);
-            if (data.chat_id) {
-                // установим кол-во сообщений
-                $('.nbeAjaxChatContainer .list-group-item[data-id="' + data.chat_id + '"]').attr('data-msg-count', data.messages.messages_count);
-            }
-        }
+
         if (data.new_message && data.new_message.result === AJAX_RESPONSE_OK && data.new_message.html) {
             $('.addNewMsgContainer').html(data.new_message.html);
             window.nbeClp.initSendForm();
             $('.addNewMsgContainer').removeClass('nbeDisplayNone');
         }
+
+        if (data.messages && data.messages.result === AJAX_RESPONSE_OK) {
+            var placementType = AJAX_RESPONSE_PLACE_APPEND;
+            if (data.messages.msgAddType) {
+                placementType = data.messages.msgAddType;
+            }
+
+            if (data.messages.html) {
+                if (placementType === AJAX_RESPONSE_PLACE_NEW) {
+                    $('.nbeAjaxMessageContainer').html(data.messages.html);
+                } else if (placementType === AJAX_RESPONSE_PLACE_APPEND) {
+                    $('.nbeAjaxMessageContainer').append(data.messages.html);
+                } else if (placementType === AJAX_RESPONSE_PLACE_PREPEND) {
+                    if (placementType === AJAX_RESPONSE_PLACE_PREPEND) {
+                        // удалим отображение подзагрузки
+                        $('.nbeAjaxMessageContainer').find('.newMessageCircle').remove();
+                    }
+                    $('.nbeAjaxMessageContainer').prepend(data.messages.html);
+                }
+                // разрешаем фиксировать движения скрола, после "предзагрузки"
+                window.nbeClp.canCheckScroll = true;
+            }
+            // сокроем "общий лоадер" (можно вызывать дважды и более)
+            window.nbeClp.hideAjaxLoader('messages');
+            if (data.chat_id) {
+                // установим кол-во сообщений
+                $('.nbeAjaxChatContainer .list-group-item[data-id="' + data.chat_id + '"]').attr('data-msg-count', data.messages.messages_count);
+            }
+
+            if (placementType === AJAX_RESPONSE_PLACE_NEW) {
+                window.nbeClp.scrollToLastMessage(data.chat_id);
+            }
+        }
         window.nbeClp.alwaysOnAjaxDone();
         console.log('данные загружены', data);
 
-        var showMessages = data.chat_id ? AJAX_REQUEST_INCLUDE : AJAX_REQUEST_EXCLUDE;
+        var showMessages = data.chat_id ? AJAX_REQUEST_CHECK_NEW : AJAX_REQUEST_EXCLUDE;
         window.nbeClp.ajaxCount--;
 
         // 1. из-за задержки ответа со стороны сервера - возможен "двойной запуск"
@@ -183,6 +230,9 @@
             'chat_msg_count': $('.nbeAjaxChatContainer .list-group-item[data-id="' + chatId + '"]').attr('data-msg-count'),
             'last_updated_at': null,
         }
+        if (showMessages === AJAX_REQUEST_CHECK_PREV) {
+            messagesParam['showed_msg_count'] = $('.nbeAjaxMessageContainer').find('.oneMsgContainer').length;
+        }
 
         var sendData = {
             'chats': {
@@ -228,10 +278,10 @@
     MessageLoader.prototype.initSendForm = function()
     {
         $('#addNewMessageForm').yiiActiveForm({
-            'message': this.addAttributeParam('messageaddform-message'),
-            "userId": this.addAttributeParam('messageaddform-userid'),
-            "chatId": this.addAttributeParam('messageaddform-chatid'),
-            "messageType": this.addAttributeParam('messageaddform-messagetype'),
+            'message': window.nbeClp.addAttributeParam('messageaddform-message'),
+            "userId": window.nbeClp.addAttributeParam('messageaddform-userid'),
+            "chatId": window.nbeClp.addAttributeParam('messageaddform-chatid'),
+            "messageType": window.nbeClp.addAttributeParam('messageaddform-messagetype'),
         });
 
         var $chatHeader = $('.chatMsgHeader[data-chat-type="1"]');

@@ -1,6 +1,7 @@
 <?php
 use common\ext\helpers\Html;
 use common\models\ChatMessageModel;
+use frontend\models\helpers\AjaxHelper;
 use frontend\models\helpers\MessageCommandHelper;
 use frontend\models\redis\FlashMsgSetStorage;
 
@@ -9,10 +10,12 @@ use frontend\models\redis\FlashMsgSetStorage;
 /** @var array $userList */
 /** @var array $chat */
 /** @var ?int $chatOwnerId */
+/** @var int $messageCount */
+/** @var int $responsePlace */
+/** @var bool $showLoader */
 ?>
-
 <?php
-if (!empty($chat['isChannel'])) { ?>
+if (!empty($chat['isChannel']) && $responsePlace === AjaxHelper::AJAX_RESPONSE_PLACE_NEW) { ?>
     <div class="chatMsgHeader" data-chat-type="<?php echo $chat['isChannel']; ?>"
         title="<?php echo "Владелец: " . $userList[$chatOwnerId] ?? ''; ?>">
 
@@ -20,9 +23,17 @@ if (!empty($chat['isChannel'])) { ?>
     </div>
 <?php
 }
-if (empty($messages)) {
+if (empty($messageCount)) {
     echo Html::tag('div', 'Вы не написали еще ни одного сообщения! Теперь есть повод!)', ['class' => 'oneMsgContainer']);
-} else {
+} elseif (!empty($messages)) {
+    if ($showLoader) { ?>
+        <div class="newMessageCircle">
+            <svg class="nbeLoader" viewBox="13 13 26 26">
+                <circle class="nbeLoaderCirc" cx="26" cy="26" r="10" fill="none" stroke="#5cb85c" stroke-width="1"></circle>
+            </svg>
+        </div>
+    <?php }
+
     foreach ($messages as $msgItem) {
         $userId = $msgItem->u ?? 0;
         $flash = FlashMsgSetStorage::getInstance()->getAndRemove($userId);
