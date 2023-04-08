@@ -5,6 +5,8 @@
         this.ajaxObj = null;
         this.ajaxTimer = null;
         this.ajaxCount = 0;
+        // "возможность фиксировать перемещение скрола"
+        this.canCheckScroll = false;
     }
 
     MessageLoader.prototype.init = function ()
@@ -27,7 +29,6 @@
     MessageLoader.prototype.initScrollChecker = function()
     {
         var selfMl = this;
-        selfMl.canCheckScroll = true;
 
         $('.nbeAjaxMessageContainer').on('scroll', function(event) {
             if (!selfMl.canCheckScroll) {
@@ -117,8 +118,6 @@
                     //
                     $('.nbeAjaxMessageContainer').prepend(data.messages.html);
                 }
-                // разрешаем фиксировать движения скрола, после "предзагрузки"
-                window.nbeClp.canCheckScroll = true;
             }
             // сокроем "общий лоадер" (можно вызывать дважды и более)
             window.nbeClp.hideAjaxLoader('messages');
@@ -130,6 +129,8 @@
             if (placementType === AJAX_RESPONSE_PLACE_NEW || placementType === AJAX_RESPONSE_PLACE_APPEND) {
                 window.nbeClp.scrollToLastMessage(data.chat_id);
             }
+            // разрешаем фиксировать движения скрола, после "предзагрузки"ы
+            window.nbeClp.canCheckScroll = true;
         }
         window.nbeClp.alwaysOnAjaxDone();
 
