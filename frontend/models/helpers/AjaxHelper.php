@@ -23,10 +23,10 @@ class AjaxHelper
     const AJAX_RESPONSE_PLACE_PREPEND = 2;
     const AJAX_RESPONSE_PLACE_APPEND = 3;
 
-    const AJAX_REQUEST_EXCLUDE = 0;
-    const AJAX_REQUEST_INCLUDE = 1;
-    const AJAX_REQUEST_CHECK_NEW = 2;
-    const AJAX_REQUEST_CHECK_PREV = 3;
+    const AJAX_REQUEST_EXCLUDE = 1;
+    const AJAX_REQUEST_INCLUDE = 2;
+    const AJAX_REQUEST_CHECK_NEW = 3;
+    const AJAX_REQUEST_CHECK_PREV = 4;
 
     public ?int $userId = null;
 

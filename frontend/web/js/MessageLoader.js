@@ -112,6 +112,9 @@
                         // удалим отображение подзагрузки
                         $('.nbeAjaxMessageContainer').find('.newMessageCircle').remove();
                     }
+                    // чтобы "крутящееся колесико" не отображалось вечно -
+                    $('.nbeAjaxMessageContainer').scrollTop(250);
+                    //
                     $('.nbeAjaxMessageContainer').prepend(data.messages.html);
                 }
                 // разрешаем фиксировать движения скрола, после "предзагрузки"
@@ -124,7 +127,7 @@
                 $('.nbeAjaxChatContainer .list-group-item[data-id="' + data.chat_id + '"]').attr('data-msg-count', data.messages.messages_count);
             }
 
-            if (placementType === AJAX_RESPONSE_PLACE_NEW) {
+            if (placementType === AJAX_RESPONSE_PLACE_NEW || placementType === AJAX_RESPONSE_PLACE_APPEND) {
                 window.nbeClp.scrollToLastMessage(data.chat_id);
             }
         }
