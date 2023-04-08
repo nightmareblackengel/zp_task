@@ -129,7 +129,6 @@
             }
         }
         window.nbeClp.alwaysOnAjaxDone();
-        console.log('данные загружены', data);
 
         var showMessages = data.chat_id ? AJAX_REQUEST_CHECK_NEW : AJAX_REQUEST_EXCLUDE;
         window.nbeClp.ajaxCount--;
