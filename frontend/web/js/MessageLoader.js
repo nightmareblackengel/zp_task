@@ -36,6 +36,7 @@
             }
 
             var scrollTop = parseInt($('.nbeAjaxMessageContainer').scrollTop());
+            console.log('can scroll', scrollTop, scrollTop < 200);
             if (!isNaN(scrollTop) && $('.nbeAjaxMessageContainer').find('.newMessageCircle').length) {
                 // если скрол приближается к элементу "загрузка данных"
                 if (scrollTop < 200) {
