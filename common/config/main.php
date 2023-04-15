@@ -21,17 +21,17 @@ return [
     'timeZone' => 'Europe/Kyiv',
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'components' => [
-        'cache' => [
-            'class' => 'yii\caching\MemCache',
-            'servers' => [
-                [
-                    'host' => '172.18.0.104',
-                    'port' => 11211,
-                    'weight' => 100,
-                ],
-            ],
-            'useMemcached' => true,
-        ],
+//        'cache' => [
+//            'class' => 'yii\caching\MemCache',
+//            'servers' => [
+//                [
+//                    'host' => '172.18.0.104',
+//                    'port' => 11211,
+//                    'weight' => 100,
+//                ],
+//            ],
+//            'useMemcached' => true,
+//        ],
         // sessions
         'redisDb1' => array_merge(['database' => 1], $redisConfigs),
         // user auth
