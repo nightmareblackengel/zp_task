@@ -8,7 +8,7 @@ use yii\helpers\Html;
 
 <?php
 if (empty($chatList) || !is_array($chatList)) {
-    echo "<strong>Вы еще не создали ни одного чата.<br/> Создайте новый чат или присоединитесь к существующему, через поиск.</strong>";
+    echo "<strong>Вы еще не создали ни одного чата.</strong>";
 } else { ?>
     <div class="list-group nbeChatList">
         <?php foreach ($chatList as $chatItem) {
