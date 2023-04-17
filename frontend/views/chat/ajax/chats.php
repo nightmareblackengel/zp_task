@@ -12,13 +12,14 @@ if (empty($chatList) || !is_array($chatList)) {
 } else { ?>
     <div class="list-group nbeChatList">
         <?php foreach ($chatList as $chatItem) {
+            $isChannel = !empty($chatItem['isChannel']);
             $chatName = Html::encode($chatItem['name']);
             $linkClasses = ['list-group-item'];
             if ($chatItem['chatId'] === $requestChatId) {
                 $linkClasses[] = 'active';
             }
             $chatIconClasses = ['glyphicon', 'nbeChatIcon'];
-            $chatIconClasses[] = !empty($chatItem['isChannel']) ? 'glyphicon-th-list' : 'glyphicon-user';
+            $chatIconClasses[] = $isChannel ? 'glyphicon-th-list' : 'glyphicon-user';
 
             $linkContent =
                 Html::tag('span', '', ['class' => implode(' ', $chatIconClasses)])
@@ -33,6 +34,7 @@ if (empty($chatList) || !is_array($chatList)) {
                     'class' => implode(' ', $linkClasses),
                     'data' => [
                         'id' => $chatItem['chatId'],
+                        'type' => $isChannel ? 1 : 0,
                     ],
                     'href' => Url::to(['/chat/index', 'chat_id' => $chatItem['chatId']]),
                     'title' => $chatName,

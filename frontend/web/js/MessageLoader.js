@@ -288,12 +288,12 @@
             "messageType": window.nbeClp.addAttributeParam('messageaddform-messagetype'),
         });
 
-        var $chatHeader = $('.chatMsgHeader[data-chat-type="1"]');
+        var $activeChatItem = $('.list-group-item.active');
         var $cmdChannelCommands = $('.msgLinkCmd[data-chat-type="1"]');
-        if (!$chatHeader.length) {
-            $cmdChannelCommands.addClass('nbeDisplayNone');
-        } else {
+        if ($activeChatItem.attr('data-type') === '1') {
             $cmdChannelCommands.removeClass('nbeDisplayNone');
+        } else {
+            $cmdChannelCommands.addClass('nbeDisplayNone');
         }
     }
 
