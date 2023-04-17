@@ -66,9 +66,16 @@ class AjaxMessageModel extends AjaxBase
                 ->getList($chatId, $offset, - 1);
         } elseif ($this->showInResponse === AjaxHelper::AJAX_REQUEST_CHECK_NEW) {
             $responsePlace = AjaxHelper::AJAX_RESPONSE_PLACE_APPEND;
-            if ($this->prevMsgCount <> $messagesCount) {
+            // если у пользователя сейчас отображается фраза "Вы не написали еще ни одного сообщения!"
+            if ($messagesCount === 0) {
+                $messages = null;
+            } elseif ($this->prevMsgCount <> $messagesCount) {
                 $messages = ChatMessageModel::getInstance()
                     ->getList($chatId, $this->prevMsgCount, $messagesCount - 1);
+                // для того, чтобы заменить стартовую надпись, при первом сообщении
+                if (0 === $this->prevMsgCount) {
+                    $responsePlace = AjaxHelper::AJAX_RESPONSE_PLACE_NEW;
+                }
             }
         } elseif ($this->showInResponse === AjaxHelper::AJAX_REQUEST_CHECK_PREV) {
             $responsePlace = AjaxHelper::AJAX_RESPONSE_PLACE_PREPEND;
@@ -86,13 +93,9 @@ class AjaxMessageModel extends AjaxBase
                     ->getList($chatId, $startPos, $endPos - 1);
             }
         }
-
-        return [
-            'result' => AjaxHelper::AJAX_RESPONSE_OK,
-            'msgAddType' => $responsePlace,
-            'messages_count' => $messagesCount,
-            'previous_msg_is_end' => $previousMsgEnd,
-            'html' => Yii::$app->controller->render('/chat/ajax/messages', [
+        $html = null;
+        if (null !== $messages) {
+            $html = Yii::$app->controller->render('/chat/ajax/messages', [
                 'userList' => UserModel::getInstance()->getUserListForChat($chatId),
                 'messages' => $messages,
                 'currentUserId' => $userId,
@@ -101,7 +104,15 @@ class AjaxMessageModel extends AjaxBase
                 'messageCount' => $messagesCount,
                 'responsePlace' => $responsePlace,
                 'showLoader' => $showLoader,
-            ]),
+            ]);
+        }
+
+        return [
+            'result' => AjaxHelper::AJAX_RESPONSE_OK,
+            'msgAddType' => $responsePlace,
+            'messages_count' => $messagesCount,
+            'previous_msg_is_end' => $previousMsgEnd,
+            'html' => $html,
         ];
     }
 }
