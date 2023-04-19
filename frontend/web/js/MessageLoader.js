@@ -162,6 +162,9 @@
         }
 
         var $scrollToItem = $('.nbeChatList .list-group-item[data-id="' + chatId + '"]');
+        if (!$scrollToItem.length) {
+            return;
+        }
         var offsetHeight = parseInt($scrollToItem.offset().top);
         var itemHeight = parseInt($scrollToItem.prop('scrollHeight'));
         // отступ до 1го элементаs
