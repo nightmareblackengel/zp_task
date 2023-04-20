@@ -19,27 +19,6 @@ class ChatModel extends MySqlModel
         return '`chat`';
     }
 
-    public static function getChatList(int $userId): ?array
-    {
-        $query = sprintf(
-            "SELECT uc1.chatId, c.isChannel,"
-                . " CASE WHEN c.isChannel=1 THEN c.name"
-                . " ELSE GROUP_CONCAT(u.email) END AS 'name'"
-                . " FROM %s uc1"
-                . " INNER JOIN %s c ON c.id = uc1.chatId"
-                . " LEFT JOIN %s u ON u.id = uc1.userId AND c.isChannel = 0"
-                . " WHERE chatId IN (SELECT uc2.chatId FROM %s uc2 WHERE uc2.userId = :userId)"
-                . " AND userId <> :userId"
-                . " GROUP BY chatId",
-            UserChatModel::tableName(),
-            ChatModel::tableName(),
-            UserModel::tableName(),
-            UserChatModel::tableName()
-        );
-
-        return self::getDb()->createCommand($query, [':userId' => $userId])->queryAll();
-    }
-
     public function saveChat(?string $name, ?bool $isChannel, ?array $userIdList, ?int $currentUserId): ?int
     {
         $transaction = static::getDb()->beginTransaction();

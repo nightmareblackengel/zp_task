@@ -6,6 +6,7 @@ use common\ext\patterns\Singleton;
 use common\ext\redis\RedisBase;
 use common\models\mysql\UserChatModel;
 use common\models\mysql\UserModel;
+use common\models\redis\ChatDateTimeMhashStorage;
 use common\models\redis\ChatMessageQueueStorage;
 use common\models\redis\DelayMsgSortedSetStorage;
 use Exception;
@@ -64,6 +65,8 @@ class ChatMessageModel extends BaseObject
         if (empty($date)) {
             $date = microtime(true);
         }
+        ChatDateTimeMhashStorage::getInstance()
+            ->setChatDateTime($userId, $chatId, time());
 
         $msgSaveRes = (bool) $this->model
             ->addToTail(

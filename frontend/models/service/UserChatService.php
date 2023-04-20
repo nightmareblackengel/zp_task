@@ -6,6 +6,7 @@ use common\models\ChatMessageModel;
 use common\models\mysql\ChatModel;
 use common\models\mysql\UserChatModel;
 use common\models\mysql\UserModel;
+use common\models\redis\ChatDateTimeMhashStorage;
 use yii\db\Expression;
 use yii\db\Query;
 
@@ -36,13 +37,21 @@ class UserChatService
         // get count for all chats
         $chatCountList = ChatMessageModel::getInstance()
             ->getChatListMsgCount($chatIds);
-        if (empty($chatCountList)) {
-            return $result;
+        // get last chat datetime
+        $dates = ChatDateTimeMhashStorage::getInstance()
+            ->getAllFields($userId);
+
+        foreach ($result as $chatId => $chatItem) {
+            $result[$chatId]['count'] = $chatCountList[$chatId] ?? 0;
+            $result[$chatId]['ldt'] = $dates[$chatId] ?? 0;
         }
-        // add "count" to result
-        foreach ($chatCountList as $chatId => $msgCount) {
-            $result[$chatId]['count'] = $msgCount;
-        }
+        uasort($result, function($item1, $item2) {
+            if ($item1['ldt'] === $item2['ldt']) {
+                return 0;
+            }
+
+            return $item1['ldt'] > $item2['ldt'] ? -1 : 1;
+        });
 
         return $result;
     }
