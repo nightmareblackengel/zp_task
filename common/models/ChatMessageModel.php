@@ -109,7 +109,7 @@ class ChatMessageModel extends BaseObject
             if ($transRes !== RedisBase::TRANSACTION_QUEUED) {
                 continue;
             }
-            $result[$chatIds[$numInd]] = (int) $chatCountList[$numInd];;
+            $result[$chatIds[$numInd]] = (int) $chatCountList[$numInd];
         }
 
         return $result;

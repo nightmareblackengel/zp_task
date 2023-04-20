@@ -17,24 +17,22 @@ class UserChatService
         $notChannelList = $this->getNotChannelChatList($userId);
 
         $result = [];
-        $chatIds = [];
         if (!empty($channelList)) {
             foreach ($channelList as $channelItem) {
                 $chatId = $channelItem['chatId'];
-                $chatIds[] = $chatId;
                 $result[$chatId] = $channelItem;
             }
         }
         if (!empty($notChannelList)) {
             foreach ($notChannelList as $notChannelItem) {
                 $chatId = $notChannelItem['chatId'];
-                $chatIds[] = $chatId;
                 $result[$chatId] = $notChannelItem;
             }
         }
         if (empty($result)) {
             return [];
         }
+        $chatIds = array_keys($result);
         // get count for all chats
         $chatCountList = ChatMessageModel::getInstance()
             ->getChatListMsgCount($chatIds);
