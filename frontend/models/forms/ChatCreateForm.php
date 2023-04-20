@@ -20,15 +20,26 @@ class ChatCreateForm extends Form
     public function rules()
     {
         return [
-            [['isChannel', 'currentUserId', 'userIdList'], 'required'],
+            [['isChannel', 'currentUserId',], 'required'],
             [['name'], 'string', 'max' => 255],
             [['name'], 'isUniqueName'],
             [['isChannel', 'currentUserId'], 'integer'],
             [['userIdList'], 'safe'],
+            [['userIdList'], 'requiredForPrivate', 'skipOnEmpty' => false],
             [['userIdList'], 'customChannelUserCount'],
             [['userIdList'], 'checkIfPrivateChatExists'],
             [['name'], 'checkChannelNameForChannel', 'skipOnEmpty' => false],
         ];
+    }
+
+    public function requiredForPrivate($attribute)
+    {
+        $this->isChannel = (int) $this->isChannel;
+        if (ChatModel::IS_CHANNEL_FALSE === $this->isChannel) {
+            if (empty($this->$attribute)) {
+                $this->addError($attribute, 'Нужно заполнить это значение.');
+            }
+        }
     }
 
     public function isUniqueName($attribute)
@@ -110,6 +121,9 @@ class ChatCreateForm extends Form
         }
 
         $chatModelInst = ChatModel::getInstance();
+        if (empty($this->userIdList)) {
+            $this->userIdList = [];
+        }
         $chatId = $chatModelInst->saveChat($this->name, $this->isChannel, $this->userIdList, $this->currentUserId);
         if (!$chatId) {
             $errMsg = 'Ошибка. Чат не сохранён!';

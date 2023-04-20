@@ -2,6 +2,7 @@
 
 namespace frontend\models\service;
 
+use common\models\ChatMessageModel;
 use common\models\mysql\ChatModel;
 use common\models\mysql\UserChatModel;
 use common\models\mysql\UserModel;
@@ -30,6 +31,19 @@ class UserChatService
                 $chatIds[] = $chatId;
                 $result[$chatId] = $notChannelItem;
             }
+        }
+        if (empty($result)) {
+            return [];
+        }
+        // get count for all chats
+        $chatCountList = ChatMessageModel::getInstance()
+            ->getChatListMsgCount($chatIds);
+        if (empty($chatCountList)) {
+            return $result;
+        }
+        // add "count" to result
+        foreach ($chatCountList as $chatId => $msgCount) {
+            $result[$chatId]['count'] = $msgCount;
         }
 
         return $result;

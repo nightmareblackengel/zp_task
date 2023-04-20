@@ -3,8 +3,8 @@
 namespace common\models\mysql;
 
 use common\ext\base\MySqlModel;
-use common\models\ChatMessageModel;
 use Exception;
+use frontend\models\service\UserChatService;
 
 class ChatModel extends MySqlModel
 {
@@ -57,8 +57,10 @@ class ChatModel extends MySqlModel
                 $transaction->rollBack();
             } else {
                 UserChatModel::getInstance()->saveUserChat($currentUserId, $newChatId, UserChatModel::IS_CHAT_OWNER_YES);
-                foreach ($userIdList as $userId) {
-                    UserChatModel::getInstance()->saveUserChat($userId, $newChatId, UserChatModel::IS_CHAT_OWNER_NO);
+                if (!empty($userIdList)) {
+                    foreach ($userIdList as $userId) {
+                        UserChatModel::getInstance()->saveUserChat($userId, $newChatId, UserChatModel::IS_CHAT_OWNER_NO);
+                    }
                 }
                 $transaction->commit();
             }
@@ -73,29 +75,12 @@ class ChatModel extends MySqlModel
 
     public static function prepareChatListWithCount(int $userId): array
     {
-        // get storage data
-        $chatListRes = [];
-        $baseChatList = ChatModel::getChatList($userId);
-        if (empty($baseChatList)) {
+        $ucService = new UserChatService();
+        $chatList = $ucService->getCombinedChatList($userId);
+        if (empty($chatList)) {
             return [];
         }
-        // prepare result with 'index key'
-        $chatIds = [];
-        foreach ($baseChatList as $chatItem) {
-            $chatIds[] = $chatItem['chatId'];
-            $chatListRes[$chatItem['chatId']] = $chatItem;
-        }
-        unset($baseChatList);
-        // get count for all chats
-        $chatCountList = ChatMessageModel::getInstance()->getChatListMsgCount($chatIds);
-        if (empty($chatCountList)) {
-            return $chatListRes;
-        }
-        // add "count" to result
-        foreach ($chatCountList as $chatId => $msgCount) {
-            $chatListRes[$chatId]['count'] = $msgCount;
-        }
 
-        return $chatListRes;
+        return $chatList;
     }
 }
