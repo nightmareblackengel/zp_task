@@ -17,4 +17,23 @@ class ChatDateTimeMhashStorage extends RedisHashes
     {
         return 'chat-date-time-full';
     }
+
+    public function getChatLastDtList(array $chatIds): array
+    {
+        if (empty($chatIds)) {
+            return [];
+        }
+
+        $dates = $this->getFewCertainFields(null, ...$chatIds);
+        if (empty($dates) || count($dates) != count($chatIds)) {
+            return [];
+        }
+
+        $result = [];
+        for ($i = 0; $i < count($chatIds); $i++) {
+            $result[$chatIds[$i]] = (int) $dates[$i];
+        }
+
+        return $result;
+    }
 }

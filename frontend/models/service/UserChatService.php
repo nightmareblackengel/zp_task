@@ -39,7 +39,7 @@ class UserChatService
             ->getChatListMsgCount($chatIds);
         // get last chat datetime
         $dates = ChatDateTimeMhashStorage::getInstance()
-            ->getAllFields($userId);
+            ->getChatLastDtList($chatIds);
 
         foreach ($result as $chatId => $chatItem) {
             $result[$chatId]['count'] = $chatCountList[$chatId] ?? 0;
