@@ -13,13 +13,8 @@ class ChatDateTimeMhashStorage extends RedisHashes
         return Yii::$app->redisDb3;
     }
 
-    public function prepareKey(string $key)
+    public function prepareKey(string $key = null)
     {
-        return 'chat-date-time:' . $key;
-    }
-
-    public function setChatDateTime(int $userId, int $chatId, $time)
-    {
-        return static::getStorage()->hmset(static::prepareKey($userId), $chatId, $time);
+        return 'chat-date-time-full';
     }
 }

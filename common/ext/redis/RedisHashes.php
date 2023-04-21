@@ -4,7 +4,12 @@ namespace common\ext\redis;
 
 abstract class RedisHashes extends RedisBase
 {
-    public function setValues(string $key, ...$values): int
+    public function setValue(?string $key, int $propertyKey, $propertyValue): int
+    {
+        return static::getStorage()->hmset(static::prepareKey($key), $propertyKey, $propertyValue);
+    }
+
+    public function setValues(?string $key, ...$values)
     {
         return static::getStorage()->hset($this->prepareKey($key), ...$values);
     }

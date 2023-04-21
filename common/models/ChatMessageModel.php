@@ -66,7 +66,7 @@ class ChatMessageModel extends BaseObject
             $date = microtime(true);
         }
         ChatDateTimeMhashStorage::getInstance()
-            ->setChatDateTime($userId, $chatId, time());
+            ->setValue(null, $chatId, time());
 
         $msgSaveRes = (bool) $this->model
             ->addToTail(
