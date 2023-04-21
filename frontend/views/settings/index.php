@@ -3,6 +3,7 @@ use common\ext\helpers\Html;
 use common\ext\widgets\ActiveForm;
 use common\models\mysql\UserSettingsModel;
 use frontend\ext\helpers\Url;
+use frontend\widgets\CookieAlert;
 use yii\web\JqueryAsset;
 
 /** @var \frontend\models\forms\UserSettingsForm $formModel */
@@ -12,12 +13,12 @@ $this->registerJsFile('/js/UserSettings.js', [
         JqueryAsset::class,
     ],
 ]);
-
 $this->title = 'Страница настроек пользователя';
 ?>
 
 <div class="row">
-    <div class="col-md-offset-2 col-md-8">
+    <div class="col-md-8">
+        <?php echo CookieAlert::widget(); ?>
 
         <div class="bs-callout bs-callout-warning" id="callout-overview-not-both">
             <h4>Страница настроек пользователя</h4>
@@ -30,7 +31,7 @@ $this->title = 'Страница настроек пользователя';
 
         <?php $form = ActiveForm::begin([
             'method' => 'POST',
-            'action' => Url::to('/chat/settings'),
+            'action' => Url::to('/settings/index'),
         ]); ?>
 
         <?php echo $form->field($formModel, 'userId')->hiddenInput()->label(false); ?>

@@ -8,9 +8,7 @@ use frontend\ext\AuthController;
 use frontend\ext\helpers\Url;
 use frontend\models\forms\ChatAddUserForm;
 use frontend\models\forms\ChatCreateForm;
-use frontend\models\forms\UserSettingsForm;
 use frontend\models\helpers\AjaxHelper;
-use frontend\widgets\CookieAlert;
 use Yii;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
@@ -103,23 +101,6 @@ class ChatController extends AuthController
         return $this->render('add-user-to-channel', [
             'usersForm' => $usersForm,
             'chat' => $chat,
-        ]);
-    }
-
-    public function actionSettings()
-    {
-        $this->layout = '_chat_default';
-        $formModel = new UserSettingsForm();
-        $formModel->userId = Yii::$app->user->identity->getId();
-        $formModel->loadFromDb();
-
-        if ($formModel->load(Yii::$app->request->post()) && $formModel->save()) {
-            CookieAlert::addMessage('Настройки были успешно сохранены');
-            return $this->redirect(Url::to('/chat/settings'));
-        }
-
-        return $this->render('settings', [
-            'formModel' => $formModel,
         ]);
     }
 

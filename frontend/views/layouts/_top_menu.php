@@ -37,7 +37,7 @@ if (!empty($chatId)) {
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="<?= Url::to('/chat/settings') ?>">Настройки</a></li>
+                            <li><a href="<?= Url::to('/settings/index') ?>">Настройки</a></li>
                             <li>
                                 <?php
                                 echo Html::beginForm(['/main/logout'], 'post')
