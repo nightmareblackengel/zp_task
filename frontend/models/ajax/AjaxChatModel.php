@@ -38,7 +38,7 @@ class AjaxChatModel extends AjaxBase
 
         return [
             'result' => AjaxHelper::AJAX_RESPONSE_OK,
-            'html' => Yii::$app->controller->render('/chat/ajax/chats', [
+            'html' => Yii::$app->controller->render('/ajax/chats', [
                 'chatList' => ChatModel::prepareChatListWithCount($userId),
                 'requestChatId' => $chatId,
             ]),

@@ -39,7 +39,7 @@ class AjaxNewItemModel extends AjaxBase
 
         return [
             'result' => AjaxHelper::AJAX_RESPONSE_OK,
-            'html' => Yii::$app->controller->render('/chat/ajax/create-message', [
+            'html' => Yii::$app->controller->render('/ajax/create-message', [
                 'formModel' => $formModel,
                 'isUserBanned' => $params['isUserBanned'] ?? UserChatModel::IS_USER_BANNED_NO,
             ]),

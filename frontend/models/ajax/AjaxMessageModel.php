@@ -40,7 +40,7 @@ class AjaxMessageModel extends AjaxBase
             return [
                 'result' => AjaxHelper::AJAX_RESPONSE_OK,
                 'messages_count' => false,
-                'html' => Yii::$app->controller->render('/chat/ajax/messages_empty'),
+                'html' => Yii::$app->controller->render('/ajax/messages_empty'),
             ];
         }
 
@@ -95,7 +95,7 @@ class AjaxMessageModel extends AjaxBase
         }
         $html = null;
         if (null !== $messages) {
-            $html = Yii::$app->controller->render('/chat/ajax/messages', [
+            $html = Yii::$app->controller->render('/ajax/messages', [
                 'userList' => UserModel::getInstance()->getUserListForChat($chatId),
                 'messages' => $messages,
                 'currentUserId' => $userId,
