@@ -3,6 +3,7 @@
 namespace common\models\mysql;
 
 use common\ext\base\MySqlModel;
+use common\models\redis\ChatDateTimeMhashStorage;
 use Exception;
 use frontend\models\service\UserChatService;
 
@@ -48,6 +49,8 @@ class ChatModel extends MySqlModel
             $transaction->rollBack();
             $this->addError(self::DEFAULT_ERR_ATTRIBUTE, 'Ошибка: ' . $ex->getMessage());
         }
+        ChatDateTimeMhashStorage::getInstance()
+            ->setValue(null, $newChatId, time());
 
         return $newChatId ?? null;
     }
