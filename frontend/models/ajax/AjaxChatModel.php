@@ -8,6 +8,8 @@ use Yii;
 
 class AjaxChatModel extends AjaxBase
 {
+    const SHOW_RESULT_BY_TIMEOUT = 30;
+
     public ?int $id = null;
     public ?int $lastUpdatedAt = null;
 
@@ -25,7 +27,12 @@ class AjaxChatModel extends AjaxBase
 
     public function prepareResponse(?int $userId, ?int $chatId, ?array $params = []): ?array
     {
-        if (empty($this->showInResponse) || $this->showInResponse === AjaxHelper::AJAX_REQUEST_EXCLUDE) {
+        // must show result by timeout
+        $timeDiff = time() - $this->lastUpdatedAt;
+        if (
+            ($timeDiff < self::SHOW_RESULT_BY_TIMEOUT)
+            && (empty($this->showInResponse) || $this->showInResponse === AjaxHelper::AJAX_REQUEST_EXCLUDE)
+        ) {
             return null;
         }
 
@@ -35,7 +42,7 @@ class AjaxChatModel extends AjaxBase
                 'chatList' => ChatModel::prepareChatListWithCount($userId),
                 'requestChatId' => $chatId,
             ]),
-//            'downloaded_at' => time(),
+            'downloaded_at' => time(),
         ];
     }
 }
