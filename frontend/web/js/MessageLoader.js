@@ -254,7 +254,7 @@
         };
 
         return {
-            'url': '/chat/ajax-load',
+            'url': '/ajax/load',
             'method': 'post',
             'data': sendData,
             'error': function (err) {

@@ -25,7 +25,7 @@
             window.nbeClp.clearAjaxTimer();
 
             $.ajax({
-                'url': '/chat/create-msg',
+                'url': '/ajax/create-msg',
                 'method': 'POST',
                 'data': $('#addNewMessageForm').serialize(),
                 'error': function (data) {
