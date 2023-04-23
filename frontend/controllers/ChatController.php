@@ -1,9 +1,9 @@
 <?php
 namespace frontend\controllers;
 
-use common\models\ChatMessageModel;
 use frontend\ext\AuthController;
 use frontend\ext\helpers\Url;
+use frontend\models\ChatMessageModel;
 use frontend\models\forms\ChatAddUserForm;
 use frontend\models\forms\ChatCreateForm;
 use frontend\models\forms\ConnectToChannelForm;

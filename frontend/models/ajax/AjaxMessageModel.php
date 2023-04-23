@@ -2,9 +2,9 @@
 
 namespace frontend\models\ajax;
 
-use common\models\ChatMessageModel;
 use common\models\mysql\ChatModel;
 use common\models\redis\ChatMessageQueueStorage;
+use frontend\models\ChatMessageModel;
 use frontend\models\helpers\AjaxHelper;
 use frontend\models\mysql\UserChatModel;
 use frontend\models\mysql\UserModel;

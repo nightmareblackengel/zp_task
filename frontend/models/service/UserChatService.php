@@ -2,11 +2,11 @@
 
 namespace frontend\models\service;
 
-use common\models\ChatMessageModel;
 use common\models\mysql\ChatModel;
 use common\models\mysql\UserChatModel;
 use common\models\mysql\UserModel;
 use common\models\redis\ChatDateTimeMhashStorage;
+use frontend\models\ChatMessageModel;
 use yii\db\Expression;
 use yii\db\Query;
 

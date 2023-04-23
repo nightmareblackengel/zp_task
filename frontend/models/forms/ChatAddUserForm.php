@@ -4,9 +4,9 @@ namespace frontend\models\forms;
 
 use common\ext\base\Form;
 use common\ext\helpers\Html;
-use common\models\ChatMessageModel;
 use common\models\mysql\UserChatModel;
 use common\models\mysql\UserModel;
+use frontend\models\ChatMessageModel;
 
 class ChatAddUserForm extends Form
 {

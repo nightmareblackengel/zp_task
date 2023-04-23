@@ -3,9 +3,9 @@
 namespace frontend\controllers;
 
 use common\ext\widgets\ActiveForm;
-use common\models\ChatMessageModel;
 use common\models\mysql\UserChatModel;
 use frontend\ext\AuthController;
+use frontend\models\ChatMessageModel;
 use frontend\models\forms\MessageAddForm;
 use frontend\models\helpers\AjaxHelper;
 use Yii;
