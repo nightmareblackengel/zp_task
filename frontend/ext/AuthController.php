@@ -7,7 +7,6 @@ use Yii;
 use yii\base\InvalidRouteException;
 use yii\base\Module;
 use yii\web\Controller;
-use yii\web\ForbiddenHttpException;
 
 class AuthController extends Controller
 {
@@ -17,7 +16,7 @@ class AuthController extends Controller
     {
         $befRes = parent::beforeAction($action);
         if (!$this->hasAccess()) {
-            throw new ForbiddenHttpException();
+            return $this->render('/main/page403');
         }
 
         return $befRes;

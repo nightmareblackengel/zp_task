@@ -6,12 +6,12 @@ $this->title = 'Access denied';
 ?>
 
 <div class="row">
-    <div class="col-lg-offset-3 col-lg-6">
+    <div class="col-sm-offset-3 col-sm-6">
         <div class="bs-callout bs-callout-danger" id="callout-overview-not-both">
             <h4>У Вас нет прав доступа для просмотра содержимого этой страницы</h4>
             <p>
-                Для просмотра содержимого страницы Вам необходимо авторизироваться!
-                <br/>Для авторизации Вам необходимо перейти по <?= Html::a('ссылке', [Url::to('/main/login')]); ?>.
+                Если Вы не авторизированы, то для просмотра содержимого страницы Вам необходимо авторизироваться!
+                <br/><br/>Для авторизации Вам необходимо перейти по <?= Html::a('ссылке', [Url::to('/main/login')]); ?>.
             </p>
         </div>
     </div>
