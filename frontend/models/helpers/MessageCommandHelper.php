@@ -13,7 +13,7 @@ class MessageCommandHelper
     const MSG_CMD_SEND_MSG_WITH_DELAY = '/sendwithdelay';
 
     const MSG_CHAT_CMD_SHOW_MEMBERS = '/showmembers';
-    const MSG_CHAT_CMD_KICK = '/kick';
+    const MSG_CHAT_CMD_BAN = '/ban';
     const MSG_CHAT_CMD_CLEAR_HISTORY = '/clearhistory';
 
     public static $chatDescriptions = [
@@ -21,13 +21,13 @@ class MessageCommandHelper
         self::MSG_CMD_ME => '/me {текст сообщения}',
         self::MSG_CMD_SEND_MSG_WITH_DELAY => '/sendwithdelay {N} {текст сообщения}',
         self::MSG_CHAT_CMD_SHOW_MEMBERS => '/showmembers',
-        self::MSG_CHAT_CMD_KICK => '/kick {email}',
+        self::MSG_CHAT_CMD_BAN => '/ban {email}',
         self::MSG_CHAT_CMD_CLEAR_HISTORY => '/clearhistory',
     ];
 
     public static $channelList = [
         self::MSG_CHAT_CMD_SHOW_MEMBERS,
-        self::MSG_CHAT_CMD_KICK,
+        self::MSG_CHAT_CMD_BAN,
         self::MSG_CHAT_CMD_CLEAR_HISTORY,
     ];
 

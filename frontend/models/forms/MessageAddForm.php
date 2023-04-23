@@ -6,6 +6,7 @@ use common\ext\base\Form;
 use common\models\ChatMessageModel;
 use common\models\mysql\ChatModel;
 use common\models\mysql\UserChatModel;
+use common\models\mysql\UserModel;
 use frontend\models\helpers\MessageCommandHelper;
 use Yii;
 
@@ -57,58 +58,68 @@ class MessageAddForm extends Form
     {
         $value = $this->$attribute;
         if (empty($value) || !is_string($value)) {
-            return false;
+            return;
         }
         if ($value[0] !== '/') {
-            return false;
+            return;
         }
 
         $value = preg_replace('`[\\ ]+`', ' ', $value);
         $cmdList = explode(' ', $value);
         if (empty($cmdList)) {
-            return false;
+            return;
         }
 
         $allowedCmds = array_keys(MessageCommandHelper::$chatDescriptions);
         if (!in_array($cmdList[0], $allowedCmds)) {
-            $this->addError($attribute, 'Некорректная комманда!');
-            return true;
+            return $this->addError($attribute, 'Некорректная комманда!');
         }
 
         $chat = ChatModel::getInstance()->getItemBy(['id' => $this->chatId]);
         $isChannel = $chat['isChannel'] ?? 0;
 
         if (in_array($cmdList[0], MessageCommandHelper::$channelList) && empty($isChannel)) {
-            $this->addError($attribute, 'Данную комманду можно использовать только в канале.');
-            return true;
+            return $this->addError($attribute, 'Данную комманду можно использовать только в канале.');
         }
 
         // дополнительные правила
-        if ($cmdList[0] === MessageCommandHelper::MSG_CHAT_CMD_KICK) {
+        if ($cmdList[0] === MessageCommandHelper::MSG_CHAT_CMD_BAN) {
             if (count($cmdList) !== 2 || empty($cmdList[1])) {
-                $this->addError($attribute, 'Некорректный формат комманды. Пример комманды: "/kick alex@gmail.com"');
-                return true;
+                return $this->addError($attribute, 'Некорректный формат комманды. Пример комманды: "/ban alex@gmail.com"');
             }
-            $userExists = UserChatModel::getInstance()->isUserEmailBelongToChat($this->chatId, $cmdList[1]);
-            if ($userExists === null) {
-                $this->addError($attribute, 'Данный пользователь уже был забанен!');
-            } elseif (!$userExists) {
-                $this->addError($attribute, 'В этом чате нет пользователя, с указанным емейлом');
-            }
-            $isChatOwner = UserChatModel::getInstance()->isUserChatOwner($this->userId, $this->chatId);
-            if (!$isChatOwner) {
-                $this->addError($attribute, 'Данную комманду может выполнять только владелец канала.');
+            $ownerUserChatRecord = UserChatModel::getInstance()->getItemBy([
+                'userId' => $this->userId,
+                'chatId' => $this->chatId,
+            ]);
+            if (UserChatModel::IS_CHAT_OWNER_NO === $ownerUserChatRecord['isChatOwner']) {
+                return $this->addError($attribute, 'Данную комманду может выполнять только владелец канала.');
             }
 
+            // по емейлу - получим пользователя "над которым" совершаем комманду
+            $cmdToUser = UserModel::getInstance()->getItemBy(['email' => $cmdList[1]]);
+            if (empty($cmdToUser)) {
+                return $this->addError($attribute, 'Пользователя, с указанным емейлом - не существует!');
+            }
+            $cmdUserChatRecord = UserChatModel::getInstance()->getItemBy([
+                'userId' => $cmdToUser['id'],
+                'chatId' => $this->chatId,
+            ]);
+            if (empty($cmdUserChatRecord)) {
+                return $this->addError($attribute, 'В этом чате нет пользователя, с указанным емейлом');
+            }
+            if (UserChatModel::IS_USER_BANNED_YES === $cmdUserChatRecord['isUserBanned']) {
+                return $this->addError($attribute, 'Данный пользователь уже был забанен!');
+            }
+            if (UserChatModel::IS_CHAT_OWNER_YES === $cmdUserChatRecord['isChatOwner']) {
+                return $this->addError($attribute, 'Вы не можете забанить владельца канала!)');
+            }
         } elseif ($cmdList[0] === MessageCommandHelper::MSG_CMD_ME) {
             if (count($cmdList) < 2 || empty($cmdList[1])) {
-                $this->addError($attribute, 'Некорректный формат комманды. Пример комманды: "/me текст сообщения"');
-                return true;
+                return $this->addError($attribute, 'Некорректный формат комманды. Пример комманды: "/me текст сообщения"');
             }
         } elseif ($cmdList[0] === MessageCommandHelper::MSG_CMD_SEND_MSG_WITH_DELAY) {
             if (count($cmdList) < 3 || empty($cmdList[2])) {
-                $this->addError($attribute, 'Некорректный формат комманды. Пример комманды: "/sendwithdelay 5 сообщение с пробелами"');
-                return true;
+                return $this->addError($attribute, 'Некорректный формат комманды. Пример комманды: "/sendwithdelay 5 сообщение с пробелами"');
             }
             $cmdList[1] = (int) $cmdList[1];
             if ($cmdList[1] < self::SEND_MSG_WITH_DELAY_MIN_THR || $cmdList[1] > self::SEND_MSG_WITH_DELAY_MAX_THR) {

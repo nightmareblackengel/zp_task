@@ -48,7 +48,7 @@ class ChatMessageModel extends BaseObject
             if ($cmdList[0] === MessageCommandHelper::MSG_CHAT_CMD_CLEAR_HISTORY) {
                 $this->executeClearHistoryCmd($form);
                 return true;
-            } elseif ($cmdList[0] === MessageCommandHelper::MSG_CHAT_CMD_KICK && count($cmdList)) {
+            } elseif ($cmdList[0] === MessageCommandHelper::MSG_CHAT_CMD_BAN && count($cmdList)) {
                 $this->executeKickByEmail($cmdList[1], $form->chatId);
                 return true;
             } elseif ($cmdList[0] === MessageCommandHelper::MSG_CMD_SEND_MSG_WITH_DELAY) {
