@@ -5,8 +5,8 @@ namespace frontend\models\forms;
 use common\ext\base\Form;
 use common\models\ChatMessageModel;
 use common\models\mysql\ChatModel;
-use common\models\mysql\UserChatModel;
 use frontend\models\helpers\MessageCommandHelper;
+use frontend\models\mysql\UserChatModel;
 use frontend\models\mysql\UserModel;
 use Yii;
 

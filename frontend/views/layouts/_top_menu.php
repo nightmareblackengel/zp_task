@@ -1,8 +1,8 @@
 <?php
 use common\ext\helpers\Html;
 use common\models\mysql\ChatModel;
-use common\models\mysql\UserChatModel;
 use frontend\ext\helpers\Url;
+use frontend\models\mysql\UserChatModel;
 
 /** @var $chatId */
 

@@ -2,12 +2,12 @@
 namespace frontend\controllers;
 
 use common\models\ChatMessageModel;
-use common\models\mysql\UserChatModel;
 use frontend\ext\AuthController;
 use frontend\ext\helpers\Url;
 use frontend\models\forms\ChatAddUserForm;
 use frontend\models\forms\ChatCreateForm;
 use frontend\models\forms\ConnectToChannelForm;
+use frontend\models\mysql\UserChatModel;
 use frontend\models\mysql\ChatModel;
 use frontend\models\mysql\UserModel;
 use Yii;
