@@ -13,11 +13,12 @@ class SettingsController extends AuthController
     {
         $this->layout = '_chat_default';
         $formModel = new UserSettingsForm();
-        $formModel->userId = Yii::$app->user->identity->getId();
+        $formModel->userId = $this->userArr['id'];
         $formModel->loadFromDb();
 
         if ($formModel->load(Yii::$app->request->post()) && $formModel->save()) {
             CookieAlert::addMessage('Настройки были успешно сохранены');
+
             return $this->redirect(Url::to('/settings/index'));
         }
 
