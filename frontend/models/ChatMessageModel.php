@@ -27,7 +27,7 @@ class ChatMessageModel extends \common\models\ChatMessageModel
                 $this->executeClearHistoryCmd($form);
                 return true;
             } elseif ($cmdList[0] === MessageCommandHelper::MSG_CHAT_CMD_BAN && count($cmdList)) {
-                $this->executeKickByEmail($cmdList[1], $form->chatId);
+                $this->executeBanByEmail($cmdList[1], $form->chatId);
                 return true;
             } elseif ($cmdList[0] === MessageCommandHelper::MSG_CMD_SEND_MSG_WITH_DELAY) {
                 $this->executeSendMsgWithDelay($form, $cmdList);
@@ -73,9 +73,8 @@ class ChatMessageModel extends \common\models\ChatMessageModel
         return $result;
     }
 
-    protected function executeKickByEmail(string $userEmail, int $chatId): bool
+    protected function executeBanByEmail(string $userEmail, int $chatId): bool
     {
-        // TODO:add cache
         $userItem = UserModel::getInstance()->getItemByEmail($userEmail);
         if (empty($userItem)) {
             return false;

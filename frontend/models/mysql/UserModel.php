@@ -6,6 +6,8 @@ use yii\db\Query;
 
 class UserModel extends \common\models\mysql\UserModel
 {
+    public static $usersByEmail = [];
+
     public function getItemById(int $id, string $selectedFields = '*'): ?array
     {
         return static::getDb()
@@ -15,11 +17,16 @@ class UserModel extends \common\models\mysql\UserModel
 
     public function getItemByEmail(string $email): ?array
     {
+        if (key_exists($email, self::$usersByEmail)) {
+            return self::$usersByEmail[$email];
+        }
         $query = new Query();
         $query->from(self::tableName())
             ->where(['[[email]]' => $email]);
 
-        return $query->one();
+        self::$usersByEmail[$email] = $query->one();
+
+        return self::$usersByEmail[$email];
     }
 
 
