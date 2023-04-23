@@ -7,10 +7,21 @@ use Yii;
 use yii\base\InvalidRouteException;
 use yii\base\Module;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 
 class AuthController extends Controller
 {
     protected ?array $userArr = [];
+
+    public function beforeAction($action)
+    {
+        $befRes = parent::beforeAction($action);
+        if (!$this->hasAccess()) {
+            throw new ForbiddenHttpException();
+        }
+
+        return $befRes;
+    }
 
     public function getCurrentUser()
     {
