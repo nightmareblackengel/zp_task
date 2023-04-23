@@ -109,9 +109,6 @@ class ChatController extends AuthController
     public function actionConnectToChannel()
     {
         $user = $this->getCurrentUser();
-        if (empty($user['id'])) {
-            throw new ForbiddenHttpException();
-        }
         $this->layout = '_chat_index';
 
         $formModel = new ConnectToChannelForm();
