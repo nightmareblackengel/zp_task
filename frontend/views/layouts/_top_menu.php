@@ -62,6 +62,7 @@ if (!empty($chatId)) {
             </form> -->
             <ul class="nav navbar-nav">
                 <li><a href="<?= Url::to('/chat/index'); ?>">Главная страница</a></li>
+                <li><a href="<?= Url::to('/chat/connect-to-channel'); ?>">Поиск канала</a></li>
                 <?php if (!empty($isChatOwner) && !empty($chat['isChannel']) && $chat['isChannel'] === ChatModel::IS_CHANNEL_TRUE) { ?>
                     <li><a href="<?= Url::to(['/chat/add-user-to-channel', 'chat_id' => $chatId]); ?>">Добавить пользователя</a></li>
                 <?php } ?>

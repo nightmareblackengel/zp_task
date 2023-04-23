@@ -90,7 +90,7 @@ class AjaxController extends AuthController
         ];
     }
 
-    protected function getUserChatItem(?int $userId, ?int $chatId): array
+    protected function getUserChatItem(?int $userId, ?int $chatId): ?array
     {
         return UserChatModel::getInstance()->getItemBy([
             'userId' => $userId,

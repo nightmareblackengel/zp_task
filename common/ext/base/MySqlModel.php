@@ -56,7 +56,8 @@ abstract class MySqlModel extends BaseObject
         return $result;
     }
 
-    public function insertBy(array $params): ?int
+    // result could be The composite key
+    public function insertBy(array $params)
     {
         $this->clearErrors();
         if (empty($params)) {

@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use common\models\ChatMessageModel;
 use common\models\mysql\ChatModel;
 use common\models\mysql\UserChatModel;
 use common\models\mysql\UserModel;
@@ -9,7 +10,6 @@ use frontend\ext\helpers\Url;
 use frontend\models\forms\ChatAddUserForm;
 use frontend\models\forms\ChatCreateForm;
 use frontend\models\forms\ConnectToChannelForm;
-use frontend\models\helpers\AjaxHelper;
 use Yii;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
@@ -116,8 +116,11 @@ class ChatController extends AuthController
 
         $formModel = new ConnectToChannelForm();
         if ($formModel->load(Yii::$app->request->post()) && $formModel->save()) {
-            echo "Saved; redirect to channel";
-            exit();
+            ChatMessageModel::getInstance()->insertMessage(
+                $user['id'], $formModel->channelId, 'Добавлен пользователь [' . $user['concatName'] . '] ', ChatMessageModel::MESSAGE_TYPE_SYSTEM
+            );
+
+            return $this->redirect(['chat/index', 'chat_id' => $formModel->channelId]);
         }
 
         return $this->render('connect-to-channel', [
@@ -145,14 +148,6 @@ class ChatController extends AuthController
 
         return [
             'results' => ChatModel::getInstance()->getChannelList($userId, $searchText),
-        ];
-    }
-
-    protected function ajaxErr($message)
-    {
-        return [
-            'result' => AjaxHelper::AJAX_RESPONSE_ERR,
-            'message' => $message,
         ];
     }
 }

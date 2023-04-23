@@ -1,6 +1,7 @@
 <?php
 namespace frontend\ext;
 
+use frontend\models\helpers\AjaxHelper;
 use frontend\models\redis\UserAuthIdentity;
 use Yii;
 use yii\base\InvalidRouteException;
@@ -26,6 +27,7 @@ class AuthController extends Controller
         if (empty($this->userArr)) {
             return null;
         }
+        $this->userArr['concatName'] = $this->userArr['name'] . ' (' . $this->userArr['email'] . ')';
 
         return $this->userArr;
     }
@@ -94,4 +96,11 @@ class AuthController extends Controller
         return $result;
     }
 
+    protected function ajaxErr($message)
+    {
+        return [
+            'result' => AjaxHelper::AJAX_RESPONSE_ERR,
+            'message' => $message,
+        ];
+    }
 }
