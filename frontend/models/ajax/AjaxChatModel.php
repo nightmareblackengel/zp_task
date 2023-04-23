@@ -2,8 +2,8 @@
 
 namespace frontend\models\ajax;
 
-use common\models\mysql\ChatModel;
 use frontend\models\helpers\AjaxHelper;
+use frontend\models\mysql\ChatModel;
 use Yii;
 
 class AjaxChatModel extends AjaxBase
