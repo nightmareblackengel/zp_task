@@ -67,7 +67,7 @@ class ChatAddUserForm extends Form
             // добавление сообщений в чат, о том, что эти пользователи были добавлены
             $user = UserModel::getInstance()->getItemBy(['id' => $userId], 'id, email');
             ChatMessageModel::getInstance()->insertMessage(
-                $userId, $this->chatId, 'Добавлен пользователь [' . $user['email'] ?? $userId . '] ', ChatMessageModel::MESSAGE_TYPE_SYSTEM
+                $userId, $this->chatId, 'Добавлен пользователь [' . ($user['email'] ?? $userId) . '] ', ChatMessageModel::MESSAGE_TYPE_SYSTEM
             );
         }
 
