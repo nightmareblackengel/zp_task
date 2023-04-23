@@ -17,7 +17,7 @@ use frontend\models\redis\FlashMsgSetStorage;
 <?php
 if (!empty($chat['isChannel']) && $responsePlace === AjaxHelper::AJAX_RESPONSE_PLACE_NEW) { ?>
     <div class="chatMsgHeader" data-chat-type="<?php echo $chat['isChannel']; ?>"
-        title="<?php echo "Владелец: " . $userList[$chatOwnerId] ?? ''; ?>">
+        title="<?php echo "Владелец: " . $userList[$chatOwnerId]['name'] ?? ''; ?>">
 
         <?php echo Html::encode($chat['name']); ?>
     </div>
@@ -54,7 +54,7 @@ if (empty($messageCount)) {
                     <?php if ($msgItem->u === $currentUserId) { ?>
                         Вы:
                     <?php } else { ?>
-                        от пользователя: <?php echo Html::encode($userList[$msgItem->u] ?? '-'); ?>
+                        от пользователя: <?php echo Html::encode($userList[$msgItem->u]['name'] ?? '-'); ?>
                     <?php } ?>
                 </div>
                 <span class="nbeMessage <?php echo $userId !== $currentUserId ? 'nbeBgLGolden' : 'nbeLCyan'; ?>">

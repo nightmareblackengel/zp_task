@@ -3,6 +3,7 @@
 namespace frontend\models\helpers;
 
 use common\ext\helpers\Html;
+use common\models\mysql\UserChatModel;
 use stdClass;
 
 class MessageCommandHelper
@@ -41,15 +42,20 @@ class MessageCommandHelper
             return date('Y-m-d H:i:s', (int) $msgItem->d);
         } elseif ($cmdList[0] === self::MSG_CMD_ME) {
             array_shift($cmdList);
-            return $userList[$msgItem->u] . ': ' . Html::encode(implode(' ', $cmdList));
+            return $userList[$msgItem->u]['name'] . ': ' . Html::encode(implode(' ', $cmdList));
         } elseif ($cmdList[0] === self::MSG_CHAT_CMD_SHOW_MEMBERS) {
             $resUsers = [];
             if (empty($userList)) {
                 return '';
             }
-            foreach ($userList as $userId => $userName) {
-                $resUsers[] = Html::tag('span', Html::encode($userName), ['class' => 'userItemInCmdList']);
+            foreach ($userList as $userId => $userItem) {
+                $userStr = Html::tag('span', Html::encode($userItem['name']), ['class' => 'userItemInCmdList']);
+                if (UserChatModel::IS_USER_BANNED_YES === $userItem['isUserBanned']) {
+                    $userStr .= Html::tag('span', ' (забанен)', ['style' => 'color:red;']);
+                }
+                $resUsers[] = $userStr;
             }
+
             return 'Список пользователей чата:<br/>' . implode('<br/>', $resUsers);
         }
 

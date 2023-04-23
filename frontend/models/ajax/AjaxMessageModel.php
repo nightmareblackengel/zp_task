@@ -96,7 +96,7 @@ class AjaxMessageModel extends AjaxBase
         $html = null;
         if (null !== $messages) {
             $html = Yii::$app->controller->render('/ajax/messages', [
-                'userList' => UserModel::getInstance()->getUserListForChat($chatId),
+                'userList' => UserModel::getInstance()->getUserListForChat($chatId, true),
                 'messages' => $messages,
                 'currentUserId' => $userId,
                 'chat' => $chat,
