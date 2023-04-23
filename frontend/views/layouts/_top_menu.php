@@ -17,9 +17,9 @@ if (!empty($chatId)) {
 ?>
 <nav class="navbar-inverse">
     <div class="container-fluid">
-        <button type="button" class="nbeFLeft <?php echo $hideChatBtnClass; ?>">
-            <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
-        </button>
+<!--        <button type="button" class="nbeFLeft --><?php //echo $hideChatBtnClass; ?><!--">-->
+<!--            <span class="glyphicon glyphicon-send" aria-hidden="true"></span>-->
+<!--        </button>-->
 
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
