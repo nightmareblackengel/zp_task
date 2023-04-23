@@ -59,27 +59,34 @@ class UserModel extends MySqlModel
         return $selectRes;
     }
 
-    public function getUserListForChat(?int $chatId): array
+    public function getUserListForChat(?int $chatId, bool $withBannedInfo = false): array
     {
         if (empty($chatId)) {
             return [];
         }
-        $query = sprintf(
-            "SELECT u.`id`, " . static::getUserNameQuery() . " "
-            . "FROM %s uc "
-            . "INNER JOIN %s u ON u.`id` = uc.`userId` "
-            . "WHERE uc.`chatId` = :chatId",
-            UserChatModel::tableName(),
-            static::tableName()
+        $query = new Query();
+        $query->select(
+            [
+                'u.`id`',
+                static::getUserNameQuery(),
+            ]
         );
+        if ($withBannedInfo) {
+            $query->addSelect(['uc.isUserBanned']);
+        }
+        $query->from(['uc' => UserChatModel::tableName()])
+            ->innerJoin(['u' => UserModel::tableName()], 'u.`id` = uc.`userId`')
+            ->where(['uc.`chatId`' => $chatId]);
 
-        $users = static::getDb()
-            ->createCommand($query, [
-                ':chatId' => $chatId,
-            ])
-            ->queryAll();
+        $users = $query->all();
+        if (empty($users)) {
+            return [];
+        }
+        if (!$withBannedInfo) {
+            return array_column($users, 'name', 'id');
+        }
 
-        return array_column($users, 'name', 'id');
+        return array_column($users, null, 'id');
     }
 
     public function getUserListForAddToChannel(?int $chatId): array
@@ -114,6 +121,6 @@ class UserModel extends MySqlModel
 
     public static function getUserNameQuery(string $resFieldName = 'name'): string
     {
-        return sprintf("CONCAT(IFNULL(`name`, ''), '(', `email`, ')') as %s", $resFieldName);
+        return sprintf("CONCAT(IFNULL(`name`, ''), '(', `email`, ')') AS %s", $resFieldName);
     }
 }
