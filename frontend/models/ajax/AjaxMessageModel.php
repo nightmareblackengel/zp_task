@@ -5,9 +5,9 @@ namespace frontend\models\ajax;
 use common\models\ChatMessageModel;
 use common\models\mysql\ChatModel;
 use common\models\mysql\UserChatModel;
-use common\models\mysql\UserModel;
 use common\models\redis\ChatMessageQueueStorage;
 use frontend\models\helpers\AjaxHelper;
+use frontend\models\mysql\UserModel;
 use Yii;
 
 class AjaxMessageModel extends AjaxBase

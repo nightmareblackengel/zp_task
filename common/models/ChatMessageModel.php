@@ -5,13 +5,13 @@ namespace common\models;
 use common\ext\patterns\Singleton;
 use common\ext\redis\RedisBase;
 use common\models\mysql\UserChatModel;
-use common\models\mysql\UserModel;
 use common\models\redis\ChatDateTimeMhashStorage;
 use common\models\redis\ChatMessageQueueStorage;
 use common\models\redis\DelayMsgSortedSetStorage;
 use Exception;
 use frontend\models\forms\MessageAddForm;
 use frontend\models\helpers\MessageCommandHelper;
+use frontend\models\mysql\UserModel;
 use frontend\models\redis\FlashMsgSetStorage;
 use yii\base\BaseObject;
 

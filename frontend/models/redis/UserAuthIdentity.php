@@ -1,8 +1,8 @@
 <?php
 namespace frontend\models\redis;
 
-use common\models\mysql\UserModel;
 use Exception;
+use frontend\models\mysql\UserModel;
 use yii\base\Model;
 use yii\base\NotSupportedException;
 use yii\web\IdentityInterface;

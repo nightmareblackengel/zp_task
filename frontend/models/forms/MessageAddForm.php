@@ -6,8 +6,8 @@ use common\ext\base\Form;
 use common\models\ChatMessageModel;
 use common\models\mysql\ChatModel;
 use common\models\mysql\UserChatModel;
-use common\models\mysql\UserModel;
 use frontend\models\helpers\MessageCommandHelper;
+use frontend\models\mysql\UserModel;
 use Yii;
 
 class MessageAddForm extends Form
