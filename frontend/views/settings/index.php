@@ -1,8 +1,8 @@
 <?php
 use common\ext\helpers\Html;
 use common\ext\widgets\ActiveForm;
-use common\models\mysql\UserSettingsModel;
 use frontend\ext\helpers\Url;
+use frontend\models\mysql\UserSettingsModel;
 use frontend\widgets\CookieAlert;
 use yii\web\JqueryAsset;
 
