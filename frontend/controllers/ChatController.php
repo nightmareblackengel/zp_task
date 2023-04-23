@@ -8,9 +8,11 @@ use frontend\ext\AuthController;
 use frontend\ext\helpers\Url;
 use frontend\models\forms\ChatAddUserForm;
 use frontend\models\forms\ChatCreateForm;
+use frontend\models\forms\ConnectToChannelForm;
 use frontend\models\helpers\AjaxHelper;
 use Yii;
 use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 class ChatController extends AuthController
@@ -63,7 +65,7 @@ class ChatController extends AuthController
         }
 
         return [
-            'results' =>  UserModel::getInstance()->getExceptList($exceptList, $searchText),
+            'results' => UserModel::getInstance()->getExceptList($exceptList, $searchText),
         ];
     }
 
@@ -102,6 +104,48 @@ class ChatController extends AuthController
             'usersForm' => $usersForm,
             'chat' => $chat,
         ]);
+    }
+
+    public function actionConnectToChannel()
+    {
+        $user = $this->getCurrentUser();
+        if (empty($user['id'])) {
+            throw new ForbiddenHttpException();
+        }
+        $this->layout = '_chat_index';
+
+        $formModel = new ConnectToChannelForm();
+        if ($formModel->load(Yii::$app->request->post()) && $formModel->save()) {
+            echo "Saved; redirect to channel";
+            exit();
+        }
+
+        return $this->render('connect-to-channel', [
+            'formModel' => $formModel,
+            'userId' => $user['id'],
+        ]);
+    }
+
+    public function actionChannelList()
+    {
+        $userId = (int) Yii::$app->request->get('user_id');
+        $searchText = Yii::$app->request->get('q');
+        if (empty($userId)) {
+            throw new NotFoundHttpException();
+        }
+        $user = $this->getCurrentUser();
+        if (empty($user['id']) || $user['id'] !== $userId) {
+            throw new ForbiddenHttpException();
+        }
+        if (empty($searchText) || mb_strlen($searchText) < 2) {
+            return [];
+        }
+        $this->layout = false;
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return [
+            'results' => ChatModel::getInstance()->getChannelList($userId, $searchText),
+        ];
     }
 
     protected function ajaxErr($message)
