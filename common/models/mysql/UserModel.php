@@ -22,11 +22,13 @@ class UserModel extends MySqlModel
             ->queryOne() ?: null;
     }
 
-    public function getItemByEmail(string $email, string $selectedFields = '*'): ?array
+    public function getItemByEmail(string $email): ?array
     {
-        return static::getDb()
-            ->createCommand(sprintf("SELECT %s FROM %s WHERE `email`='%s'", $selectedFields, static::tableName(), $email))
-            ->queryOne() ?: null;
+        $query = new Query();
+        $query->from(self::tableName())
+            ->where(['[[email]]' => $email]);
+
+        return $query->one();
     }
 
     public function getExceptList(array $exceptIds, string $namePart, int $limit = 20): array {
@@ -40,7 +42,7 @@ class UserModel extends MySqlModel
                 static::getUserNameQuery('text')
             ])
             ->from(static::tableName())
-            ->where(['NOT IN', 'id', $exceptIds])
+            ->where(['NOT IN', '[[id]]', $exceptIds])
             ->andWhere([
                 '[[status]]' => self::STATUS_ENABLED,
             ])
