@@ -120,6 +120,7 @@ class ChatMessageModel extends BaseObject
 
     protected function executeKickByEmail(string $userEmail, int $chatId): bool
     {
+        // TODO:add cache
         $userItem = UserModel::getInstance()->getItemByEmail($userEmail);
         if (empty($userItem)) {
             return false;
@@ -131,6 +132,12 @@ class ChatMessageModel extends BaseObject
             return false;
         }
         $userChatItem['isUserBanned'] = UserChatModel::IS_USER_BANNED_YES;
+        $this->insertMessage(
+            $userItem['id'],
+            $chatId,
+            'Пользователь [' . $userEmail . '] забанен.',
+            self::MESSAGE_TYPE_SYSTEM
+        );
 
         return (int) UserChatModel::getInstance()->updateBy($userChatItem, $whereParams);
     }

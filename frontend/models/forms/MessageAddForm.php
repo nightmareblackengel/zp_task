@@ -96,7 +96,7 @@ class MessageAddForm extends Form
             }
 
             // по емейлу - получим пользователя "над которым" совершаем комманду
-            $cmdToUser = UserModel::getInstance()->getItemBy(['email' => $cmdList[1]]);
+            $cmdToUser = UserModel::getInstance()->getItemByEmail($cmdList[1]);
             if (empty($cmdToUser)) {
                 return $this->addError($attribute, 'Пользователя, с указанным емейлом - не существует!');
             }
