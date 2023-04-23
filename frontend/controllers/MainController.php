@@ -72,6 +72,6 @@ class MainController extends Controller
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+        return $this->redirect(['/main/login']);
     }
 }
