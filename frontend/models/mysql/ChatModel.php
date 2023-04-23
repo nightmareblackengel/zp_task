@@ -29,9 +29,9 @@ class ChatModel extends \common\models\mysql\ChatModel
         $query->select([
             'text' => 'c.name',
             'c.id',
-        ])->from(['c' => \common\models\mysql\ChatModel::tableName()])
+        ])->from(['c' => self::tableName()])
             ->where([
-                '[[c.isChannel]]' => ChatModel::IS_CHANNEL_TRUE,
+                '[[c.isChannel]]' => self::IS_CHANNEL_TRUE,
             ])
             ->andWhere(['NOT IN', '[[c.id]]', $subQuery])
             ->andWhere(['LIKE', '[[c.name]]', $searchText])

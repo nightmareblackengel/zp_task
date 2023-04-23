@@ -69,7 +69,7 @@ class UserModel extends \common\models\mysql\UserModel
             $query->addSelect(['uc.isUserBanned']);
         }
         $query->from(['uc' => UserChatModel::tableName()])
-            ->innerJoin(['u' => \common\models\mysql\UserModel::tableName()], 'u.`id` = uc.`userId`')
+            ->innerJoin(['u' => self::tableName()], 'u.`id` = uc.`userId`')
             ->where(['uc.`chatId`' => $chatId]);
 
         $users = $query->all();
