@@ -70,7 +70,8 @@ class DelayMessageController extends ConsoleController
 
     // создание тестовых записей, с "отрывом в секундах",
     // если значение 60, то будет вставка с timestamp "следующей минуты"
-    public function actionCreateTest($delayInSeconds = 60, $insertCount = 2000, $showLog = 1)
+    // docker exec -it mphp /var/www/html/ztt.loc/yii delay-message/create-test
+    public function actionCreateTest($delayInSeconds = 60, $insertCount = 200, $showLog = 1)
     {
         echo "action CreateTest started", PHP_EOL;
 

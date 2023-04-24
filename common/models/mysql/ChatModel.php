@@ -35,7 +35,9 @@ class ChatModel extends MySqlModel
             if (empty($newChatId)) {
                 $transaction->rollBack();
             } else {
-                UserChatModel::getInstance()->saveUserChat($currentUserId, $newChatId, UserChatModel::IS_CHAT_OWNER_YES);
+                if (!empty($currentUserId)) {
+                    UserChatModel::getInstance()->saveUserChat($currentUserId, $newChatId, UserChatModel::IS_CHAT_OWNER_YES);
+                }
                 if (!empty($userIdList)) {
                     foreach ($userIdList as $userId) {
                         UserChatModel::getInstance()->saveUserChat($userId, $newChatId, UserChatModel::IS_CHAT_OWNER_NO);
@@ -48,8 +50,11 @@ class ChatModel extends MySqlModel
             $transaction->rollBack();
             $this->addError(self::DEFAULT_ERR_ATTRIBUTE, 'Ошибка: ' . $ex->getMessage());
         }
-        ChatDateTimeMhashStorage::getInstance()
-            ->setValue(null, $newChatId, time());
+
+        if (!empty($newChatId)) {
+            ChatDateTimeMhashStorage::getInstance()
+                ->setValue(null, $newChatId, time());
+        }
 
         return $newChatId ?? null;
     }

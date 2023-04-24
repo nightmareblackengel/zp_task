@@ -11,7 +11,9 @@ use Faker\Factory;
 
 class TestController extends ConsoleController
 {
-    /** docker exec -it mphp /var/www/html/ztt.loc/yii test/create-users
+    /**
+     * docker exec -it mphp /var/www/html/ztt.loc/yii test/create-users
+     *
      * Контроллер создает тестовые записи:
      * создает пользователей с настройками
      * создает чаты и подключает пользователей к чатам
@@ -44,12 +46,13 @@ class TestController extends ConsoleController
             echo "Было создано " . count($userIds) . " пользователей для текущего чата", PHP_EOL;
 
             if (!empty($userIds)) {
-                $newChatId = ChatModel::getInstance()->saveChat(
-                    'НазвЧата' . microtime(true),
-                    true,
-                    $userIds,
-                    $userIds[0],
-                );
+                $newChatId = ChatModel::getInstance()
+                    ->saveChat(
+                        'НазвЧата' . microtime(true),
+                        true,
+                        $userIds,
+                        null,
+                    );
                 if (!empty($newChatId)) {
                     $insertedMsgCount = MessageHelper::generateNewMessages($faker, $userIds, $newChatId, rand(1000, 10000));
                     echo "Чат id=" . $newChatId . ' был создан; В этот чат добавленое ', $insertedMsgCount, ' сообщений', PHP_EOL;
