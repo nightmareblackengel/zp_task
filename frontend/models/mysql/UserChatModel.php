@@ -5,6 +5,8 @@ use common\models\mysql\ChatModel;
 
 class UserChatModel extends \common\models\mysql\UserChatModel
 {
+    protected static $userOwnerList = [];
+
     public function getUserPrivateChatIds(int $firstUser, int $secondUser): array
     {
         $query = sprintf("SELECT `chatId`
@@ -36,19 +38,21 @@ class UserChatModel extends \common\models\mysql\UserChatModel
 
     public function isUserChatOwner(int $userId, int $chatId): bool
     {
-        // TODO: static cache
+        $key = $userId . ':' .$chatId;
+        if (in_array($key, self::$userOwnerList)) {
+            return self::$userOwnerList[$key];
+        }
         $item = static::getItemBy([
             'userId' => $userId,
             'chatId' => $chatId,
         ], '`userId`, `chatId`, `isChatOwner`');
-        if (empty($item)) {
-            return false;
-        }
-        if (empty($item['isChatOwner']) || $item['isChatOwner'] === self::IS_CHAT_OWNER_NO) {
-            return false;
+        if (empty($item) || empty($item['isChatOwner']) || $item['isChatOwner'] === self::IS_CHAT_OWNER_NO) {
+            self::$userOwnerList[$key] = false;
+        } else {
+            self::$userOwnerList[$key] = true;
         }
 
-        return true;
+        return self::$userOwnerList[$key];
     }
 
     public function getChatOwnerId(int $chatId): ?int
