@@ -68,6 +68,11 @@ class MainController extends Controller
         ]);
     }
 
+    public function actionPage403()
+    {
+        return $this->render('page403');
+    }
+
     public function actionLogout()
     {
         Yii::$app->user->logout();

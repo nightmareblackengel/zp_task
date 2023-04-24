@@ -85,7 +85,7 @@ class AuthController extends Controller
             if (empty($this->allowedUnAuthActions) || !in_array($this->action->id, $this->allowedUnAuthActions)) {
                 if (!$this->hasAccess()) {
                     $this->layout = 'main';
-                    return $this->render('/main/page403');
+                    return $this->redirect('/main/page403');
                 }
             }
             // run the action
