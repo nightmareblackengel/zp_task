@@ -39,7 +39,7 @@ $this->title = 'Присоединение к существующему кан�
             ]
         ]); ?>
 
-        <?php echo Html::submitButton('присоединиться', ['class' => 'btn btn-success',]); ?>
+        <?php echo Html::submitButton('Присоединиться', ['class' => 'btn btn-success',]); ?>
 
         <?php ActiveForm::end(); ?>
     </div>
