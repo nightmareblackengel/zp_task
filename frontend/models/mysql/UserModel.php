@@ -24,7 +24,11 @@ class UserModel extends \common\models\mysql\UserModel
         $query->from(self::tableName())
             ->where(['[[email]]' => $email]);
 
-        self::$usersByEmail[$email] = $query->one();
+        $result = $query->one();
+        if (empty($result)) {
+            return null;
+        }
+        self::$usersByEmail[$email] = $result;
 
         return self::$usersByEmail[$email];
     }

@@ -53,7 +53,59 @@
         пользователи_чата; UserChatModel
         настройки пользователя. UserSettingsModel
 
+==============================================
+== Развёртывание проекта
+1) в конфигах докера указать свои значения
+1.1) название локального сайта прописать в /media/gb_work/projects/php/zp_task/docker/nginx/conf/ztt.loc.conf (в параметре server_name)
 
+2) запустить команду для докера "docker-compose up -d"
+2.1) зайти на страницу сайта
+2.2) зайти в докер БазыДанных "msql8" и создать базу:
+    # Команды в cmd
+    > docker exec -it msql8 sh
+    > mysql -u root -p
+    # password: rO0tExample
+
+    # Команды в mysql
+    > CREATE DATABASE `ztt` CHARACTER SET = utf8mb4;
+    > GRANT ALL PRIVILEGES ON *.* TO `jackson`@`%`
+    > FLUSH PRIVILEGES;
+2.3) инициализировать сайт
+2.3.1) зайти в докер php "mphp" и запустить инициализацию для сайта
+    # Команды в cmd
+    > docker exec -it mphp sh
+    > cd /var/www/html/ztt.loc
+    > php init
+        > выбрать Development (ввести 0)
+        > ввести "yes"
+
+2.3.2) внести правки в файлах *-local.php
+    здесь /media/gb_work/projects/php/zp_task_test/common/config/main-local.php
+    внести данные конфигурации
+        'components' => [
+            'db' => [
+                'class' => \yii\db\Connection::class,
+                'dsn' => 'mysql:host=172.18.0.102;dbname=ztt2',
+                'username' => 'root',
+                'password' => 'rO0tExample',
+                'charset' => 'utf8',
+            ],
+            'cache' => [
+                'class' => 'yii\caching\MemCache',
+                'servers' => [
+                    [
+                        'host' => '172.18.0.104',
+                        'port' => 11211,
+                        'weight' => 100,
+                    ],
+                ],
+                'useMemcached' => true,
+            ],
+2.3.3) запустить миграции коммандой docker exec -it mphp /var/www/html/ztt.loc/yii migrate/up
+
+3) настроить кроны как написано здесь
+(скопировать и настроить кроны для ОС)
+пример файла /console/controllers/commands
 
 ============================
 Технические тексты ошибок отображаются целенаправленно.
