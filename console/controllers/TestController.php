@@ -12,9 +12,9 @@ use Faker\Factory;
 
 class TestController extends ConsoleController
 {
-    const MSG_CREATE_COUNT = 1;
-    const CHANNEL_USER_COUNT = 1000;
-    const CHANNEL_COUNT = 1;
+    const MSG_CREATE_COUNT = 1; //~4sec for 10000
+    const CHANNEL_USER_COUNT = 1; // ~3sec for 1000
+    const CHANNEL_COUNT = 1000; // ~4sec for 1000
 
     private $time;
     /**
@@ -35,8 +35,8 @@ class TestController extends ConsoleController
         }
 
         echo "Будет создано " . $chatCount . " чатов", PHP_EOL;
-        $this->time = DateTime::createFromFormat('U.u', microtime(true));
         $faker = Factory::create('ru_RU');
+        $this->time = DateTime::createFromFormat('U.u', microtime(true));
 
         for ($c = 0; $c < $chatCount; $c++) {
             $usersCount = self::CHANNEL_USER_COUNT;
