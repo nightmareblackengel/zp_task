@@ -7,10 +7,16 @@ use common\models\mysql\ChatModel;
 use common\models\mysql\UserModel;
 use common\models\mysql\UserSettingsModel;
 use console\models\helpers\MessageHelper;
+use DateTime;
 use Faker\Factory;
 
 class TestController extends ConsoleController
 {
+    const MSG_CREATE_COUNT = 1;
+    const CHANNEL_USER_COUNT = 1000;
+    const CHANNEL_COUNT = 1;
+
+    private $time;
     /**
      * docker exec -it mphp /var/www/html/ztt.loc/yii test/create-users
      *
@@ -22,17 +28,18 @@ class TestController extends ConsoleController
     {
         $chatCount = (int) $chatCount;
         if (empty($chatCount)) {
-            $chatCount = rand(5, 20);
+            $chatCount = self::CHANNEL_COUNT;
         }
         if ($chatCount < 0 || $chatCount > 1000) {
             $chatCount = 1;
         }
 
         echo "Будет создано " . $chatCount . " чатов", PHP_EOL;
+        $this->time = DateTime::createFromFormat('U.u', microtime(true));
         $faker = Factory::create('ru_RU');
 
         for ($c = 0; $c < $chatCount; $c++) {
-            $usersCount = rand(5, 20);
+            $usersCount = self::CHANNEL_USER_COUNT;
             echo "Будет создано " . $usersCount . " пользователей", PHP_EOL;
             $userIds = [];
             for ($i = 0; $i < $usersCount; $i++) {
@@ -43,6 +50,7 @@ class TestController extends ConsoleController
                     $this->createUserSetting($userId);
                 }
             }
+            $this->print_difference('users created');
             echo "Было создано " . count($userIds) . " пользователей для текущего чата", PHP_EOL;
 
             if (!empty($userIds)) {
@@ -53,14 +61,17 @@ class TestController extends ConsoleController
                         $userIds,
                         null,
                     );
+                $this->print_difference('chat created');
                 if (!empty($newChatId)) {
-                    $insertedMsgCount = MessageHelper::generateNewMessages($faker, $userIds, $newChatId, rand(1000, 10000));
+                    $insertedMsgCount = MessageHelper::generateNewMessages($faker, $userIds, $newChatId, rand(self::MSG_CREATE_COUNT, self::MSG_CREATE_COUNT + 1));
+
                     echo "Чат id=" . $newChatId . ' был создан; В этот чат добавленое ', $insertedMsgCount, ' сообщений', PHP_EOL;
+                    $this->print_difference('msg created');
                 }
             }
         }
         echo "Создание тестовых данных - завершено", PHP_EOL;
-
+        $this->print_difference();
         return '';
     }
 
@@ -85,5 +96,13 @@ class TestController extends ConsoleController
             'email' => 'email' . microtime(true) . '@tst.ua',
             'status' => UserModel::STATUS_ENABLED,
         ]);
+    }
+
+    public function print_difference($message = '')
+    {
+        $now = DateTime::createFromFormat('U.u', microtime(true));
+        $dateInterval = $now->diff($this->time);
+        echo PHP_EOL, $message, $dateInterval->format('[%H:%I:%S.%F]'), PHP_EOL;
+        $this->time = $now;
     }
 }
