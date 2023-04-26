@@ -11,7 +11,7 @@ class m221030_220922_chat_init extends \yii\db\Migration
 				`name` VARCHAR(30),
 				`status` TINYINT UNSIGNED NOT NULL DEFAULT 0,
 				`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				INDEX `user__email` (`email`(30))
+				UNIQUE `user__email` (`email`)
             ) ENGINE=InnoDB;",
 			"CREATE TABLE `chat` (
 				`id` INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
