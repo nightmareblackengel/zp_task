@@ -19,7 +19,7 @@ class ChatModel extends MySqlModel
         return '`chat`';
     }
 
-    public function saveChat(?string $name, ?bool $isChannel, ?array $userIdList, ?int $currentUserId): ?int
+    public function saveChat(?string $name, ?bool $isChannel, ?array $userIdList, int $currentUserId): ?int
     {
         $transaction = static::getDb()->beginTransaction();
         try {
@@ -35,9 +35,7 @@ class ChatModel extends MySqlModel
             if (empty($newChatId)) {
                 $transaction->rollBack();
             } else {
-                if (!empty($currentUserId)) {
-                    UserChatModel::getInstance()->saveUserChat($currentUserId, $newChatId, UserChatModel::IS_CHAT_OWNER_YES);
-                }
+                UserChatModel::getInstance()->saveUserChat($currentUserId, $newChatId, UserChatModel::IS_CHAT_OWNER_YES);
                 if (!empty($userIdList)) {
                     foreach ($userIdList as $userId) {
                         UserChatModel::getInstance()->saveUserChat($userId, $newChatId, UserChatModel::IS_CHAT_OWNER_NO);

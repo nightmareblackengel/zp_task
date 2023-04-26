@@ -13,8 +13,8 @@ use Faker\Factory;
 class TestController extends ConsoleController
 {
     const MSG_CREATE_COUNT = 1; //~4sec for 10000
-    const CHANNEL_USER_COUNT = 1; // ~3sec for 1000
-    const CHANNEL_COUNT = 1000; // ~4sec for 1000
+    const CHANNEL_USER_COUNT = 2; // ~3sec for 1000
+    const CHANNEL_COUNT = 1; // ~2sec for 1000
 
     private $time;
     /**
@@ -54,16 +54,17 @@ class TestController extends ConsoleController
             echo "Было создано " . count($userIds) . " пользователей для текущего чата", PHP_EOL;
 
             if (!empty($userIds)) {
+                $owner = array_shift($userIds);
                 $newChatId = ChatModel::getInstance()
                     ->saveChat(
                         'НазвЧата' . microtime(true),
                         true,
                         $userIds,
-                        null,
+                        $owner,
                     );
                 $this->print_difference('chat created');
                 if (!empty($newChatId)) {
-                    $insertedMsgCount = MessageHelper::generateNewMessages($faker, $userIds, $newChatId, rand(self::MSG_CREATE_COUNT, self::MSG_CREATE_COUNT + 1));
+                    $insertedMsgCount = MessageHelper::generateNewMessages($faker, [$owner] + $userIds, $newChatId, rand(self::MSG_CREATE_COUNT, self::MSG_CREATE_COUNT + 1));
 
                     echo "Чат id=" . $newChatId . ' был создан; В этот чат добавленое ', $insertedMsgCount, ' сообщений', PHP_EOL;
                     $this->print_difference('msg created');
