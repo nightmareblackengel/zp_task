@@ -48,7 +48,8 @@ class ChatController extends AuthController
         $this->layout = false;
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $exceptParam = (int) Yii::$app->request->get('except_users');
+        $exceptWithChat = (int) Yii::$app->request->get('except_with_chat');
+        $exceptWithUser = (int) Yii::$app->request->get('except_with_user');
         $chatId = (int) Yii::$app->request->get('chat_id');
 
         $searchText = Yii::$app->request->get('q');
@@ -57,10 +58,16 @@ class ChatController extends AuthController
             return [];
         }
         $exceptList = [$userItem['id']];
-        if ($exceptParam === 1) {
+        if ($exceptWithChat === 1) {
             $userIds = array_keys(UserModel::getInstance()->getUserListForChat($chatId));
             if (!empty($userIds)) {
                 $exceptList = $userIds;
+            }
+        }
+        if ($exceptWithUser === 1) {
+            $userIds = UserChatModel::getInstance()->getExceptUserIds($userItem['id']);
+            if (!empty($userIds)) {
+                $exceptList = array_merge($exceptList, $userIds);
             }
         }
 

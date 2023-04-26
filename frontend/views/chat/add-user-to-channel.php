@@ -24,19 +24,19 @@ $this->title = 'Добавление пользователей';
             ]);
             ?>
 
-            <?= $form->field($usersForm, 'userIds', [
+            <?php echo $form->field($usersForm, 'userIds', [
                 'errorOptions' => [
                     'class' => 'help-block',
                     'encode' => false,
                 ]
             ])->widget(Select2Widget::class, [
                 'multiple' => 'multiple',
-                'ajax' => ['chat/user-list', 'except_users' => 1, 'chat_id' => $chat['id']],
+                'ajax' => ['chat/user-list', 'except_with_chat' => 1, 'chat_id' => $chat['id']],
                 'settings' => [
                     'ajax' => ['delay' => 250],
                     'minimumInputLength' => 2,
-                ]
-            ]); ?>
+                ],
+            ]);?>
 
             <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']); ?>
             <?php ActiveForm::end(); ?>

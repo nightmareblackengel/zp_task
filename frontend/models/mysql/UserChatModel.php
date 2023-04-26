@@ -2,6 +2,7 @@
 namespace frontend\models\mysql;
 
 use common\models\mysql\ChatModel;
+use yii\db\Query;
 
 class UserChatModel extends \common\models\mysql\UserChatModel
 {
@@ -66,5 +67,31 @@ class UserChatModel extends \common\models\mysql\UserChatModel
         }
 
         return $item['userId'];
+    }
+
+    public function getExceptUserIds(int $userId): ?array
+    {
+        $subQuery = new Query();
+        $subQuery->select(['chatId'])
+            ->from(['uc2' => static::tableName()])
+            ->innerJoin(['c2' => ChatModel::tableName()], 'c2.id = uc2.chatId')
+            ->where([
+                'c2.isChannel' => ChatModel::IS_CHANNEL_FALSE,
+                'uc2.userId' => $userId,
+            ]);
+
+        $query = new Query();
+        $query->select(['userId'])
+            ->distinct()
+            ->from(['uc' => static::tableName()])
+            ->where(['uc.chatId' => $subQuery])
+            ->andWhere(['<>', 'uc.userId', $userId]);
+
+        $res = $query->column();
+        if (empty($res)) {
+            return [];
+        }
+
+        return $res;
     }
 }

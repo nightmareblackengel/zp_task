@@ -72,7 +72,7 @@ class ChatCreateForm extends Form
         if (empty($this->userIdList)) {
             return;
         }
-        $otherUser = $this->userIdList[0];
+        $otherUser = (int) $this->userIdList[0];
 
         $chatIds = UserChatModel::getInstance()->getUserPrivateChatIds($this->currentUserId, $otherUser);
         if (!empty($chatIds)) {
