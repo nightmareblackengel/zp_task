@@ -61,18 +61,23 @@ class AjaxHelper
         return true;
     }
 
-    public function prepareData(array $userChatItem): array
+    public function prepareData(?array $userChatItem): array
     {
-        return [
+        $result = [
             'result' => self::AJAX_RESPONSE_OK,
             'chat_id' => $this->chat->id,
             'send_time' => time(),
             'chats' => $this->chat->prepareResponse($this->userId, $this->chat->id),
-            'messages' => $this->message->prepareResponse($this->userId, $this->chat->id),
-            'new_message' => $this->newItem->prepareResponse($this->userId, $this->chat->id, [
-                'isUserBanned' => $userChatItem['isUserBanned'] ?? UserChatModel::IS_USER_BANNED_NO,
-            ]),
         ];
+
+        $result['messages'] = $this->message->prepareResponse($this->userId, $this->chat->id, ['ucItem' => $userChatItem]);
+        if (!empty($userChatItem)) {
+            $result['new_message'] = $this->newItem->prepareResponse($this->userId, $this->chat->id, [
+                'isUserBanned' => $userChatItem['isUserBanned'] ?? UserChatModel::IS_USER_BANNED_NO,
+            ]);
+        }
+
+        return $result;
     }
 
     public function getDefaultError()

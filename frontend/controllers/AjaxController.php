@@ -35,9 +35,6 @@ class AjaxController extends AuthController
         $userChatItem = [];
         if (!empty($form->chat->id)) {
             $userChatItem = $this->getUserChatItem($form->userId, $form->chat->id);
-            if (empty($userChatItem)) {
-                return $this->ajaxErr('Ошибка 403! У Вас нет доступа к этому чату');
-            }
         }
 
         return $form->prepareData($userChatItem);
