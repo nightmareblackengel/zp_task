@@ -12,9 +12,9 @@ use Faker\Factory;
 
 class TestController extends ConsoleController
 {
-    const MSG_CREATE_COUNT = 1; //~4sec for 10000
-    const CHANNEL_USER_COUNT = 2; // ~3sec for 1000
-    const CHANNEL_COUNT = 1; // ~2sec for 1000
+    const MSG_CREATE_COUNT = 10000; //~4sec for 10000
+    const CHANNEL_USER_COUNT = 7; // ~3sec for 1000
+    const CHANNEL_COUNT = 100; // ~2sec for 1000
 
     private $time;
     /**
