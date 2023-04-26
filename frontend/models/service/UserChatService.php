@@ -88,7 +88,7 @@ class UserChatService
         $query->select([
                 'uc.chatId',
                 new Expression(sprintf("'%s' AS `isChannel`", ChatModel::IS_CHANNEL_FALSE)),
-                'name' => "CONCAT(IFNULL(`u`.`name`, ''), '(', `u`.`email`, ')')",
+                'name' => "u.email",
             ])->from(['uc' => UserChatModel::tableName()])
             ->innerJoin(['c' => ChatModel::tableName()], 'c.id = uc.chatId')
             ->innerJoin(['u' => UserModel::tableName()], 'uc.userId = u.id')
@@ -97,7 +97,7 @@ class UserChatService
             ])
             ->andWhere(['!=', 'uc.userId',  $userId])
             ->andWhere(['IN', 'uc.chatId', $subQuery])
-            ->groupBy('uc.chatId, name');
+            ->groupBy('uc.chatId, u.email');
 
         return $query->all();
     }

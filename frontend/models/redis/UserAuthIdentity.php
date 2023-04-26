@@ -60,7 +60,6 @@ class UserAuthIdentity extends Model implements IdentityInterface
     {
         $user = [
             'email' => $email,
-            'name' => '',
             'status' => UserModel::STATUS_ENABLED,
             'createdAt' => date('Y-m-d H:i:s'),
         ];
@@ -81,10 +80,6 @@ class UserAuthIdentity extends Model implements IdentityInterface
 
     public function getUserTitle()
     {
-        if (!empty($this->_user['name'])) {
-            return $this->_user['name'];
-        }
-
         return $this->_user['email'];
     }
 

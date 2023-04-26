@@ -33,7 +33,6 @@ class UserModel extends \common\models\mysql\UserModel
         return self::$usersByEmail[$email];
     }
 
-
     public function getExceptList(array $exceptIds, string $namePart, int $limit = 20): array
     {
         if (empty($exceptIds)) {
@@ -43,18 +42,14 @@ class UserModel extends \common\models\mysql\UserModel
         $query = new Query();
         $query->select([
             '[[id]]',
-            static::getUserNameQuery('text')
+            'text' => '`email`',
         ])
             ->from(static::tableName())
             ->where(['NOT IN', '[[id]]', $exceptIds])
             ->andWhere([
                 '[[status]]' => self::STATUS_ENABLED,
             ])
-            ->andWhere([
-                'OR',
-                ['LIKE', '[[name]]', $namePart],
-                ['LIKE', '[[email]]', $namePart]
-            ])
+            ->andWhere(['LIKE', '[[email]]', $namePart])
             ->limit($limit);
 
         $selectRes = $query->all();
@@ -65,7 +60,6 @@ class UserModel extends \common\models\mysql\UserModel
         return $selectRes;
     }
 
-
     public function getUserListForChat(?int $chatId, bool $withBannedInfo = false): array
     {
         if (empty($chatId)) {
@@ -74,7 +68,7 @@ class UserModel extends \common\models\mysql\UserModel
         $query = new Query();
         $query->select([
                 'u.`id`',
-                static::getUserNameQuery(),
+                'name' => '`email`',
             ]);
         if ($withBannedInfo) {
             $query->addSelect(['uc.isUserBanned']);
@@ -92,10 +86,5 @@ class UserModel extends \common\models\mysql\UserModel
         }
 
         return array_column($users, null, 'id');
-    }
-
-    public static function getUserNameQuery(string $resFieldName = 'name'): string
-    {
-        return sprintf("CONCAT(IFNULL(`name`, ''), '(', `email`, ')') AS %s", $resFieldName);
     }
 }
