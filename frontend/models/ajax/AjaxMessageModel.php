@@ -53,7 +53,7 @@ class AjaxMessageModel extends AjaxBase
         }
 
         $chat = ChatModel::getInstance()->getItemBy(['id' => $chatId]);
-        $chatOwnerId = $params['ucItem']['isChatOwner'] ?? 0;
+        $chatOwnerId = UserChatModel::getInstance()->getChatOwnerId($chatId);
         $messagesCount = (int) ChatMessageQueueStorage::getInstance()->getQueueLength($chatId);
         $responsePlace = AjaxHelper::AJAX_RESPONSE_PLACE_APPEND;
         $offset = 0;
