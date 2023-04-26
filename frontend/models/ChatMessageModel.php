@@ -139,7 +139,8 @@ class ChatMessageModel extends \common\models\ChatMessageModel
             $resUsers[] = $userStr;
         }
         $msgStr = 'Список пользователей чата:<br/>' . implode('<br/>', $resUsers);
+        FlashMsgSetStorage::getInstance()->setExValue($form->userId, $msgStr);
 
-        return $this->insertMessage($form->userId, $form->chatId, $msgStr, static::MESSAGE_TYPE_SYSTEM);
+        return true;
     }
 }

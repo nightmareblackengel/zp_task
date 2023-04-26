@@ -34,9 +34,9 @@ if (empty($messageCount)) {
         </div>
     <?php }
 
+    $flash = FlashMsgSetStorage::getInstance()->getAndRemove($currentUserId);
     foreach ($messages as $msgItem) {
         $userId = $msgItem->u ?? 0;
-        $flash = FlashMsgSetStorage::getInstance()->getAndRemove($userId);
 
         $contClasses = 'oneMsgContainer';
         if ($msgItem->t === ChatMessageModel::MESSAGE_TYPE_SYSTEM) {
@@ -70,12 +70,11 @@ if (empty($messageCount)) {
                 </span>
             <?php } ?>
         </div>
-
-        <?php if (!empty($flash)) { ?>
-            <div class="alert alert-success" role="alert">
-                <?php echo $flash; ?>
-            </div>
-        <?php } ?>
-
-    <?php }
+    <?php } ?>
+    <?php if (!empty($flash)) { ?>
+        <div class="alert alert-success" role="alert">
+            <?php echo $flash; ?>
+        </div>
+    <?php } ?>
+<?php
 }
