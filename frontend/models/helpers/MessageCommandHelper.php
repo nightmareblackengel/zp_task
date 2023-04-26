@@ -43,22 +43,8 @@ class MessageCommandHelper
         } elseif ($cmdList[0] === self::MSG_CMD_ME) {
             array_shift($cmdList);
             return $userList[$msgItem->u]['name'] . ': ' . Html::encode(implode(' ', $cmdList));
-        } elseif ($cmdList[0] === self::MSG_CHAT_CMD_SHOW_MEMBERS) {
-            $resUsers = [];
-            if (empty($userList)) {
-                return '';
-            }
-            foreach ($userList as $userId => $userItem) {
-                $userStr = Html::tag('span', Html::encode($userItem['name']), ['class' => 'userItemInCmdList']);
-                if (UserChatModel::IS_USER_BANNED_YES === $userItem['isUserBanned']) {
-                    $userStr .= Html::tag('span', ' (забанен)', ['style' => 'color:red;']);
-                }
-                $resUsers[] = $userStr;
-            }
-
-            return 'Список пользователей чата:<br/>' . implode('<br/>', $resUsers);
         }
 
-        return Html::encode($cmd);
+        return $cmd;
     }
 }

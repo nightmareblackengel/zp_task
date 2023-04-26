@@ -1,6 +1,7 @@
 <?php
 namespace frontend\models;
 
+use common\ext\helpers\Html;
 use common\ext\redis\RedisBase;
 use common\models\mysql\UserChatModel;
 use common\models\redis\DelayMsgSortedSetStorage;
@@ -31,6 +32,9 @@ class ChatMessageModel extends \common\models\ChatMessageModel
                 return true;
             } elseif ($cmdList[0] === MessageCommandHelper::MSG_CMD_SEND_MSG_WITH_DELAY) {
                 $this->executeSendMsgWithDelay($form, $cmdList);
+                return true;
+            } elseif ($cmdList[0] === MessageCommandHelper::MSG_CHAT_CMD_SHOW_MEMBERS) {
+                $this->executeShowMembers($form);
                 return true;
             }
         }
@@ -121,5 +125,21 @@ class ChatMessageModel extends \common\models\ChatMessageModel
         FlashMsgSetStorage::getInstance()->setExValue($form->userId, 'Было удалено ' . $existsMsgCount . ' сообщений.');
 
         return $this->insertMessage($form->userId, $form->chatId, $form->message, $form->messageType);
+    }
+
+    protected function executeShowMembers(MessageAddForm $form): bool
+    {
+        $userList = UserModel::getInstance()->getUserListForChat($form->chatId, true);
+        $resUsers = [];
+        foreach ($userList as $userId => $userItem) {
+            $userStr = Html::tag('span', Html::encode($userItem['name']), ['class' => 'userItemInCmdList']);
+            if (UserChatModel::IS_USER_BANNED_YES === $userItem['isUserBanned']) {
+                $userStr .= Html::tag('span', ' (забанен)', ['style' => 'color:red;']);
+            }
+            $resUsers[] = $userStr;
+        }
+        $msgStr = 'Список пользователей чата:<br/>' . implode('<br/>', $resUsers);
+
+        return $this->insertMessage($form->userId, $form->chatId, $msgStr, static::MESSAGE_TYPE_SYSTEM);
     }
 }
