@@ -1,13 +1,14 @@
 <?php
 use common\ext\helpers\Html;
 use common\ext\widgets\ActiveForm;
-use conquer\select2\Select2Widget;
+use conquer\select2\Select2Asset;
+
 use frontend\assets\ChatEditFormAsset;
 
 /** @var \frontend\models\forms\ChatCreateForm $formModel */
 
 ChatEditFormAsset::register($this);
-
+Select2Asset::register($this);
 $this->title = 'Страница создания нового чата';
 ?>
 <div class="row">
@@ -27,19 +28,15 @@ $this->title = 'Страница создания нового чата';
                 ]);
             ?>
 
-            <?= $form->field($formModel, 'userIdList', [
-                    'errorOptions' => [
-                        'class' => 'help-block',
-                        'encode' => false,
-                    ]
-                ])->widget(Select2Widget::class, [
-                    'multiple' => 'multiple',
-                    'ajax' => ['chat/user-list', 'except_with_user' => 1, 'chat_id' => -1,],
-                    'settings' => [
-                        'ajax' => ['delay' => 250],
-                        'minimumInputLength' => 2,
-                    ]
-                ]); ?>
+            <?php echo $form->field($formModel, 'userIdList', [
+                'errorOptions' => [
+                    'class' => 'help-block',
+                    'encode' => false,
+                ],
+            ])->dropDownList([], [
+                'id' => 'userIdsSelect',
+                'multiple' => 'multiple',
+            ]); ?>
 
             <?= $form->field($formModel, 'currentUserId')->hiddenInput()->label(false); ?>
 
