@@ -11,9 +11,19 @@ use yii\web\Controller;
 class AuthController extends Controller
 {
     protected ?array $userArr = [];
+    protected $userId = null;
 
     public function beforeAction($action)
     {
+        if ($action->id === 'load' && $action->controller->id === 'ajax') {
+            $this->enableCsrfValidation = false;
+        }
+        // принудительная авторизация
+        $this->userId = 1;
+        $authIdentity = UserAuthIdentity::findIdentity($this->userId);
+        Yii::$app->user->login($authIdentity, 60*60);
+        //
+
         $befRes = parent::beforeAction($action);
         if (!$this->hasAccess()) {
             return $this->render('/main/page403');

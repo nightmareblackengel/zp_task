@@ -20,15 +20,30 @@ class AjaxController extends AuthController
         $this->layout = false;
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        if (!Yii::$app->request->isAjax || !Yii::$app->request->isPost) {
-            return $this->ajaxErr('Ошибка! Некорректный тип переданных данных');
-        }
+//        if (!Yii::$app->request->isAjax || !Yii::$app->request->isPost) {
+//            return $this->ajaxErr('Ошибка! Некорректный тип переданных данных');
+//        }
         if (!$this->hasAccess()) {
             return $this->ajaxErr('Время авторизации истекло. Обновите пожалуйста страницу, для повторной авторизации.');
         }
+        $post = [
+            'chats' => [
+                'show_in_response' => 1,
+                'id' => 27,
+                'last_updated_at' => 1682543314,
+            ],
+            'messages' => [
+                'show_in_response' => 3,
+                'chat_msg_count' => 14,
+                'last_updated_at' => null,
+            ],
+            'new_item' => [
+                'show_in_response' => 1,
+            ],
+        ];
 
         $form = new AjaxHelper();
-        if (!$form->load(Yii::$app->request->post())) {
+        if (!$form->load($post)) {
             return $this->ajaxErr($form->getDefaultError());
         }
 

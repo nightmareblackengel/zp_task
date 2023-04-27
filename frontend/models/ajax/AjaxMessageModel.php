@@ -33,9 +33,10 @@ class AjaxMessageModel extends AjaxBase
 
     public function prepareResponse(?int $userId, ?int $chatId, ?array $params = []): ?array
     {
-        if (empty($this->showInResponse) || $this->showInResponse === AjaxHelper::AJAX_REQUEST_EXCLUDE) {
-            return null;
-        }
+
+//        if (empty($this->showInResponse) || $this->showInResponse === AjaxHelper::AJAX_REQUEST_EXCLUDE) {
+//            return null;
+//        }
         if (empty($chatId)) {
             return [
                 'result' => AjaxHelper::AJAX_RESPONSE_OK,
@@ -43,14 +44,14 @@ class AjaxMessageModel extends AjaxBase
                 'html' => Yii::$app->controller->render('/ajax/messages_empty'),
             ];
         }
-        if (empty($params['ucItem'])) {
-            return [
-                'result' => AjaxHelper::AJAX_RESPONSE_OK,
-                'msgAddType' => AjaxHelper::AJAX_RESPONSE_PLACE_NEW,
-                'messages_count' => false,
-                'html' => 'Ошибка 403! У Вас нет доступа к этому чату',
-            ];
-        }
+//        if (empty($params['ucItem'])) {
+//            return [
+//                'result' => AjaxHelper::AJAX_RESPONSE_OK,
+//                'msgAddType' => AjaxHelper::AJAX_RESPONSE_PLACE_NEW,
+//                'messages_count' => false,
+//                'html' => 'Ошибка 403! У Вас нет доступа к этому чату',
+//            ];
+//        }
 
         $chat = ChatModel::getInstance()->getItemBy(['id' => $chatId]);
         $chatOwnerId = UserChatModel::getInstance()->getChatOwnerId($chatId);
