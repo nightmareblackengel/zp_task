@@ -3,6 +3,7 @@
 namespace console\controllers;
 
 use common\ext\console\ConsoleController;
+use common\models\ChatMessageModel;
 use common\models\mysql\ChatModel;
 use common\models\mysql\UserModel;
 use common\models\mysql\UserSettingsModel;
@@ -105,5 +106,27 @@ class TestController extends ConsoleController
         $dateInterval = $now->diff($this->time);
         echo PHP_EOL, $message, $dateInterval->format('[%H:%I:%S.%F]'), PHP_EOL;
         $this->time = $now;
+    }
+
+    // docker exec -it mphp /var/www/html/ztt.loc/yii test/add-message-cont
+    // автоматически отправляет сообщение в указанный чат от указанного пользователя с указанным интервалом
+    public function actionAddMessageCont($channelId = 11424, $userId = 2, $count = 2000, $sleep = 1)
+    {
+        $count = (int) $count;
+        set_time_limit($count);
+        $i = 2;
+        while ($i < $count) {
+            sleep((int) $sleep);
+            ChatMessageModel::getInstance()
+                ->insertMessage(
+                    (int) $userId,
+                    (int) $channelId,
+                    $i,
+                    ChatMessageModel::MESSAGE_TYPE_SIMPLE,
+                    time()
+                );
+            echo $i, PHP_EOL;
+            $i++;
+        }
     }
 }
