@@ -7,6 +7,8 @@
         this.ajaxCount = 0;
         // "возможность фиксировать перемещение скрола"
         this.canCheckScroll = false;
+        this.prevScrollTop = -1;
+        this.prevScrollHeight = -1;
     }
 
     MessageLoader.prototype.init = function ()
@@ -103,6 +105,8 @@
             if (data.messages.msgAddType) {
                 placementType = data.messages.msgAddType;
             }
+            window.nbeClp.prevScrollHeight = parseInt($('.nbeAjaxMessageContainer').prop('scrollHeight'));
+            window.nbeClp.prevScrollTop = parseInt($('.nbeAjaxMessageContainer').scrollTop());
 
             if (data.messages.html) {
                 if (placementType === AJAX_RESPONSE_PLACE_NEW) {
@@ -198,7 +202,7 @@
             return;
         }
         // если пользователь сильно проскроллил вверх - то не будем перемещать скрол вниз
-        if ((scrollHeight - scrollTop)/1.5 > clientHeight) {
+        if ((window.nbeClp.prevScrollHeight - window.nbeClp.prevScrollTop - clientHeight) > 200) {
             return;
         }
 
