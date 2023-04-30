@@ -5,6 +5,7 @@ namespace common\models\mysql;
 use common\ext\base\MySqlModel;
 use common\models\redis\ChatDateTimeMhashStorage;
 use Exception;
+use Yii;
 
 class ChatModel extends MySqlModel
 {
@@ -55,5 +56,10 @@ class ChatModel extends MySqlModel
         }
 
         return $newChatId ?? null;
+    }
+
+    public function clearChatListCache(int $userId)
+    {
+        Yii::$app->cache->delete('chat:list:'. $userId);
     }
 }

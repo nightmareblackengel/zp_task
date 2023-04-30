@@ -32,6 +32,7 @@ class ChatController extends AuthController
         if ($formModel->load(Yii::$app->request->post())) {
             $chatId = $formModel->save();
             if ($chatId) {
+                ChatModel::getInstance()->clearChatListCache($formModel->currentUserId);
                 return $this->redirect(
                     Url::to(['/chat/index', 'chat_id' => $chatId])
                 );
