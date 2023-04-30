@@ -3,14 +3,17 @@ namespace frontend\models\mysql;
 
 use common\models\mysql\UserChatModel;
 use frontend\models\service\UserChatService;
+use Yii;
 use yii\db\Query;
 
 class ChatModel extends \common\models\mysql\ChatModel
 {
     public static function prepareChatListWithCount(int $userId): array
     {
-        $ucService = new UserChatService();
-        $chatList = $ucService->getCombinedChatList($userId);
+        $chatList = Yii::$app->cache->getOrSet('chat:list:'. $userId, function() use($userId) {
+            $ucService = new UserChatService();
+            return $ucService->getCombinedChatList($userId);
+        }, 5);
         if (empty($chatList)) {
             return [];
         }

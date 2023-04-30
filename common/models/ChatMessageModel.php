@@ -5,6 +5,7 @@ namespace common\models;
 use common\ext\patterns\Singleton;
 use common\models\redis\ChatDateTimeMhashStorage;
 use common\models\redis\ChatMessageQueueStorage;
+use Yii;
 use yii\base\BaseObject;
 
 class ChatMessageModel extends BaseObject
@@ -45,6 +46,7 @@ class ChatMessageModel extends BaseObject
                     'd' => $date,
                 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
             );
+        Yii::$app->cache->delete('chat:list:'. $userId);
 
         return $msgSaveRes;
     }
