@@ -37,7 +37,7 @@ class AuthController extends Controller
         if (empty($this->userArr)) {
             return null;
         }
-        $this->userArr['concatName'] = $this->userArr['name'] . ' (' . $this->userArr['email'] . ')';
+        $this->userArr['concatName'] = $this->userArr['email'];
 
         return $this->userArr;
     }
