@@ -169,19 +169,9 @@
         if (!$scrollToItem.length) {
             return;
         }
-        var offsetHeight = parseInt($scrollToItem.offset().top);
-        var itemHeight = parseInt($scrollToItem.prop('scrollHeight'));
-        // отступ до 1го элементаs
-        var scrollHeight = - 160;
-        if (offsetHeight) {
-            scrollHeight += offsetHeight;
-        }
-        if (itemHeight) {
-            scrollHeight += itemHeight;
-        }
-        if (scrollHeight) {
-            $('.nbeChatContainer').scrollTop(scrollHeight/2);
-        }
+        var firstItemTop = parseInt($('.list-group-item:first').offset().top);
+        var selectedItemTop = parseInt($scrollToItem.offset().top);
+        $('.nbeChatContainer').scrollTop((selectedItemTop - firstItemTop) - 160);
     }
 
     // скролл вниз, в области сообщений
